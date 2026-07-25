@@ -1,0 +1,14 @@
+services:
+  myflix:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_PATH=/data/myflix 
+      - MEDIA_PATH=/media
+      - ADMIN_USER=${ADMIN_USER}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./test-media:/media:ro
+      - ./test-data:/data

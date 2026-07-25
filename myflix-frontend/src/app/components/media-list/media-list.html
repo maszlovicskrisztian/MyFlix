@@ -1,0 +1,36 @@
+<div class="browse">
+  <header class="topbar">
+    <a class="topbar__brand" [routerLink]="['/media']">MyFlix</a>
+    <nav class="topbar__nav">
+      <a class="topbar__link topbar__link--active" [routerLink]="['/media']">Kezdőlap</a>
+      <a class="topbar__link" (click)="logout()">Kijelentkezés</a>
+    </nav>
+  </header>
+
+  <section class="row">
+    <h2 class="row__title">Az Ön médiatára</h2>
+
+    @if (mediaItems().length) {
+      <div class="grid">
+        @for (item of mediaItems(); track item.id) {
+          <a class="card" [routerLink]="['/media', item.id]">
+            <div class="card__poster">
+              <span class="card__poster-title">{{ item.title }}</span>
+              <div class="card__overlay">
+                <span class="card__play" aria-hidden="true">▶</span>
+              </div>
+            </div>
+            <div class="card__meta">
+              <span class="card__name">{{ item.title }}</span>
+            </div>
+          </a>
+        }
+      </div>
+    } @else {
+      <div class="empty">
+        <p class="empty__title">Egyelőre nincs elérhető média</p>
+        <p class="empty__text">Amint tartalmat adnak hozzá, itt fog megjelenni.</p>
+      </div>
+    }
+  </section>
+</div>

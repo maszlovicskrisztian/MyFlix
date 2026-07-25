@@ -1,0 +1,21 @@
+<div class="player">
+  @if (mediaId()) {
+    <a class="player__back" [routerLink]="['/media', mediaId()]">
+      <span class="player__back-icon" aria-hidden="true">‹</span> Vissza
+    </a>
+
+    <video
+      #videoElement
+      class="player__video"
+      controls
+      autoplay
+      [src]="streamUrl()"
+      (loadedmetadata)="onLoadedMetadata()"
+      (timeupdate)="onTimeUpdate()"
+    ></video>
+  } @else {
+    <div class="player__loading">
+      <div class="player__spinner" aria-hidden="true"></div>
+    </div>
+  }
+</div>
