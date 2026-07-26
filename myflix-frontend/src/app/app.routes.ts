@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { MediaList } from './components/media-list/media-list';
 
 export const routes: Routes = [
     {
@@ -10,6 +9,13 @@ export const routes: Routes = [
     { 
         path: 'media', 
         loadComponent: () => import('./components/media-list/media-list').then(m => m.MediaList)
-     },
-
+    },
+    { 
+        path: 'media/:id', 
+        loadComponent: () => import('./components/media-viewer/media-viewer').then(m => m.MediaViewer)
+    },
+    { 
+        path: 'media/:id/play', 
+        loadComponent: () => import('./components/media-player/media-player').then(m => m.MediaPlayer)
+    },
 ];

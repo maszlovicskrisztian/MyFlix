@@ -1,5 +1,4 @@
-<p>media-list works!</p>
-
 @for (item of mediaItems() ; track item.id) {
   <p>{{ item.title }}</p>
+  <a [routerLink]="['/media', item.id]">View Details</a>
 }
