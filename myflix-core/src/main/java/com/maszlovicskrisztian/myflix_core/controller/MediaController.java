@@ -1,7 +1,10 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
+import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
+import com.maszlovicskrisztian.myflix_core.dtos.WatchProgressDto;
 import com.maszlovicskrisztian.myflix_core.model.MediaItem;
 import com.maszlovicskrisztian.myflix_core.repository.MediaItemRepository;
+import com.maszlovicskrisztian.myflix_core.repository.WatchProgressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -24,17 +27,35 @@ public class MediaController {
     private String mediaPath;
 
     private final MediaItemRepository mediaItemRepository;
+    private final WatchProgressRepository watchProgressRepository;
 
     @GetMapping
-    public List<MediaItem> getAllMedia() {
-        return mediaItemRepository.findAll();
+    public List<MediaItemDto> getAllMedia() {
+        return mediaItemRepository.findAll().stream().map(MediaItemDto::from).toList();
     }
 
     @GetMapping("/{id}")
-    public MediaItem getMediaById(@PathVariable Long id) {
+    public MediaItemDto getMediaById(@PathVariable Long id) {
         return mediaItemRepository
                 .findById(id)
+                .map(MediaItemDto::from)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/{id}/progress?profileId=")
+    public WatchProgressDto getProgressForMediaByProfile(
+            @PathVariable Long id,
+            @RequestParam Long profileId) {
+        return watchProgressRepository
+                .findByProfileIdAndMediaItemId(profileId, id)
+                .map(WatchProgressDto::from)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/{id}/progress?profileId=")
+    public void setProgressForMediaByProfile(
+            @PathVariable Long id,
+            @RequestParam Long profileId) {
     }
 
     @GetMapping("/{id}/stream")
