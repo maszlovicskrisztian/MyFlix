@@ -1,0 +1,16 @@
+import { inject, Injectable } from '@angular/core';
+import { MediaItem } from '../model/media-item';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class MediaService {
+    http = inject(HttpClient);
+
+    public getMediaItems() {
+        const url = `${environment.apiUrl}/media`;
+        return this.http.get<Array<MediaItem>>(url);
+    }
+}
