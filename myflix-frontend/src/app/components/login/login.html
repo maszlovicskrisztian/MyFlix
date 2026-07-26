@@ -1,0 +1,9 @@
+<form (ngSubmit)="login()">
+  <input [(ngModel)]="username" name="username" placeholder="Felhasználónév" />
+  <input [(ngModel)]="password" name="password" type="password" placeholder="Jelszó" />
+  <button type="submit">Bejelentkezés</button>
+</form>
+
+@if (errorMessage()) {
+  <p class="error">{{ errorMessage() }}</p>
+}
