@@ -2,9 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { ProfileService } from './profile-service';
 
 @Service()
 export class AuthService {
+    private profileService = inject(ProfileService);
     private http = inject(HttpClient);
     private router = inject(Router);
 
@@ -20,6 +22,7 @@ export class AuthService {
     logout() {
         localStorage.removeItem(this.TOKEN_KEY);
         this.isAuthenticated.set(false);
+        this.profileService.clearSelectedProfile();
         this.router.navigate(['/login']);
     }
 
