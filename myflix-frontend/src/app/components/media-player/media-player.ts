@@ -3,6 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth-service';
 import { WatchProgressService } from '../../services/watch-progress-service';
+import { ProfileService } from '../../services/profile-service';
 
 @Component({
   selector: 'app-media-player',
@@ -13,11 +14,12 @@ import { WatchProgressService } from '../../services/watch-progress-service';
 export class MediaPlayer implements OnInit {
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
+  private profileService = inject(ProfileService);
   private watchProgressService = inject(WatchProgressService);
 
   videoRef = viewChild<ElementRef<HTMLVideoElement>>('videoElement');
   mediaId = signal<string | null>(null);
-  profileId = 1; // egyelőre hardcode, amíg nincs profil-választó UI
+  profileId = signal<number | null>(null);
 
   private lastSentPosition = 0;
 
@@ -28,13 +30,16 @@ export class MediaPlayer implements OnInit {
 
   ngOnInit(): void {
     this.mediaId.set(this.route.snapshot.paramMap.get('id'));
+    this.profileId.set(this.profileService.selectedProfileId());
   }
   
   onLoadedMetadata(): void {
     const mediaId = this.mediaId();
-    if (mediaId === null) return;
+    const profileId = this.profileId();
+    if (mediaId === null || profileId === null) 
+      return;
 
-    this.watchProgressService.getProgress(mediaId, this.profileId).subscribe({
+    this.watchProgressService.getProgress(mediaId, profileId).subscribe({
       next: (progress) => {
         const video = this.videoRef()?.nativeElement;
         if (video && progress.progressSeconds > 0) {
@@ -47,16 +52,17 @@ export class MediaPlayer implements OnInit {
 
   onTimeUpdate(): void {
     const video = this.videoRef()?.nativeElement;
+    const profileId = this.profileId();
     const mediaId = this.mediaId();
     
-    if (!video || mediaId === null) 
+    if (!video || mediaId === null || profileId === null) 
       return;
 
     const currentPosition = Math.floor(video.currentTime);
 
     if (Math.abs(currentPosition - this.lastSentPosition) >= 10) {
       this.lastSentPosition = currentPosition;
-      this.watchProgressService.updateProgress(mediaId, this.profileId, currentPosition).subscribe();
+      this.watchProgressService.updateProgress(mediaId, profileId, currentPosition).subscribe();
     }
   }
 }

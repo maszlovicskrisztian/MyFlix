@@ -1,0 +1,8 @@
+<div class="profile-grid">
+  @for (profile of profiles(); track profile.id) {
+    <button class="profile-card" (click)="selectProfile(profile)">
+      <span class="profile-card__avatar">{{ profile.name.charAt(0) }}</span>
+      <span class="profile-card__name">{{ profile.name }}</span>
+    </button>
+  }
+</div>
