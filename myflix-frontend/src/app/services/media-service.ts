@@ -1,11 +1,9 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { MediaItem } from '../model/media-item';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class MediaService {
     http = inject(HttpClient);
 
