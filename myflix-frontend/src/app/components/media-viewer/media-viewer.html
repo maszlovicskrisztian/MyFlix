@@ -1,4 +1,8 @@
-<p>{{mediaItem()?.title}}</p>
-<p>{{mediaItem()?.addedAt}}</p>
-<a [routerLink]="['/media']">Back to list </a>
-<a [routerLink]="['/media/' + (mediaItem()?.id) + '/play']">Play</a>
+@if (mediaItem(); as item) {
+  <p>{{ item.title }}</p>
+  <p>{{ item.addedAt }}</p>
+  <a [routerLink]="['/media']">Back to list</a>
+  <a [routerLink]="['/media', item.id, 'play']">Play</a>
+} @else {
+  <p>Loading...</p>
+}

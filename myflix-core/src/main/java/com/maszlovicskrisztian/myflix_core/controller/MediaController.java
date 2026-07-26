@@ -32,7 +32,9 @@ public class MediaController {
 
     @GetMapping("/{id}")
     public MediaItem getMediaById(@PathVariable Long id) {
-        return mediaItemRepository.findById(id).orElse(null);
+        return mediaItemRepository
+                .findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping("/{id}/stream")
