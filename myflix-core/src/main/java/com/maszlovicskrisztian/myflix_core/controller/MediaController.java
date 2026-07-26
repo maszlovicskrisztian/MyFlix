@@ -1,10 +1,11 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
 import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
+import com.maszlovicskrisztian.myflix_core.dtos.UpdateProgressRequest;
 import com.maszlovicskrisztian.myflix_core.dtos.WatchProgressDto;
 import com.maszlovicskrisztian.myflix_core.model.MediaItem;
-import com.maszlovicskrisztian.myflix_core.repository.MediaItemRepository;
-import com.maszlovicskrisztian.myflix_core.repository.WatchProgressRepository;
+import com.maszlovicskrisztian.myflix_core.service.MediaItemService;
+import com.maszlovicskrisztian.myflix_core.service.WatchProgressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
@@ -26,36 +27,44 @@ public class MediaController {
     @Value("${MEDIA_PATH}")
     private String mediaPath;
 
-    private final MediaItemRepository mediaItemRepository;
-    private final WatchProgressRepository watchProgressRepository;
+    private final MediaItemService mediaItemService;
+    private final WatchProgressService watchProgressService;
 
     @GetMapping
     public List<MediaItemDto> getAllMedia() {
-        return mediaItemRepository.findAll().stream().map(MediaItemDto::from).toList();
+        return mediaItemService.getAllMedia();
     }
 
     @GetMapping("/{id}")
     public MediaItemDto getMediaById(@PathVariable Long id) {
-        return mediaItemRepository
-                .findById(id)
-                .map(MediaItemDto::from)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        MediaItemDto dto = mediaItemService.getMediaDtoById(id);
+
+        if (dto == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        return dto;
     }
 
-    @GetMapping("/{id}/progress?profileId=")
+    @GetMapping("/{id}/progress")
     public WatchProgressDto getProgressForMediaByProfile(
             @PathVariable Long id,
             @RequestParam Long profileId) {
-        return watchProgressRepository
-                .findByProfileIdAndMediaItemId(profileId, id)
-                .map(WatchProgressDto::from)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        WatchProgressDto dto = watchProgressService.getProgressForMediaByProfile(id, profileId);
+
+        if (dto == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+
+        return dto;
     }
 
-    @PutMapping("/{id}/progress?profileId=")
-    public void setProgressForMediaByProfile(
+    @PutMapping("/{id}/progress")
+    public WatchProgressDto setProgressForMediaByProfile(
             @PathVariable Long id,
-            @RequestParam Long profileId) {
+            @RequestParam Long profileId,
+            @RequestBody UpdateProgressRequest request) {
+
+        return watchProgressService.setProgressForMediaByProfile(id, profileId, request.progressSeconds());
     }
 
     @GetMapping("/{id}/stream")
@@ -63,9 +72,9 @@ public class MediaController {
             @PathVariable Long id,
             @RequestHeader HttpHeaders header) throws IOException {
 
-        MediaItem mediaItem = mediaItemRepository
-                .findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        MediaItem mediaItem = mediaItemService.getMediaById(id);
+        if (mediaItem == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         Path filePath = Paths.get(mediaPath).resolve(mediaItem.getRelativePath());
         FileSystemResource file = new FileSystemResource(filePath);
@@ -90,6 +99,5 @@ public class MediaController {
                 .status(HttpStatus.PARTIAL_CONTENT)
                 .contentType(MediaTypeFactory.getMediaType(file).orElse(MediaType.APPLICATION_OCTET_STREAM))
                 .body(region);
-
     }
 }

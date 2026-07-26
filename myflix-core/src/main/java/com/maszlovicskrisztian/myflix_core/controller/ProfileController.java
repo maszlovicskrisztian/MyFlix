@@ -4,6 +4,8 @@ import com.maszlovicskrisztian.myflix_core.dtos.ProfileDto;
 import com.maszlovicskrisztian.myflix_core.model.Profile;
 import com.maszlovicskrisztian.myflix_core.repository.ProfileRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,16 +23,13 @@ public class ProfileController {
     }
 
     @PostMapping
-    public ProfileDto saveProfile(@RequestBody ProfileDto profileDto) {
-        if (profileDto == null)
-            return null;
-
+    public ResponseEntity<ProfileDto> saveProfile(@RequestBody ProfileDto profileDto) {
         Profile profile = new Profile();
         profile.setName(profileDto.name());
         profile.setAvatarKey(profileDto.avatarKey());
 
         profileRepository.save(profile);
-        return ProfileDto.from(profile);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ProfileDto.from(profile));
     }
 
     @DeleteMapping("/{id}")

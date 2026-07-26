@@ -1,10 +1,13 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
+import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
 import com.maszlovicskrisztian.myflix_core.model.MediaItem;
 import com.maszlovicskrisztian.myflix_core.repository.MediaItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -53,5 +56,22 @@ public class MediaItemService {
 
     public Set<String> getAllRelativePaths() {
         return mediaItemRepository.findAll().stream().map(MediaItem::getRelativePath).collect(Collectors.toSet());
+    }
+
+    public List<MediaItemDto> getAllMedia() {
+        return mediaItemRepository.findAll().stream().map(MediaItemDto::from).toList();
+    }
+
+    public MediaItemDto getMediaDtoById(Long id) {
+        return mediaItemRepository
+                .findById(id)
+                .map(MediaItemDto::from)
+                .orElse(null);
+    }
+
+    public MediaItem getMediaById(Long id) {
+        return mediaItemRepository
+                .findById(id)
+                .orElse(null);
     }
 }
