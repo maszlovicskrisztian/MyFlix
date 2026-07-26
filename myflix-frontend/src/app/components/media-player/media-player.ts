@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-media-player',
@@ -10,11 +11,16 @@ import { environment } from '../../../environments/environment';
 })
 export class MediaPlayer implements OnInit {
   private route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
+
   mediaId = signal<string | null>(null);
-  streamUrl = computed(() => `${environment.apiUrl}/media/${this.mediaId()}/stream`);
+
+  streamUrl = computed(() => {
+    const token = this.authService.getToken();
+    return `${environment.apiUrl}/media/${this.mediaId()}/stream?token=${token}`;
+  });
 
   ngOnInit(): void {
     this.mediaId.set(this.route.snapshot.paramMap.get('id'));
   }
-
 }
