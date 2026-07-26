@@ -1,11 +1,11 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-media-player',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './media-player.html',
   styleUrl: './media-player.scss',
 })

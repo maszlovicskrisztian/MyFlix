@@ -1,8 +1,36 @@
-@if (mediaItem(); as item) {
-  <p>{{ item.title }}</p>
-  <p>{{ item.addedAt }}</p>
-  <a [routerLink]="['/media']">Back to list</a>
-  <a [routerLink]="['/media', item.id, 'play']">Play</a>
-} @else {
-  <p>Loading...</p>
-}
+<div class="detail">
+  <header class="detail__topbar">
+    <a class="detail__brand" [routerLink]="['/media']">MyFlix</a>
+  </header>
+
+  @if (mediaItem(); as item) {
+    <div class="hero">
+      <div class="hero__backdrop"></div>
+      <div class="hero__scrim"></div>
+
+      <div class="hero__content">
+        <a class="back" [routerLink]="['/media']">
+          <span class="back__icon" aria-hidden="true">‹</span> Vissza a listához
+        </a>
+
+        <h1 class="hero__title">{{ item.title }}</h1>
+
+        <div class="hero__meta">
+          <span class="badge">HD</span>
+          <span class="hero__meta-item">Hozzáadva: {{ item.addedAt | date: 'longDate' }}</span>
+        </div>
+
+        <div class="hero__actions">
+          <a class="btn btn--play" [routerLink]="['/media', item.id, 'play']">
+            <span class="btn__icon" aria-hidden="true">▶</span> Lejátszás
+          </a>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="loading">
+      <div class="loading__spinner" aria-hidden="true"></div>
+      <p class="loading__text">Betöltés…</p>
+    </div>
+  }
+</div>

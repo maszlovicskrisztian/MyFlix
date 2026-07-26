@@ -2,7 +2,8 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { MediaService } from '../../services/media-service';
 import { MediaItem } from '../../model/media-item';
 import { catchError, of } from 'rxjs';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-media-list',
@@ -12,7 +13,14 @@ import { RouterLink } from '@angular/router';
 })
 export class MediaList implements OnInit {
   mediaService = inject(MediaService);
+  authService = inject(AuthService);
   mediaItems = signal<MediaItem[]>([]);
+  private router = inject(Router);
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 
   ngOnInit(): void {
     this.mediaService
