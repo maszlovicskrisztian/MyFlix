@@ -1,0 +1,4 @@
+<p>{{mediaItem()?.title}}</p>
+<p>{{mediaItem()?.addedAt}}</p>
+<a [routerLink]="['/media']">Back to list </a>
+<a [routerLink]="['/media/' + (mediaItem()?.id) + '/play']">Play</a>

@@ -30,6 +30,11 @@ public class MediaController {
         return mediaItemRepository.findAll();
     }
 
+    @GetMapping("/{id}")
+    public MediaItem getMediaById(@PathVariable Long id) {
+        return mediaItemRepository.findById(id).orElse(null);
+    }
+
     @GetMapping("/{id}/stream")
     public ResponseEntity<ResourceRegion> stream(
             @PathVariable Long id,

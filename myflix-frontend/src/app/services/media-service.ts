@@ -13,4 +13,9 @@ export class MediaService {
         const url = `${environment.apiUrl}/media`;
         return this.http.get<Array<MediaItem>>(url);
     }
+
+    public getMediaItemById(id: string) {
+        const url = `${environment.apiUrl}/media/${id}`;
+        return this.http.get<MediaItem>(url);
+    }
 }
