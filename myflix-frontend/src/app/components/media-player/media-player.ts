@@ -19,7 +19,7 @@ export class MediaPlayer implements OnInit {
 
   videoRef = viewChild<ElementRef<HTMLVideoElement>>('videoElement');
   mediaId = signal<string | null>(null);
-  profileId = signal<number | null>(null);
+  profileId = computed(() => this.profileService.selectedProfileId());
 
   private lastSentPosition = 0;
 
@@ -30,7 +30,6 @@ export class MediaPlayer implements OnInit {
 
   ngOnInit(): void {
     this.mediaId.set(this.route.snapshot.paramMap.get('id'));
-    this.profileId.set(this.profileService.selectedProfileId());
   }
   
   onLoadedMetadata(): void {

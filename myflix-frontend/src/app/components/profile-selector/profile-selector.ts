@@ -27,6 +27,14 @@ export class ProfileSelector implements OnInit {
   }
 
   addProfile(): void {
+    const name = prompt('Profil neve:');
+    if (!name) return;
+
+    this.profileService.createProfile(name, null).subscribe({
+      next: (newProfile) => {
+        this.profiles.set([...this.profiles(), newProfile]);
+      },
+    });
   }
 
   deleteProfile(profile: Profile): void {

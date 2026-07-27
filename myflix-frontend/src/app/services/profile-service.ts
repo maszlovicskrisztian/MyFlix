@@ -19,7 +19,7 @@ export class ProfileService {
     return this.http.get<Profile[]>(`${environment.apiUrl}/profiles`);
   }
 
-  createProfile(name: string, avatarKey: string) {
+  createProfile(name: string, avatarKey: string | null) {
     return this.http.post<Profile>(`${environment.apiUrl}/profiles`, { name, avatarKey });
   }
 
