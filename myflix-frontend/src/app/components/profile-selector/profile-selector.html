@@ -31,6 +31,17 @@
       } @empty {
         <p class="profiles__empty">Még nincsenek profilok.</p>
       }
+      <div class="profile-card">
+          <button
+            class="profile-card__select"
+            type="button"
+            (click)="addProfile()"
+          >
+            <span class="profile-card__avatar">+</span>
+          </button>
+
+          <span class="profile-card__name">Új profil</span>
+        </div>
     </div>
   </main>
 </div>

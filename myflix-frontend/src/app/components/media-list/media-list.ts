@@ -14,6 +14,7 @@ import { AuthService } from '../../services/auth-service';
 export class MediaList implements OnInit {
   mediaService = inject(MediaService);
   authService = inject(AuthService);
+
   mediaItems = signal<MediaItem[]>([]);
   private router = inject(Router);
 

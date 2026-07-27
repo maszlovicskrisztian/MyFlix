@@ -26,6 +26,9 @@ export class ProfileSelector implements OnInit {
     this.router.navigate(['/media']);
   }
 
+  addProfile(): void {
+  }
+
   deleteProfile(profile: Profile): void {
     this.profileService.deleteProfile(profile.id).subscribe({
       next: () => {

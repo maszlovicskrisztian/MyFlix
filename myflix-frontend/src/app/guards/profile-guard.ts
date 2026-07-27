@@ -6,7 +6,7 @@ export const profileGuard: CanActivateFn = () => {
   const profileService = inject(ProfileService);
   const router = inject(Router);
 
-  if (profileService.selectedProfileId()) {
+  if (profileService.selectedProfileId() !== null) {
     return true;
   }
 
