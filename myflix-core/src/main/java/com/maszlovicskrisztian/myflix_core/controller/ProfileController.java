@@ -3,6 +3,7 @@ package com.maszlovicskrisztian.myflix_core.controller;
 import com.maszlovicskrisztian.myflix_core.dtos.ProfileDto;
 import com.maszlovicskrisztian.myflix_core.model.Profile;
 import com.maszlovicskrisztian.myflix_core.repository.ProfileRepository;
+import com.maszlovicskrisztian.myflix_core.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 public class ProfileController {
 
     private final ProfileRepository profileRepository;
+    private final ProfileService profileService;
 
     @GetMapping
     public List<ProfileDto> getAllProfiles() {
@@ -24,16 +26,12 @@ public class ProfileController {
 
     @PostMapping
     public ResponseEntity<ProfileDto> saveProfile(@RequestBody ProfileDto profileDto) {
-        Profile profile = new Profile();
-        profile.setName(profileDto.name());
-        profile.setAvatarKey(profileDto.avatarKey());
-
-        profileRepository.save(profile);
+        Profile profile = profileService.saveProfile(profileDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ProfileDto.from(profile));
     }
 
     @DeleteMapping("/{id}")
     public void deleteProfile(@PathVariable Long id) {
-        profileRepository.deleteById(id);
+        profileService.deleteById(id);
     }
 }
