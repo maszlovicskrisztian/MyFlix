@@ -1,0 +1,15 @@
+services:
+  myflix:
+    image: ghcr.io/maszlovicskrisztian/myflix:0.1.0
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - MEDIA_PATH=/media
+      - DB_PATH=/data/myflix
+      - ADMIN_USER=<admin username>
+      - ADMIN_PASSWORD=<admin password>
+      - JWT_SECRET=<jwt secret>
+    volumes:
+      - <path_to_media>:/media:ro
+      - <path_to_data>:/data
