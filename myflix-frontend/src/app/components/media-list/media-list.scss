@@ -3,45 +3,6 @@
   min-height: 100vh;
 }
 
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 32px;
-  padding: 16px clamp(20px, 5vw, 60px);
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
-
-  &__brand {
-    color: var(--mf-red);
-    font-size: 26px;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-    text-transform: uppercase;
-  }
-
-  &__nav {
-    display: flex;
-    gap: 20px;
-  }
-
-  &__link {
-    color: var(--mf-text-dim);
-    font-size: 14px;
-    transition: color 0.2s ease;
-
-    &:hover {
-      color: #fff;
-    }
-
-    &--active {
-      color: #fff;
-      font-weight: 600;
-    }
-  }
-}
-
 .row {
   padding: 8px clamp(20px, 5vw, 60px) 60px;
 

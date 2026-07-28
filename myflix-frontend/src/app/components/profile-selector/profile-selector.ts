@@ -22,7 +22,7 @@ export class ProfileSelector implements OnInit {
   }
 
   selectProfile(profile: Profile): void {
-    this.profileService.selectProfile(profile.id);
+    this.profileService.selectProfile(profile);
     this.router.navigate(['/media']);
   }
 

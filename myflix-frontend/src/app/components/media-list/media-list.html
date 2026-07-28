@@ -1,11 +1,5 @@
 <div class="browse">
-  <header class="topbar">
-    <a class="topbar__brand" [routerLink]="['/media']">MyFlix</a>
-    <nav class="topbar__nav">
-      <a class="topbar__link topbar__link--active" [routerLink]="['/media']">Kezdőlap</a>
-      <a class="topbar__link" (click)="logout()">Kijelentkezés</a>
-    </nav>
-  </header>
+  <app-header></app-header>
 
   <section class="row">
     <h2 class="row__title">Az Ön médiatára</h2>

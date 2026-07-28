@@ -13,15 +13,6 @@
     left: 0;
     right: 0;
     z-index: 20;
-    padding: 16px clamp(20px, 5vw, 60px);
-  }
-
-  &__brand {
-    color: var(--mf-red);
-    font-size: 26px;
-    font-weight: 900;
-    letter-spacing: -0.5px;
-    text-transform: uppercase;
   }
 }
 

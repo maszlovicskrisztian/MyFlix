@@ -4,10 +4,11 @@ import { MediaItem } from '../../model/media-item';
 import { MediaService } from '../../services/media-service';
 import { catchError, of } from 'rxjs';
 import { DatePipe } from '@angular/common';
+import { Header } from '../header/header';
 
 @Component({
   selector: 'app-media-viewer',
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, Header],
   templateUrl: './media-viewer.html',
   styleUrl: './media-viewer.scss',
 })

@@ -1,12 +1,11 @@
 <div class="detail">
-  <header class="detail__topbar">
-    <a class="detail__brand" [routerLink]="['/media']">MyFlix</a>
-  </header>
+  <app-header class="detail__topbar"></app-header>
 
-  @if (mediaItem(); as item) {
-    <div class="hero">
-      <div class="hero__backdrop"></div>
-      <div class="hero__scrim"></div>
+  <div class="hero">
+    <div class="hero__backdrop"></div>
+    <div class="hero__scrim"></div>
+
+    @if (mediaItem(); as item) {
 
       <div class="hero__content">
         <a class="back" [routerLink]="['/media']">
@@ -26,11 +25,11 @@
           </a>
         </div>
       </div>
-    </div>
-  } @else {
-    <div class="loading">
-      <div class="loading__spinner" aria-hidden="true"></div>
-      <p class="loading__text">Betöltés…</p>
-    </div>
-  }
+    } @else {
+      <div class="loading">
+        <div class="loading__spinner" aria-hidden="true"></div>
+        <p class="loading__text">Betöltés…</p>
+      </div>
+    }
+  </div>
 </div>

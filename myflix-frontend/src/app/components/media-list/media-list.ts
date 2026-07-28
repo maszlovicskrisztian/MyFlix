@@ -4,10 +4,11 @@ import { MediaItem } from '../../model/media-item';
 import { catchError, of } from 'rxjs';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
+import { Header } from "../header/header";
 
 @Component({
   selector: 'app-media-list',
-  imports: [RouterLink],
+  imports: [RouterLink, Header],
   templateUrl: './media-list.html',
   styleUrls: ['./media-list.scss'],
 })

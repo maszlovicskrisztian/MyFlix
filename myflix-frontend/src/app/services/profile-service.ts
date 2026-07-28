@@ -7,8 +7,10 @@ import { Profile } from '../model/profile';
 export class ProfileService {
   private http = inject(HttpClient);
   private readonly PROFILE_KEY = 'myflix_selected_profile';
+  private readonly PROFILE_NAME_KEY = 'myflix_selected_profile_name';
 
   selectedProfileId = signal<number | null>(this.loadStoredProfileId());
+  selectedProfileName = signal<string | null>(localStorage.getItem(this.PROFILE_NAME_KEY));
 
   private loadStoredProfileId(): number | null {
     const stored = localStorage.getItem(this.PROFILE_KEY);
@@ -23,9 +25,11 @@ export class ProfileService {
     return this.http.post<Profile>(`${environment.apiUrl}/profiles`, { name, avatarKey });
   }
 
-  selectProfile(profileId: number): void {
-    localStorage.setItem(this.PROFILE_KEY, String(profileId));
-    this.selectedProfileId.set(profileId);
+  selectProfile(profile: Profile): void {
+    localStorage.setItem(this.PROFILE_KEY, String(profile.id));
+    localStorage.setItem(this.PROFILE_NAME_KEY, profile.name);
+    this.selectedProfileId.set(profile.id);
+    this.selectedProfileName.set(profile.name);
   }
 
   deleteProfile(profileId: number) {
@@ -34,6 +38,8 @@ export class ProfileService {
 
   clearSelectedProfile(): void {
     localStorage.removeItem(this.PROFILE_KEY);
+    localStorage.removeItem(this.PROFILE_NAME_KEY);
     this.selectedProfileId.set(null);
+    this.selectedProfileName.set(null);
   }
 }
