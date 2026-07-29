@@ -10,31 +10,31 @@ export const routes: Routes = [
     },
     {
         path: 'login',
-        loadComponent: () => import('./components/login/login').then(m => m.Login),
+        loadComponent: () => import('./pages/login/login').then(m => m.Login),
     },
     {
         path: 'profiles',
-        loadComponent: () => import('./components/profile-selector/profile-selector').then(m => m.ProfileSelector),
+        loadComponent: () => import('./pages/profile-selector/profile-selector').then(m => m.ProfileSelector),
         canActivate: [authGuard],
     },
     {
         path: 'profiles/add',
-        loadComponent: () => import('./components/add-profile/add-profile').then(m => m.AddProfile),
+        loadComponent: () => import('./pages/add-profile/add-profile').then(m => m.AddProfile),
         canActivate: [authGuard],
     },
-    { 
-        path: 'media', 
-        loadComponent: () => import('./components/media-list/media-list').then(m => m.MediaList),
+    {
+        path: 'home', 
+        loadComponent: () => import('./pages/home/home').then(m => m.Home),
         canActivate: [authGuard, profileGuard]
     },
     { 
         path: 'media/:id', 
-        loadComponent: () => import('./components/media-viewer/media-viewer').then(m => m.MediaViewer),
+        loadComponent: () => import('./pages/media-viewer/media-viewer').then(m => m.MediaViewer),
         canActivate: [authGuard, profileGuard]
     },
     { 
         path: 'media/:id/play', 
-        loadComponent: () => import('./components/media-player/media-player').then(m => m.MediaPlayer),
+        loadComponent: () => import('./pages/media-player/media-player').then(m => m.MediaPlayer),
         canActivate: [authGuard, profileGuard]
     },
 ];

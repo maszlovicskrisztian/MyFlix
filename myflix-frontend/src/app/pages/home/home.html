@@ -1,0 +1,18 @@
+<div class="browse">
+  <app-header></app-header>
+  <app-media-section 
+    title="Megtekintés folytatása" 
+    [mediaItems]="continueWatching()"
+    emptyMessage="Nincs megtekintés alatt álló tartalom.">
+  </app-media-section>
+  <app-media-section 
+    title="Ajánlott filmek" 
+    [mediaItems]="suggestedMovies()" 
+    emptyMessage="Nézz valamit, hogy tudjunk ajánlani.">
+  </app-media-section>
+  <app-media-section 
+    title="Ajánlott Sorozatok" 
+    [mediaItems]="suggestedSeries()" 
+    emptyMessage="Nézz valamit, hogy tudjunk ajánlani.">
+  </app-media-section>
+</div>

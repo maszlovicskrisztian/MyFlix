@@ -1,0 +1,18 @@
+<section class="row">
+    @if (title()) {
+      <h2 class="row__title">{{ title() }}</h2>
+    }
+
+    @if (mediaItems().length) {
+      <div class="grid">
+        @for (item of mediaItems(); track item.id) {
+          <app-media-card class="grid__item" [mediaItem]="item"></app-media-card>
+        }
+      </div>
+    } @else {
+      <div class="empty">
+        <p class="empty__title">Egyelőre nincs elérhető média</p>
+        <p class="empty__text">{{ emptyMessage() }}</p>
+      </div>
+    }
+</section>

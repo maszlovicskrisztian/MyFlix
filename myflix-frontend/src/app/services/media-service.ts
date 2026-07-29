@@ -7,9 +7,17 @@ import { environment } from '../../environments/environment';
 export class MediaService {
     http = inject(HttpClient);
 
-    public getMediaItems() {
+    public getContinueWatching() {
         const url = `${environment.apiUrl}/media`;
         return this.http.get<Array<MediaItem>>(url);
+    }
+
+    public getSuggestedMovies() {
+        return Array<MediaItem>();
+    }
+
+    public getSuggestedSeries() {
+        return Array<MediaItem>();
     }
 
     public getMediaItemById(id: string) {

@@ -1,0 +1,40 @@
+.row {
+  padding: 8px clamp(20px, 5vw, 60px) 60px;
+
+  &__title {
+    font-size: clamp(18px, 2.4vw, 24px);
+    font-weight: 700;
+    margin: 8px 0 20px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 28px 16px;
+}
+
+.empty {
+  padding: 60px 0;
+  text-align: center;
+  color: var(--mf-text-dim);
+
+  &__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 8px;
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 20px 12px;
+  }
+}

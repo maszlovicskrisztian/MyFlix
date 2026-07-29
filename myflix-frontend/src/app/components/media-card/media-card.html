@@ -1,0 +1,13 @@
+@if (mediaItem(); as item) {
+  <div class="card" [routerLink]="['/media', item?.id]">
+    <div class="card__poster">
+        <span class="card__poster-title">{{ item?.title }}</span>
+        <div class="card__overlay">
+        <span class="card__play" aria-hidden="true">▶</span>
+        </div>
+    </div>
+    <div class="card__meta">
+        <span class="card__name">{{ item?.title }}</span>
+    </div>
+  </div>
+}
