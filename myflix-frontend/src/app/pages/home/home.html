@@ -1,16 +1,19 @@
 <div class="browse">
   <app-header></app-header>
-  <app-media-section 
+  <app-media-section
+    layout="row"
     title="Megtekintés folytatása" 
     [mediaItems]="continueWatching()"
     emptyMessage="Nincs megtekintés alatt álló tartalom.">
   </app-media-section>
   <app-media-section 
+    layout="row"
     title="Ajánlott filmek" 
     [mediaItems]="suggestedMovies()" 
     emptyMessage="Nézz valamit, hogy tudjunk ajánlani.">
   </app-media-section>
   <app-media-section 
+    layout="row"
     title="Ajánlott Sorozatok" 
     [mediaItems]="suggestedSeries()" 
     emptyMessage="Nézz valamit, hogy tudjunk ajánlani.">

@@ -4,9 +4,9 @@
     }
 
     @if (mediaItems().length) {
-      <div class="grid">
+      <div class="items" [class.items--grid]="layout() === 'grid'" [class.items--row]="layout() === 'row'">
         @for (item of mediaItems(); track item.id) {
-          <app-media-card class="grid__item" [mediaItem]="item"></app-media-card>
+          <app-media-card class="items__item" [mediaItem]="item"></app-media-card>
         }
       </div>
     } @else {
