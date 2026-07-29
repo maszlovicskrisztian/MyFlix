@@ -1,0 +1,63 @@
+<div class="add-profile">
+    <div class="add-profile__backdrop"></div>
+
+    <header class="add-profile__topbar">
+        <span class="add-profile__brand">MyFlix</span>
+    </header>
+
+    <main class="add-profile__main">
+        <form class="profile-form" (ngSubmit)="addProfile()">
+            <h1 class="profile-form__title">Profil hozzáadása</h1>
+
+            <div class="avatar-picker">
+                <button
+                    class="avatar-picker__side"
+                    type="button"
+                    [attr.aria-label]="'Választás: ' + avatarLabel(previousAvatar())"
+                    (click)="rotate(-1)"
+                >
+                    <img class="avatar avatar--side" [src]="avatarSrc(previousAvatar())" alt="" />
+                </button>
+
+                <div class="avatar-picker__current">
+                    <img
+                        class="avatar avatar--current"
+                        [src]="avatarSrc(selectedAvatar())"
+                        [alt]="'Kiválasztott avatar: ' + avatarLabel(selectedAvatar())"
+                    />
+                </div>
+
+                <button
+                    class="avatar-picker__side"
+                    type="button"
+                    [attr.aria-label]="'Választás: ' + avatarLabel(nextAvatar())"
+                    (click)="rotate(1)"
+                >
+                    <img class="avatar avatar--side" [src]="avatarSrc(nextAvatar())" alt="" />
+                </button>
+            </div>
+
+            <label class="field">
+                <input
+                    class="field__input"
+                    [(ngModel)]="profileName"
+                    name="profileName"
+                    placeholder=" "
+                    autocomplete="off"
+                />
+                <span class="field__label">Profilnév</span>
+            </label>
+
+            @if (errorMessage()) {
+                <p class="profile-form__error">{{ errorMessage() }}</p>
+            }
+
+            <div class="profile-form__actions">
+                <button class="btn btn--primary" type="submit">
+                    Hozzáadás
+                </button>
+                <a class="btn btn--ghost" [routerLink]="['/profiles']">Mégse</a>
+            </div>
+        </form>
+    </main>
+</div>

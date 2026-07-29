@@ -2,6 +2,7 @@ import { Component, computed, ElementRef, HostListener, inject, signal, viewChil
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { ProfileService } from '../../services/profile-service';
+import { avatarUrl } from '../../model/avatar';
 
 @Component({
   selector: 'app-header',
@@ -11,10 +12,13 @@ import { ProfileService } from '../../services/profile-service';
 })
 export class Header {
   authService = inject(AuthService);
+  profileService = inject(ProfileService);
   router = inject(Router);
-  private readonly PROFILE_NAME_KEY = 'myflix_selected_profile_name';
-  
-  selectedProfileName = signal<string | null>(localStorage.getItem(this.PROFILE_NAME_KEY));
+
+  avatarUrl = avatarUrl;
+
+  selectedProfileName = this.profileService.selectedProfileName;
+  selectedProfileAvatar = this.profileService.selectedProfileAvatar;
   profileInitial = computed(() => this.selectedProfileName()?.charAt(0) ?? '');
   menuOpen = signal(false);
 

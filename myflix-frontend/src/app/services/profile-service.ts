@@ -8,9 +8,11 @@ export class ProfileService {
   private http = inject(HttpClient);
   private readonly PROFILE_KEY = 'myflix_selected_profile';
   private readonly PROFILE_NAME_KEY = 'myflix_selected_profile_name';
+  private readonly PROFILE_AVATAR_KEY = 'myflix_selected_profile_avatar';
 
   selectedProfileId = signal<number | null>(this.loadStoredProfileId());
   selectedProfileName = signal<string | null>(localStorage.getItem(this.PROFILE_NAME_KEY));
+  selectedProfileAvatar = signal<string | null>(localStorage.getItem(this.PROFILE_AVATAR_KEY));
 
   private loadStoredProfileId(): number | null {
     const stored = localStorage.getItem(this.PROFILE_KEY);
@@ -30,6 +32,14 @@ export class ProfileService {
     localStorage.setItem(this.PROFILE_NAME_KEY, profile.name);
     this.selectedProfileId.set(profile.id);
     this.selectedProfileName.set(profile.name);
+
+    // Profiles created before avatars existed have none — fall back to the initial.
+    if (profile.avatarKey) {
+      localStorage.setItem(this.PROFILE_AVATAR_KEY, profile.avatarKey);
+    } else {
+      localStorage.removeItem(this.PROFILE_AVATAR_KEY);
+    }
+    this.selectedProfileAvatar.set(profile.avatarKey || null);
   }
 
   deleteProfile(profileId: number) {
@@ -39,7 +49,9 @@ export class ProfileService {
   clearSelectedProfile(): void {
     localStorage.removeItem(this.PROFILE_KEY);
     localStorage.removeItem(this.PROFILE_NAME_KEY);
+    localStorage.removeItem(this.PROFILE_AVATAR_KEY);
     this.selectedProfileId.set(null);
     this.selectedProfileName.set(null);
+    this.selectedProfileAvatar.set(null);
   }
 }

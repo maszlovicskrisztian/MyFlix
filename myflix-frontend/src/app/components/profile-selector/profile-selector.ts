@@ -1,17 +1,20 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ProfileService } from '../../services/profile-service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Profile } from '../../model/profile';
+import { avatarUrl } from '../../model/avatar';
 
 @Component({
   selector: 'app-profile-selector',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './profile-selector.html',
   styleUrl: './profile-selector.scss',
 })
 export class ProfileSelector implements OnInit {
   private profileService = inject(ProfileService);
   private router = inject(Router);
+
+  avatarUrl = avatarUrl;
 
   profiles = signal<Profile[]>([]);
   

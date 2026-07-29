@@ -14,7 +14,13 @@
             type="button"
             (click)="selectProfile(profile)"
           >
-            <span class="profile-card__avatar">{{ profile.name.charAt(0) }}</span>
+            <span class="profile-card__avatar">
+              @if (profile.avatarKey) {
+                <img class="profile-card__avatar-img" [src]="avatarUrl(profile.avatarKey)" alt="" />
+              } @else {
+                {{ profile.name.charAt(0) }}
+              }
+            </span>
           </button>
 
           <span class="profile-card__name">{{ profile.name }}</span>
@@ -33,7 +39,7 @@
           <button
             class="profile-card__select"
             type="button"
-            (click)="addProfile()"
+            routerLink="/profiles/add"
           >
             <span class="profile-card__avatar">+</span>
           </button>

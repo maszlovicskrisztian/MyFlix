@@ -13,7 +13,13 @@
         <button class="profile-menu__trigger" type="button" [class.profile-menu__trigger--open]="menuOpen()"
             [attr.aria-expanded]="menuOpen()" aria-haspopup="menu" aria-label="Profil menü"
             (click)="toggleMenu()">
-            <span class="profile-menu__avatar">{{ profileInitial() }}</span>
+            <span class="profile-menu__avatar">
+                @if (selectedProfileAvatar(); as avatar) {
+                    <img class="profile-menu__avatar-img" [src]="avatarUrl(avatar)" alt="" />
+                } @else {
+                    {{ profileInitial() }}
+                }
+            </span>
             <span class="profile-menu__caret"></span>
         </button>
 

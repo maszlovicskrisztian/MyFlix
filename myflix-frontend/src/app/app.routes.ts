@@ -6,7 +6,7 @@ export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'media',
+        redirectTo: 'login',
     },
     {
         path: 'login',
@@ -15,6 +15,11 @@ export const routes: Routes = [
     {
         path: 'profiles',
         loadComponent: () => import('./components/profile-selector/profile-selector').then(m => m.ProfileSelector),
+        canActivate: [authGuard],
+    },
+    {
+        path: 'profiles/add',
+        loadComponent: () => import('./components/add-profile/add-profile').then(m => m.AddProfile),
         canActivate: [authGuard],
     },
     { 

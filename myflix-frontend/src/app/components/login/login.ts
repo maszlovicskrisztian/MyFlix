@@ -21,7 +21,7 @@ export class Login {
     this.authService.login(this.username(), this.password()).subscribe({
       next: (response) => {
         this.authService.setToken(response.token);
-        this.router.navigate(['/media']);
+        this.router.navigate(['/profiles']);
       },
       error: () => {
         this.errorMessage.set('Invalid username or password');
