@@ -5,9 +5,7 @@ import com.maszlovicskrisztian.myflix_core.model.MediaItem;
 import com.maszlovicskrisztian.myflix_core.repository.MediaItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,7 +46,7 @@ public class MediaItemService {
 
         MediaItem item = new MediaItem();
         item.setRelativePath(relativePath);
-        item.setTitle(String.valueOf(path.getFileName()));
+        item.setFileName(String.valueOf(path.getFileName()));
         item.setSizeBytes(Files.size(path));
         item.setAddedAt(LocalDateTime.now());
         mediaItemRepository.save(item);

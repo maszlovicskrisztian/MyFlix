@@ -1,7 +1,6 @@
 export type MediaItem = {
     id: number;
-    title: string;
+    fileName: string;
     durationSeconds: number | null;
-    relativePath: string;
     addedAt: string;
 }

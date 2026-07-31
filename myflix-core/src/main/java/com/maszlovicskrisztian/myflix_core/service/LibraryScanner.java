@@ -1,5 +1,6 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
+import com.maszlovicskrisztian.myflix_core.helpers.FileHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,5 +38,4 @@ public class LibraryScanner {
                 mediaItemService.addMediaItems(videoFiles);
         }
     }
-
 }

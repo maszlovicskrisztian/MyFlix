@@ -18,7 +18,7 @@ public class MediaItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String relativePath;
-    private String title;
+    private String fileName;
     private Long sizeBytes;
     private Long durationSeconds;
     private String container;

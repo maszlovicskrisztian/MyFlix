@@ -1,4 +1,4 @@
-package com.maszlovicskrisztian.myflix_core.service;
+package com.maszlovicskrisztian.myflix_core.helpers;
 
 import org.springframework.stereotype.Component;
 

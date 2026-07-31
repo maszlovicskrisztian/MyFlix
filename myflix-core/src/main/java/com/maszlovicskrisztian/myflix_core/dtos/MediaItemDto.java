@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public record MediaItemDto(
         Long id,
-        String title,
+        String fileName,
         Long durationSeconds,
         LocalDateTime addedAt,
         String container,
@@ -15,7 +15,7 @@ public record MediaItemDto(
     public static MediaItemDto from(MediaItem model) {
         return new MediaItemDto(
                 model.getId(),
-                model.getTitle(),
+                model.getFileName(),
                 model.getDurationSeconds(),
                 model.getAddedAt(),
                 model.getContainer(),
