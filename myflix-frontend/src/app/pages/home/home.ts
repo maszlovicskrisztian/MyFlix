@@ -1,9 +1,10 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { MediaService } from '../../services/media-service';
 import { MediaItem } from '../../model/media-item';
 import { catchError, of } from 'rxjs';
 import { Header } from "../../components/header/header";
 import { MediaSection } from "../../components/media-section/media-section";
+import { ProfileService } from '../../services/profile-service';
 
 @Component({
   selector: 'app-home',
@@ -12,10 +13,12 @@ import { MediaSection } from "../../components/media-section/media-section";
   styleUrl: './home.scss',
 })
 export class Home implements OnInit {
+  profileService = inject(ProfileService);
   mediaService = inject(MediaService);
   continueWatching = signal<MediaItem[]>([]);
   suggestedMovies = signal<MediaItem[]>([]);
   suggestedSeries = signal<MediaItem[]>([]);
+  profileId = computed(() => this.profileService.selectedProfileId());
 
   ngOnInit(): void {
     this.getContinueWatching();
@@ -24,8 +27,14 @@ export class Home implements OnInit {
   }
 
   getContinueWatching() {
+    const profileId = this.profileId();
+    if (profileId === null) {
+      console.error('Profile ID is undefined. Cannot fetch continue watching items.');
+      return;
+    }
+
     this.mediaService
-      .getContinueWatching()
+      .getContinueWatching(profileId)
       .pipe(
         catchError((error) => {
           console.error('Error fetching media items:', error);

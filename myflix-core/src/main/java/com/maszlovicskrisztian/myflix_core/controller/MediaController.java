@@ -50,6 +50,11 @@ public class MediaController {
         return mediaItemService.getAllMovies();
     }
 
+    @GetMapping("/continue-watching")
+    public List<MediaItemDto> getContinueWatchingList(@RequestParam Long profileId) {
+        return watchProgressService.getMediasInWatchByProfile(profileId);
+    }
+
     @GetMapping("/{id}/progress")
     public WatchProgressDto getProgressForMediaByProfile(
             @PathVariable Long id,

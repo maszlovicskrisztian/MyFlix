@@ -7,8 +7,8 @@ import { environment } from '../../environments/environment';
 export class MediaService {
     http = inject(HttpClient);
 
-    public getContinueWatching() {
-        const url = `${environment.apiUrl}/media`;
+    public getContinueWatching(profileId: number) {
+        const url = `${environment.apiUrl}/media/continue-watching?profileId=${profileId}`;
         return this.http.get<Array<MediaItem>>(url);
     }
 
