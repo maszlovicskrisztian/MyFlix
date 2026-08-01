@@ -18,12 +18,14 @@ export class Home implements OnInit {
   continueWatching = signal<MediaItem[]>([]);
   suggestedMovies = signal<MediaItem[]>([]);
   suggestedSeries = signal<MediaItem[]>([]);
+  allMedia = signal<MediaItem[]>([]);
   profileId = computed(() => this.profileService.selectedProfileId());
 
   ngOnInit(): void {
     this.getContinueWatching();
     this.getSuggestedMovies();
     this.getSuggestedSeries();
+    this.getAllMedia();
   }
 
   getContinueWatching() {
@@ -44,6 +46,19 @@ export class Home implements OnInit {
       .subscribe(items => {
         this.continueWatching.set(items);
     });
+  }
+
+  getAllMedia() {
+    this.mediaService
+      .getAllMedia()
+      .subscribe({
+        next: (items) => { this.allMedia.set(items); },
+        error: (error) => {
+          console.error('Error fetching all media items:', error);
+          this.allMedia.set([]);
+        }
+      }
+    );
   }
 
   getSuggestedMovies() {

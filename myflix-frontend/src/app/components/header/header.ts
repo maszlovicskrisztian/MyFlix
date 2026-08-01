@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { ProfileService } from '../../services/profile-service';
 import { avatarUrl } from '../../model/avatar';
+import { MetadataService } from '../../services/metadata-service';
 
 @Component({
   selector: 'app-header',
@@ -13,6 +14,7 @@ import { avatarUrl } from '../../model/avatar';
 export class Header {
   authService = inject(AuthService);
   profileService = inject(ProfileService);
+  metadataService = inject(MetadataService);
   router = inject(Router);
 
   avatarUrl = avatarUrl;
@@ -52,5 +54,13 @@ export class Header {
     this.menuOpen.set(false);
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  refreshLibrary() {
+    this.menuOpen.set(false);
+    this.metadataService.refreshLibrary().subscribe({
+        next: () => console.log('Dúsítás elindítva'),
+        error: (err) => console.error('Hiba', err)
+    });
   }
 }

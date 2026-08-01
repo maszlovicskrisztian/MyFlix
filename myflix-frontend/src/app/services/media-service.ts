@@ -29,4 +29,9 @@ export class MediaService {
         const url = `${environment.apiUrl}/media/${id}`;
         return this.http.get<MediaItem>(url);
     }
+
+    public getAllMedia() {
+        const url = `${environment.apiUrl}/media`;
+        return this.http.get<Array<MediaItem>>(url);
+    }
 }
