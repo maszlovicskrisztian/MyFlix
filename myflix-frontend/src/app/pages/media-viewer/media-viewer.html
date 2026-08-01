@@ -12,10 +12,11 @@
           <span class="back__icon" aria-hidden="true">‹</span> Vissza a listához
         </a>
 
-        <h1 class="hero__title">{{ item.fileName }}</h1>
+        <h1 class="hero__title">{{ item.title || item.fileName }}</h1>
 
         <div class="hero__meta">
           <span class="badge">HD</span>
+          <span class="hero__meta-item">Bemutatás: {{ item.releaseDate | date: 'longDate' }}</span>
           <span class="hero__meta-item">Hozzáadva: {{ item.addedAt | date: 'longDate' }}</span>
         </div>
 
