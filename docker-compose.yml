@@ -9,6 +9,7 @@ services:
       - ADMIN_USER=${ADMIN_USER}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
+      - TMDB_API=${TMDB_API}
     volumes:
       - ./test-media:/media:ro
       - ./test-data:/data
