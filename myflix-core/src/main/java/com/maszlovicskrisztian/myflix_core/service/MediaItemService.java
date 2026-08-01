@@ -1,6 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
 import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
+import com.maszlovicskrisztian.myflix_core.mapping.MediaItemMapper;
 import com.maszlovicskrisztian.myflix_core.model.MediaItem;
 import com.maszlovicskrisztian.myflix_core.repository.MediaItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MediaItemService {
     private final MediaItemRepository mediaItemRepository;
+    private final MediaItemMapper mapper;
 
     @Value("${MEDIA_PATH}")
     private String mediaPath;
@@ -57,13 +59,13 @@ public class MediaItemService {
     }
 
     public List<MediaItemDto> getAllMedia() {
-        return mediaItemRepository.findAll().stream().map(MediaItemDto::from).toList();
+        return mediaItemRepository.findAll().stream().map(mapper::from).toList();
     }
 
     public MediaItemDto getMediaDtoById(Long id) {
         return mediaItemRepository
                 .findById(id)
-                .map(MediaItemDto::from)
+                .map(mapper::from)
                 .orElse(null);
     }
 
