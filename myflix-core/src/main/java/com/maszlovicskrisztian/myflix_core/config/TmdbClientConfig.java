@@ -13,7 +13,7 @@ public class TmdbClientConfig {
 
     @Bean
     public RestClient tmdbClient(
-            @Value("${tmdb.api.token}") String apiToken,
+            @Value("${TMDB_API}") String apiToken,
             @Value("${tmdb.api.base-url}") String baseUrl) {
         return RestClient.builder()
                 .baseUrl(baseUrl)

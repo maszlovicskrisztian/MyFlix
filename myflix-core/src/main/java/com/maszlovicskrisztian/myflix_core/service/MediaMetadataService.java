@@ -24,15 +24,11 @@ public class MediaMetadataService {
     private final TmdbClient tmdbClient;
     private final MediaMetadataRepository metadataRepository;
 
-    public boolean existsByMediaItemId(Long id) {
-        return metadataRepository.existsByMediaItemId(id);
-    }
-
     public void enrichMedia(MediaItem mediaItem) {
         if (mediaItem == null)
             return;
 
-        if (existsByMediaItemId(mediaItem.getId()))
+        if (mediaItem.getMetadata() != null)
             return;
 
         String relativePath = mediaItem.getRelativePath();

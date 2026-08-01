@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "media_item")
@@ -24,4 +26,10 @@ public class MediaItem {
     private String container;
     private String codec;
     private LocalDateTime addedAt;
+
+    @OneToOne(mappedBy = "mediaItem")
+    private MediaMetadata metadata;
+
+    @OneToMany(mappedBy = "mediaItem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<WatchProgress> watchProgressEntries = new ArrayList<>();
 }
