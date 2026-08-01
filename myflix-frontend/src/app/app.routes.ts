@@ -27,6 +27,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/home/home').then(m => m.Home),
         canActivate: [authGuard, profileGuard]
     },
+    {
+        path: 'movies', 
+        loadComponent: () => import('./pages/movies/movies').then(m => m.Movies),
+        canActivate: [authGuard, profileGuard]
+    },
     { 
         path: 'media/:id', 
         loadComponent: () => import('./pages/media-viewer/media-viewer').then(m => m.MediaViewer),

@@ -1,1 +1,13 @@
-<p>movies works!</p>
+<app-header></app-header>
+<app-media-section
+    layout="row"
+    title="Újdonságok"
+    emptyMessage="Nincs elérhető új film."
+    [mediaItems]="newMovies()">
+</app-media-section>
+<app-media-section
+    layout="grid"
+    title="Összes film"
+    emptyMessage="Nincs elérhető film."
+    [mediaItems]="movies()">
+</app-media-section>

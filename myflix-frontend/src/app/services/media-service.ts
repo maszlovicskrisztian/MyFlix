@@ -12,6 +12,11 @@ export class MediaService {
         return this.http.get<Array<MediaItem>>(url);
     }
 
+    public getMovies() {
+        const url = `${environment.apiUrl}/media/movies`;
+        return this.http.get<Array<MediaItem>>(url);
+    }
+
     public getSuggestedMovies() {
         return Array<MediaItem>();
     }

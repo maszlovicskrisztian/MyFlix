@@ -4,7 +4,8 @@
     <nav class="topbar__nav">
         <a class="topbar__link" [routerLink]="['/home']" routerLinkActive="topbar__link--active"
             [routerLinkActiveOptions]="{ exact: true }">Kezdőlap</a>
-        <a class="topbar__link">Filmek</a>
+        <a class="topbar__link" [routerLink]="['/movies']" routerLinkActive="topbar__link--active"
+            [routerLinkActiveOptions]="{ exact: true }">Filmek</a>
         <a class="topbar__link">Sorozatok</a>
         <a class="topbar__link">Kedvencek</a>
     </nav>
