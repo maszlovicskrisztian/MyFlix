@@ -9,11 +9,13 @@ import com.maszlovicskrisztian.myflix_core.interfaces.TmdbClient;
 import com.maszlovicskrisztian.myflix_core.model.MediaItem;
 import com.maszlovicskrisztian.myflix_core.model.MediaMetadata;
 import com.maszlovicskrisztian.myflix_core.model.MediaType;
+import com.maszlovicskrisztian.myflix_core.repository.MediaItemRepository;
 import com.maszlovicskrisztian.myflix_core.repository.MediaMetadataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +25,12 @@ public class MediaMetadataService {
     private final MediaTitleParser parser;
     private final TmdbClient tmdbClient;
     private final MediaMetadataRepository metadataRepository;
+    private final MediaItemRepository mediaItemRepository;
+
+    public void enrich() {
+        List<MediaItem> mediaMissingMetadata = mediaItemRepository.findAll().stream().filter(x -> x.getMetadata() == null).toList();
+        mediaMissingMetadata.forEach(this::enrichMedia);
+    }
 
     public void enrichMedia(MediaItem mediaItem) {
         if (mediaItem == null)
@@ -45,7 +53,7 @@ public class MediaMetadataService {
 
         boolean isMovie = result.mediaType().equals(MediaType.MOVIE.name().toLowerCase());
 
-        TmdbDetailsResponse details = null;
+        TmdbDetailsResponse details;
         if (isMovie) {
             details = tmdbClient.getMovieDetails(result.id());
         } else {
