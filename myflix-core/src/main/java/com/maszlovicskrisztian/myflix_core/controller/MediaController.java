@@ -45,6 +45,11 @@ public class MediaController {
         return dto;
     }
 
+    @GetMapping("/movies")
+    public List<MediaItemDto> getMovies() {
+        return mediaItemService.getAllMovies();
+    }
+
     @GetMapping("/{id}/progress")
     public WatchProgressDto getProgressForMediaByProfile(
             @PathVariable Long id,

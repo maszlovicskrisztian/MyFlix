@@ -3,6 +3,7 @@ package com.maszlovicskrisztian.myflix_core.service;
 import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
 import com.maszlovicskrisztian.myflix_core.mapping.MediaItemMapper;
 import com.maszlovicskrisztian.myflix_core.model.MediaItem;
+import com.maszlovicskrisztian.myflix_core.model.MediaType;
 import com.maszlovicskrisztian.myflix_core.repository.MediaItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,6 +61,14 @@ public class MediaItemService {
 
     public List<MediaItemDto> getAllMedia() {
         return mediaItemRepository.findAll().stream().map(mapper::from).toList();
+    }
+
+    public List<MediaItemDto> getAllMovies() {
+        return mediaItemRepository
+                .findAll()
+                .stream().filter(x -> x.getMetadata() != null && x.getMetadata().getMediaType() == MediaType.MOVIE)
+                .map(mapper::from)
+                .toList();
     }
 
     public MediaItemDto getMediaDtoById(Long id) {
