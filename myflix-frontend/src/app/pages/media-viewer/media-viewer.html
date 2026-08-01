@@ -2,34 +2,62 @@
   <app-header class="detail__topbar"></app-header>
 
   <div class="hero">
-    <div class="hero__backdrop"></div>
-    <div class="hero__scrim"></div>
+    <div class="hero__stage">
+      <div class="hero__backdrop">
+        @if (backdropUrl(); as backdrop) {
+          <img class="hero__backdrop-img" [src]="backdrop" alt="" (error)="onBackdropError()" />
+        }
+      </div>
+      <div class="hero__scrim"></div>
 
-    @if (mediaItem(); as item) {
-
-      <div class="hero__content">
+      <div class="hero__nav">
         <a class="back" [routerLink]="['/home']">
           <span class="back__icon" aria-hidden="true">‹</span> Vissza a listához
         </a>
-
-        <h1 class="hero__title">{{ item.title || item.fileName }}</h1>
-
-        <div class="hero__meta">
-          <span class="badge">HD</span>
-          <span class="hero__meta-item">Bemutatás: {{ item.releaseDate | date: 'longDate' }}</span>
-          <span class="hero__meta-item">Hozzáadva: {{ item.addedAt | date: 'longDate' }}</span>
-        </div>
-
-        <div class="hero__actions">
-          <a class="btn btn--play" [routerLink]="['/media', item.id, 'play']">
-            <span class="btn__icon" aria-hidden="true">▶</span> Lejátszás
-          </a>
-        </div>
       </div>
-    } @else {
-      <div class="loading">
-        <div class="loading__spinner" aria-hidden="true"></div>
-        <p class="loading__text">Betöltés…</p>
+
+      @if (mediaItem(); as item) {
+        <div class="hero__head">
+          <h1 class="hero__title">{{ item.title || item.fileName }}</h1>
+
+          <div class="hero__meta">
+            <span class="badge">HD</span>
+            @if (item.releaseDate) {
+              <span class="hero__meta-item">Bemutatás: {{ item.releaseDate | date: 'longDate' }}</span>
+            }
+            <span class="hero__meta-item">Hozzáadva: {{ item.addedAt | date: 'longDate' }}</span>
+          </div>
+
+          @if (runtime(); as runtime) {
+            <p class="hero__runtime">
+              <span class="hero__runtime-icon" aria-hidden="true">◷</span>
+              Játékidő: <span class="hero__runtime-value">{{ runtime }}</span>
+            </p>
+          }
+        </div>
+      } @else {
+        <div class="loading">
+          <div class="loading__spinner" aria-hidden="true"></div>
+          <p class="loading__text">Betöltés…</p>
+        </div>
+      }
+    </div>
+
+    @if (mediaItem(); as item) {
+      <div class="hero__foot">
+        <div class="hero__body">
+          <div class="hero__actions">
+            <a class="btn btn--play" [routerLink]="['/media', item.id, 'play']">
+              <span class="btn__icon" aria-hidden="true">▶</span> Lejátszás
+            </a>
+          </div>
+
+          @if (item.overview) {
+            <p class="hero__overview">{{ item.overview }}</p>
+          }
+        </div>
+
+        <div class="hero__spacer"></div>
       </div>
     }
   </div>

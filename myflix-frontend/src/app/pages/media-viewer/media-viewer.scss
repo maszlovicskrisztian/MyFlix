@@ -3,6 +3,8 @@
   min-height: 100vh;
 }
 
+$gutter: clamp(20px, 5vw, 60px);
+
 .detail {
   position: relative;
   min-height: 100vh;
@@ -20,46 +22,151 @@
   position: relative;
   min-height: 100vh;
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
+
+  /* Spans the top of the page down to the bottom edge of the runtime — the backdrop
+     is absolutely positioned inside it, so the image ends exactly on that line. */
+  &__stage {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
 
   &__backdrop {
     position: absolute;
     inset: 0;
+    overflow: hidden;
     background:
       radial-gradient(circle at 75% 30%, rgba(229, 9, 20, 0.4), transparent 55%),
       linear-gradient(120deg, #2a2a2a 0%, #0c0c0c 100%);
   }
 
+  &__backdrop-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.04);
+    animation: mf-fade-in 0.6s ease both;
+  }
+
+  /* The vertical fade is painted last so the stage's bottom edge is exactly
+     --mf-bg — the same colour the foot's gradient starts from, so there is no seam. */
   &__scrim {
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(90deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%),
-      linear-gradient(0deg, var(--mf-bg) 0%, transparent 40%);
+      linear-gradient(
+        0deg,
+        var(--mf-bg) 0%,
+        rgba(20, 20, 20, 0.92) 7%,
+        rgba(20, 20, 20, 0.62) 16%,
+        rgba(20, 20, 20, 0.3) 28%,
+        rgba(20, 20, 20, 0.1) 40%,
+        rgba(20, 20, 20, 0) 55%
+      ),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 45%, rgba(0, 0, 0, 0.15) 100%);
   }
 
-  &__content {
+  &__nav {
     position: relative;
     z-index: 2;
-    max-width: 720px;
-    padding: clamp(40px, 8vw, 90px) clamp(20px, 5vw, 60px);
+    padding: clamp(80px, 10vh, 110px) $gutter 0;
+  }
+
+  /* Pinned to the bottom of the stage, so the runtime closes off the backdrop. */
+  &__head {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding: clamp(30px, 6vw, 60px) $gutter 16px;
+    animation: mf-rise-in 0.5s ease both;
+  }
+
+  /* Everything below the backdrop: carries the fade from the image into black. */
+  &__foot {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* -1px absorbs sub-pixel rounding when the stage lands on a fractional height. */
+    margin-top: -1px;
+    padding-top: 1px;
+    background: linear-gradient(180deg, var(--mf-bg) 0%, #050505 55%, #000 100%);
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 16px $gutter 0;
+    animation: mf-rise-in 0.5s ease both;
+  }
+
+  /* Balances the stage so the head + body block stays vertically centred. */
+  &__spacer {
+    flex: 1;
+    min-height: clamp(30px, 6vw, 60px);
   }
 
   &__title {
+    max-width: 800px;
     font-size: clamp(36px, 6vw, 64px);
     font-weight: 900;
     line-height: 1.05;
-    margin: 0 0 20px;
-    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+    margin: 0;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.75);
   }
 
   &__meta {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 14px;
-    margin-bottom: 28px;
+    margin: 0;
     color: var(--mf-text-dim);
     font-size: 16px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  }
+
+  &__overview {
+    max-width: 640px;
+    margin: 0;
+    color: var(--mf-text-dim);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  &__runtime {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 7px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    color: var(--mf-text-dim);
+    font-size: 15px;
+  }
+
+  &__runtime-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  &__runtime-value {
+    color: #fff;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.5px;
   }
 
   &__actions {
@@ -82,9 +189,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 22px;
   color: var(--mf-text-dim);
   font-size: 15px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
   transition: color 0.2s ease;
 
   &:hover {
@@ -127,7 +234,9 @@
 }
 
 .loading {
-  min-height: 100vh;
+  position: relative;
+  z-index: 2;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -153,5 +262,25 @@
 @keyframes mf-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes mf-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mf-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }

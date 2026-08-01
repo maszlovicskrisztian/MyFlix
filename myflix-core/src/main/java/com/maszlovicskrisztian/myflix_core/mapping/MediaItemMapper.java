@@ -30,8 +30,8 @@ public class MediaItemMapper {
                     null
             );
         } else {
-            String posterPath = imagesBase + "/w500" + metadata.getPosterPath();
-            String backdropPath = imagesBase + "/w500" + metadata.getBackdropPath();
+            String posterPath = toImageUrl(metadata.getPosterPath());
+            String backdropPath = toImageUrl(metadata.getBackdropPath());
 
             return new MediaItemDto(
                     model.getId(),
@@ -48,5 +48,13 @@ public class MediaItemMapper {
                     metadata.getRuntimeMinutes()
             );
         }
+    }
+
+    private String toImageUrl(String path) {
+        if (path == null || path.isBlank()) {
+            return null;
+        }
+
+        return imagesBase + "/original" + path;
     }
 }

@@ -35,7 +35,6 @@ export class AuthService {
         return localStorage.getItem(this.TOKEN_KEY);
     }
 
-    /** True only when a token is present and its `exp` has not passed. */
     hasValidToken(): boolean {
         const token = this.getToken();
         return !!token && !this.isExpired(token);
@@ -44,12 +43,9 @@ export class AuthService {
     private isExpired(token: string): boolean {
         const exp = this.readExpiry(token);
 
-        // A token we can't read an expiry from is left to the server to reject,
-        // so a format change here can't lock everyone out of the app.
         return exp !== null && exp <= Date.now();
     }
 
-    /** Reads `exp` out of the JWT payload, in milliseconds. */
     private readExpiry(token: string): number | null {
         const segments = token.split('.');
         if (segments.length !== 3) {

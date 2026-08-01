@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, linkedSignal, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MediaItem } from '../../model/media-item';
 import { MediaService } from '../../services/media-service';
@@ -19,6 +19,21 @@ export class MediaViewer implements OnInit {
   mediaId = signal<string | null>(null);
   mediaItem = signal<MediaItem | null>(null);
 
+  /** Resets whenever a new item arrives, and is cleared when the image fails to load. */
+  backdropUrl = linkedSignal(() => this.mediaItem()?.backdropPath ?? null);
+
+  /** Runtime as hh:mm, or null when the metadata is missing. */
+  runtime = computed(() => {
+    const minutes = this.mediaItem()?.runtimeMinutes;
+
+    if (!minutes || minutes <= 0) {
+      return null;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    return `${String(hours).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+  });
+
   ngOnInit(): void {
     this.mediaId.set(this.route.snapshot.paramMap.get('id'));
     this.mediaService
@@ -32,5 +47,9 @@ export class MediaViewer implements OnInit {
           .subscribe(item => {
             this.mediaItem.set(item);
         });
+  }
+
+  onBackdropError(): void {
+    this.backdropUrl.set(null);
   }
 }
