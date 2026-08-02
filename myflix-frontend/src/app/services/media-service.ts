@@ -1,7 +1,7 @@
 import { inject, Service } from '@angular/core';
 import { MediaItem } from '../model/media-item';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+import { environment } from '../environments/environment';
 
 @Service()
 export class MediaService {

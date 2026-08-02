@@ -1,5 +1,5 @@
 import { inject, Service } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { environment } from '../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { WatchProgressResponse } from '../model/watch-progress-response';
 

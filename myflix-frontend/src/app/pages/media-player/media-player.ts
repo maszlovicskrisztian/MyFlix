@@ -1,6 +1,6 @@
 import { Component, computed, ElementRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../environments/environment';
 import { AuthService } from '../../services/auth-service';
 import { WatchProgressService } from '../../services/watch-progress-service';
 import { ProfileService } from '../../services/profile-service';
