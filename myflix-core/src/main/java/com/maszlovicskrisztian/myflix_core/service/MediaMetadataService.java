@@ -1,6 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
 import com.maszlovicskrisztian.myflix_core.dtos.ParsedMediaTitle;
+import com.maszlovicskrisztian.myflix_core.dtos.tmdb.ImdbSearchResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbDetailsResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbGenre;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchResult;
@@ -30,6 +31,32 @@ public class MediaMetadataService {
     public void enrich() {
         List<MediaItem> mediaMissingMetadata = mediaItemRepository.findAll().stream().filter(x -> x.getMetadata() == null).toList();
         mediaMissingMetadata.forEach(this::enrichMedia);
+    }
+
+    public void enrichMediaByImdbId(Long mediaId,  String imdbId) {
+        MediaItem media = mediaItemRepository.findById(mediaId).orElse(null);
+
+        if (media == null)
+            return;
+
+        ImdbSearchResponse response = tmdbClient.searchByImdbId(imdbId);
+
+        if (response == null)
+            return;
+
+        boolean isMovie = false;
+        TmdbSearchResult result;
+        TmdbDetailsResponse details;
+        if (response.movieResults() != null) {
+            result = response.movieResults().getFirst();
+            details = tmdbClient.getMovieDetails(result.id());
+            isMovie = true;
+        } else {
+            result = response.tvResults().getFirst();
+            details = tmdbClient.getTvDetails(result.id());
+        }
+
+        saveMetadata(media, result, details, isMovie);
     }
 
     public void enrichMedia(MediaItem mediaItem) {
@@ -63,8 +90,21 @@ public class MediaMetadataService {
         if (details == null)
             return;
 
-        MediaMetadata metadata = new MediaMetadata();
-        metadata.setMediaItem(mediaItem);
+        saveMetadata(mediaItem, result, details, isMovie);
+    }
+
+    private void saveMetadata(
+            MediaItem mediaItem,
+            TmdbSearchResult result,
+            TmdbDetailsResponse details,
+            boolean isMovie) {
+
+        MediaMetadata metadata = mediaItem.getMetadata();
+        if (metadata == null) {
+            metadata = new MediaMetadata();
+            metadata.setMediaItem(mediaItem);
+        }
+
         metadata.setTmdbId(result.id());
         metadata.setTitle(isMovie ? details.title() : details.name());
         metadata.setReleaseDate(LocalDate.parse(details.releaseDate()));
@@ -74,8 +114,8 @@ public class MediaMetadataService {
         metadata.setOverview(details.overview());
         metadata.setBackdropPath(details.backdropPath());
         metadata.setPosterPath(details.posterPath());
-        metadata.setSeasonNumber(parsedMediaTitle.season());
-        metadata.setEpisodeNumber(parsedMediaTitle.episode());
+        metadata.setSeasonNumber(details.seasonNumber());
+        metadata.setEpisodeNumber(details.episodeNumber());
 
         metadataRepository.save(metadata);
     }

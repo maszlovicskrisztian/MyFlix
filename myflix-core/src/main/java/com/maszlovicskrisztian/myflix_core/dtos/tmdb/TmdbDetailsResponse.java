@@ -23,6 +23,10 @@ public record TmdbDetailsResponse(
         String name,
         @JsonProperty("first_air_date") String firstAirDate,
         @JsonProperty("last_air_date") String LastAirDate,
-        @JsonProperty("episode_run_time") List<Integer> episodeRunTime
+        @JsonProperty("episode_run_time") List<Integer> episodeRunTime,
+
+        //episode
+        @JsonProperty("episode_number") Integer episodeNumber,
+        @JsonProperty("season_number") Integer seasonNumber
 
 ) {}

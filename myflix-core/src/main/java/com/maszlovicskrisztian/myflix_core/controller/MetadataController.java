@@ -1,5 +1,6 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
+import com.maszlovicskrisztian.myflix_core.dtos.EnrichRequest;
 import com.maszlovicskrisztian.myflix_core.service.MediaMetadataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,5 +15,10 @@ public class MetadataController {
     @PostMapping("/enrich")
     public void refreshMissingMetadata() {
         metadataService.enrich();
+    }
+
+    @PostMapping("/enrich/{mediaId}")
+    public void refreshMetadataForMedia(@PathVariable Long mediaId, @RequestBody EnrichRequest request) {
+        metadataService.enrichMediaByImdbId(mediaId, request.imdbId());
     }
 }

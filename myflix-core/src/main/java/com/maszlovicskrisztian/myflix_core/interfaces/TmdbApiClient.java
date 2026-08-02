@@ -1,5 +1,6 @@
 package com.maszlovicskrisztian.myflix_core.interfaces;
 
+import com.maszlovicskrisztian.myflix_core.dtos.tmdb.ImdbSearchResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbDetailsResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchResult;
@@ -35,6 +36,16 @@ public class TmdbApiClient implements TmdbClient{
         return response.results().stream()
                 .filter(x -> Arrays.stream(mediaTypes).anyMatch(t -> t.name().toLowerCase().equals(x.mediaType())))
                 .findFirst();
+    }
+
+    @Override
+    public ImdbSearchResponse searchByImdbId(String imdbId) {
+        return client.get()
+                .uri(uriBuilder -> uriBuilder.path("/find/{external_id}")
+                        .queryParam("external_source", "imdb_id")
+                        .build(imdbId))
+                .retrieve()
+                .body(ImdbSearchResponse.class);
     }
 
     @Override
