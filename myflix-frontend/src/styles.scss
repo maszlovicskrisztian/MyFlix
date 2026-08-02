@@ -44,6 +44,14 @@ button {
   cursor: pointer;
 }
 
+/* On phones the header renders a fixed bottom tab bar, so pages that use the
+   header have to reserve room for it. */
+@media (max-width: 700px) {
+  body:has(app-header) {
+    padding-bottom: calc(66px + env(safe-area-inset-bottom));
+  }
+}
+
 /* Shared button shell. Size, colour and layout stay with each variant — component
    styles are scoped with an attribute selector, so they always win over this. */
 .btn {
