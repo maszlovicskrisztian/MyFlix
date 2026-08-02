@@ -4,11 +4,10 @@ import { MediaItem } from '../../model/media-item';
 import { MediaService } from '../../services/media-service';
 import { catchError, of } from 'rxjs';
 import { DatePipe } from '@angular/common';
-import { Header } from '../../components/header/header';
 
 @Component({
   selector: 'app-media-viewer',
-  imports: [RouterLink, DatePipe, Header],
+  imports: [RouterLink, DatePipe],
   templateUrl: './media-viewer.html',
   styleUrl: './media-viewer.scss',
 })
@@ -18,6 +17,7 @@ export class MediaViewer implements OnInit {
 
   mediaId = signal<string | null>(null);
   mediaItem = signal<MediaItem | null>(null);
+  enriching = signal(false);
 
   /** Resets whenever a new item arrives, and is cleared when the image fails to load. */
   backdropUrl = linkedSignal(() => this.mediaItem()?.backdropPath ?? null);
@@ -36,6 +36,31 @@ export class MediaViewer implements OnInit {
 
   ngOnInit(): void {
     this.mediaId.set(this.route.snapshot.paramMap.get('id'));
+    this.loadMediaItem();
+  }
+
+  enrich(): void {
+    this.enriching.set(true);
+
+    this.mediaService
+      .enrichMetadata()
+      .pipe(
+        catchError((error) => {
+          console.error('Error enriching metadata:', error);
+          return of(null);
+        })
+      )
+      .subscribe(() => {
+        this.enriching.set(false);
+        this.loadMediaItem();
+      });
+  }
+
+  onBackdropError(): void {
+    this.backdropUrl.set(null);
+  }
+
+  private loadMediaItem(): void {
     this.mediaService
           .getMediaItemById(this.mediaId()!)
           .pipe(
@@ -47,9 +72,5 @@ export class MediaViewer implements OnInit {
           .subscribe(item => {
             this.mediaItem.set(item);
         });
-  }
-
-  onBackdropError(): void {
-    this.backdropUrl.set(null);
   }
 }

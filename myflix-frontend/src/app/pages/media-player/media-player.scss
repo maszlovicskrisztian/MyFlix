@@ -50,18 +50,4 @@
     justify-content: center;
   }
 
-  &__spinner {
-    width: 46px;
-    height: 46px;
-    border: 4px solid rgba(255, 255, 255, 0.15);
-    border-top-color: var(--mf-red);
-    border-radius: 50%;
-    animation: mf-spin 0.9s linear infinite;
-  }
-}
-
-@keyframes mf-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }

@@ -182,12 +182,10 @@
 .btn {
   display: block;
   width: 100%;
-  border: none;
-  border-radius: 4px;
   font-size: 16px;
-  font-weight: 700;
   padding: 14px 18px;
   text-align: center;
+  /* --ghost animates its border and text, which the shared shell does not. */
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.05s ease;
 
   &--primary {
