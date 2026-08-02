@@ -11,4 +11,9 @@ export class MetadataService {
             return this.http.post(url, {});
         
     }
+
+    public enrichByImdbId(mediaId: string, imdbId: string) {
+        const url = `${environment.apiUrl}/metadata/enrich/${mediaId}`;
+        return this.http.post<void>(url, { imdbId });
+    }
 }

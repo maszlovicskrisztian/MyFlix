@@ -60,7 +60,8 @@
               </svg>
             </button>
 
-            <button class="btn btn--ghost" type="button" (click)="enrich()" [disabled]="enriching()">
+            <button class="btn btn--ghost" type="button" (click)="openEnrichDialog()"
+              [disabled]="enriching()">
               {{ enriching() ? 'Enrich…' : 'Enrich' }}
             </button>
           </div>
@@ -75,3 +76,8 @@
     }
   </div>
 </div>
+
+@if (enrichDialogOpen()) {
+  <app-enrich-dialog [busy]="enriching()" (confirmed)="enrich($event)"
+    (cancelled)="closeEnrichDialog()" />
+}

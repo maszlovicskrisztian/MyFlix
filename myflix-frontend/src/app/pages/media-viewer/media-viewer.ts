@@ -4,20 +4,24 @@ import { MediaItem } from '../../model/media-item';
 import { MediaService } from '../../services/media-service';
 import { catchError, of } from 'rxjs';
 import { DatePipe } from '@angular/common';
+import { MetadataService } from '../../services/metadata-service';
+import { EnrichDialog } from '../../components/enrich-dialog/enrich-dialog';
 
 @Component({
   selector: 'app-media-viewer',
-  imports: [RouterLink, DatePipe],
+  imports: [RouterLink, DatePipe, EnrichDialog],
   templateUrl: './media-viewer.html',
   styleUrl: './media-viewer.scss',
 })
 export class MediaViewer implements OnInit {
   private route = inject(ActivatedRoute);
   private mediaService = inject(MediaService);
+  private metadataService = inject(MetadataService);
 
   mediaId = signal<string | null>(null);
   mediaItem = signal<MediaItem | null>(null);
   enriching = signal(false);
+  enrichDialogOpen = signal(false);
 
   /** Resets whenever a new item arrives, and is cleared when the image fails to load. */
   backdropUrl = linkedSignal(() => this.mediaItem()?.backdropPath ?? null);
@@ -39,11 +43,19 @@ export class MediaViewer implements OnInit {
     this.loadMediaItem();
   }
 
-  enrich(): void {
+  openEnrichDialog(): void {
+    this.enrichDialogOpen.set(true);
+  }
+
+  closeEnrichDialog(): void {
+    this.enrichDialogOpen.set(false);
+  }
+
+  enrich(imdbId: string): void {
     this.enriching.set(true);
 
-    this.mediaService
-      .enrichMetadata()
+    this.metadataService
+      .enrichByImdbId(this.mediaId()!, imdbId)
       .pipe(
         catchError((error) => {
           console.error('Error enriching metadata:', error);
@@ -52,6 +64,7 @@ export class MediaViewer implements OnInit {
       )
       .subscribe(() => {
         this.enriching.set(false);
+        this.enrichDialogOpen.set(false);
         this.loadMediaItem();
       });
   }

@@ -30,11 +30,6 @@ export class MediaService {
         return this.http.get<MediaItem>(url);
     }
 
-    public enrichMetadata() {
-        const url = `${environment.apiUrl}/metadata/enrich`;
-        return this.http.post<void>(url, {});
-    }
-
     public getAllMedia() {
         const url = `${environment.apiUrl}/media`;
         return this.http.get<Array<MediaItem>>(url);
