@@ -3,15 +3,13 @@ package com.maszlovicskrisztian.myflix_core.controller;
 import com.maszlovicskrisztian.myflix_core.dtos.*;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import com.maszlovicskrisztian.myflix_core.helpers.PlaybackCompatibility;
-import com.maszlovicskrisztian.myflix_core.model.MediaItem;
+import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.service.FfProbeService;
 import com.maszlovicskrisztian.myflix_core.service.MediaItemService;
 import com.maszlovicskrisztian.myflix_core.service.WatchProgressService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -129,7 +127,7 @@ public class MediaController {
             @RequestParam Long profileId,
             @RequestParam(defaultValue = "false") boolean supportsMkv) {
 
-        MediaItem item = mediaItemService.getMediaById(id)
+        FileInfo item = mediaItemService.getMediaById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         if (item.getCodec() == null) probeAndPersist(item);
@@ -143,7 +141,7 @@ public class MediaController {
                 : new PlaybackInfoDto("HLS", "/media/" + id + "/hls/playlist.m3u8", resumeSeconds, item.getDurationSeconds());
     }
 
-    private void probeAndPersist(MediaItem item) {
+    private void probeAndPersist(FileInfo item) {
         try {
             Path file = Paths.get(mediaPathResolver.getMediaPath()).resolve(item.getRelativePath());
             MediaProbeResult result = probeService.probe(file);

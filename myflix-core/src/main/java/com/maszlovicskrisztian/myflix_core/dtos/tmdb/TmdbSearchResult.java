@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record TmdbSearchResult(
         Long id,
-        @JsonProperty("show_id") Long seriesId,
-        @JsonProperty("media_type") String mediaType
+        @JsonProperty("show_id") Long showId,
+        @JsonProperty("media_type") String mediaType,
+        @JsonProperty("episode_number") Integer episode,
+        @JsonProperty("season_number") Integer season
 ) {}

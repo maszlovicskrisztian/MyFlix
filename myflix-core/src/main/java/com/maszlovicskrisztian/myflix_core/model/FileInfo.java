@@ -10,27 +10,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "media_item")
+@Table(name = "file_info")
 @Getter
 @Setter
 @NoArgsConstructor
-public class MediaItem {
+public class FileInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String relativePath;
-    private String fileName;
-    private Long sizeBytes;
     private Long durationSeconds;
     private String container;
     private String codec;
     private String audioCodec;
     private LocalDateTime addedAt;
 
-    @OneToOne(mappedBy = "mediaItem")
-    private MediaMetadata metadata;
+    @OneToOne(mappedBy = "fileInfo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private MovieMetadata movieMetadata;
 
-    @OneToMany(mappedBy = "mediaItem", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "fileInfo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private EpisodeMetadata episodeMetadata;
+
+    @OneToMany(mappedBy = "fileInfo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<WatchProgress> watchProgressEntries = new ArrayList<>();
 }

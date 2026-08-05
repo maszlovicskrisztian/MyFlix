@@ -22,11 +22,13 @@ public record TmdbDetailsResponse(
         //sorozat
         String name,
         @JsonProperty("first_air_date") String firstAirDate,
-        @JsonProperty("last_air_date") String LastAirDate,
+        @JsonProperty("last_air_date") String lastAirDate,
         @JsonProperty("episode_run_time") List<Integer> episodeRunTime,
+        @JsonProperty("number_of_episodes") Integer episodeCount,
+        @JsonProperty("number_of_seasons") Integer seasonCount,
 
         //episode
-        @JsonProperty("episode_number") Integer episodeNumber,
-        @JsonProperty("season_number") Integer seasonNumber
+        @JsonProperty("still_path") String stillPath,
+        @JsonProperty("air_date") String airDate
 
 ) {}

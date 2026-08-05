@@ -1,8 +1,8 @@
 package com.maszlovicskrisztian.myflix_core.mapping;
 
 import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
-import com.maszlovicskrisztian.myflix_core.model.MediaItem;
-import com.maszlovicskrisztian.myflix_core.model.MediaMetadata;
+import com.maszlovicskrisztian.myflix_core.model.FileInfo;
+import com.maszlovicskrisztian.myflix_core.model.MovieMetadata;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +11,12 @@ public class MediaItemMapper {
     @Value("${tmdb.images.base-url}")
     private String imagesBase;
 
-    public MediaItemDto from(MediaItem model) {
-        MediaMetadata metadata = model.getMetadata();
+    public MediaItemDto from(FileInfo model) {
+        MovieMetadata metadata = model.getMovieMetadata();
 
         if (metadata == null) {
             return new MediaItemDto(
                     model.getId(),
-                    model.getFileName(),
                     model.getAddedAt(),
                     model.getContainer(),
                     model.getCodec(),
@@ -35,7 +34,6 @@ public class MediaItemMapper {
 
             return new MediaItemDto(
                     model.getId(),
-                    model.getFileName(),
                     model.getAddedAt(),
                     model.getContainer(),
                     model.getCodec(),

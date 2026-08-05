@@ -23,8 +23,8 @@ public class WatchProgress {
     private Profile profile;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "media_item_id", nullable = false)
-    private MediaItem mediaItem;
+    @JoinColumn(name = "file_info_id", nullable = false)
+    private FileInfo fileInfo;
 
     private Long progressSeconds;
 

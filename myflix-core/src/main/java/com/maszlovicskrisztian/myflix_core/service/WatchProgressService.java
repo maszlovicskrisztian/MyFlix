@@ -4,7 +4,7 @@ import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
 import com.maszlovicskrisztian.myflix_core.dtos.WatchProgressDto;
 import com.maszlovicskrisztian.myflix_core.mapping.MediaItemMapper;
 import com.maszlovicskrisztian.myflix_core.model.WatchProgress;
-import com.maszlovicskrisztian.myflix_core.repository.MediaItemRepository;
+import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
 import com.maszlovicskrisztian.myflix_core.repository.ProfileRepository;
 import com.maszlovicskrisztian.myflix_core.repository.WatchProgressRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +18,23 @@ import java.util.List;
 public class WatchProgressService {
     private final WatchProgressRepository watchProgressRepository;
     private final ProfileRepository profileRepository;
-    private final MediaItemRepository mediaItemRepository;
+    private final FileInfoRepository fileInfoRepository;
     private final MediaItemMapper mapper;
 
     public WatchProgressDto getProgressForMediaByProfile(Long id, Long profileId) {
         return watchProgressRepository
-                .findByProfileIdAndMediaItemId(profileId, id)
+                .findByProfileIdAndFileInfoId(profileId, id)
                 .map(WatchProgressDto::from)
                 .orElse(null);
     }
 
     public WatchProgressDto setProgressForMediaByProfile(Long id, Long profileId, Long progressSeconds) {
         WatchProgress watchProgress = watchProgressRepository
-                .findByProfileIdAndMediaItemId(profileId, id)
+                .findByProfileIdAndFileInfoId(profileId, id)
                 .orElseGet(() -> {
                     WatchProgress newProgress = new WatchProgress();
                     newProgress.setProfile(profileRepository.getReferenceById(profileId));
-                    newProgress.setMediaItem(mediaItemRepository.getReferenceById(id));
+                    newProgress.setFileInfo(fileInfoRepository.getReferenceById(id));
                     return newProgress;
                 });
 
@@ -51,6 +51,6 @@ public class WatchProgressService {
         if (progressList == null)
             return null;
 
-        return progressList.stream().map(WatchProgress::getMediaItem).map(mapper::from).toList();
+        return progressList.stream().map(WatchProgress::getFileInfo).map(mapper::from).toList();
     }
 }

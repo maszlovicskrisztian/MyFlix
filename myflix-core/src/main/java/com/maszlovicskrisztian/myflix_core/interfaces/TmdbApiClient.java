@@ -11,6 +11,7 @@ import org.springframework.web.client.RestClient;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,11 +20,10 @@ public class TmdbApiClient implements TmdbClient{
     private final RestClient client;
 
     @Override
-    public Optional<TmdbSearchResult> searchBestMatch(String query, Integer year) {
+    public Optional<TmdbSearchResult> searchBestMatch(String query) {
         TmdbSearchResponse response = client.get()
                 .uri(uriBuilder -> uriBuilder.path("/search/multi")
                         .queryParam("query", query)
-                        .queryParamIfPresent("year", Optional.ofNullable(year))
                         .build())
                 .retrieve()
                 .body(TmdbSearchResponse.class);
@@ -31,7 +31,9 @@ public class TmdbApiClient implements TmdbClient{
         if (response == null)
             return Optional.empty();
 
-        MediaType[] mediaTypes = MediaType.values();
+        MediaType[] mediaTypes = Arrays.stream(MediaType.values())
+                .filter(x -> x != MediaType.TV_EPISODE)
+                .toArray(MediaType[]::new);
 
         return response.results().stream()
                 .filter(x -> Arrays.stream(mediaTypes).anyMatch(t -> t.name().toLowerCase().equals(x.mediaType())))
@@ -56,5 +58,15 @@ public class TmdbApiClient implements TmdbClient{
     @Override
     public TmdbDetailsResponse getTvDetails(Long tmdbId) {
         return client.get().uri("/tv/{id}", tmdbId).retrieve().body(TmdbDetailsResponse.class);
+    }
+
+    @Override
+    public TmdbDetailsResponse getTvSeasonDetails(Long tvId, Integer season) {
+        return client.get().uri("/tv/{id}/season/{season}", tvId, season).retrieve().body(TmdbDetailsResponse.class);
+    }
+
+    @Override
+    public TmdbDetailsResponse getTvEpisodeDetails(Long tvId, Integer season, Integer episode) {
+        return client.get().uri("/tv/{id}/season/{season}/episode/{episode}", tvId, season, episode).retrieve().body(TmdbDetailsResponse.class);
     }
 }

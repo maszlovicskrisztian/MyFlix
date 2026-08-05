@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 
 public record MediaItemDto(
         Long id,
-        String fileName,
         LocalDateTime addedAt,
         String container,
         String codec,

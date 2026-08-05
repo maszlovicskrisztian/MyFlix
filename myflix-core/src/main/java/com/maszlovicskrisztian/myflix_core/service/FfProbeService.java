@@ -53,15 +53,15 @@ public class FfProbeService {
         String videoCodec = findCodec(root, "video");
         String audioCodec = findCodec(root, "audio");
         long durationSeconds = (long)(root.path("format").path("duration").asDouble());
-        String container = root.path("format").path("format_name").asText(null);
+        String container = root.path("format").path("format_name").asString(null);
 
         return new MediaProbeResult(videoCodec, audioCodec, container, durationSeconds);
     }
 
     private String findCodec(JsonNode root, String codecType) {
         for (JsonNode stream : root.path("streams")) {
-            if (codecType.equals(stream.path("codec_type").asText())) {
-                return stream.path("codec_name").asText(null);
+            if (codecType.equals(stream.path("codec_type").asString())) {
+                return stream.path("codec_name").asString(null);
             }
         }
         return null;

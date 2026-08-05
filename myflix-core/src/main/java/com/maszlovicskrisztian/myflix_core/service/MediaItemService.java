@@ -4,15 +4,14 @@ import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
 import com.maszlovicskrisztian.myflix_core.dtos.MediaProbeResult;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import com.maszlovicskrisztian.myflix_core.mapping.MediaItemMapper;
-import com.maszlovicskrisztian.myflix_core.model.MediaItem;
+import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.model.MediaType;
-import com.maszlovicskrisztian.myflix_core.repository.MediaItemRepository;
+import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
 import com.maszlovicskrisztian.myflix_core.repository.RelativePathProjection;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MediaItemService {
-    private final MediaItemRepository mediaItemRepository;
+    private final FileInfoRepository fileInfoRepository;
     private final MediaItemMapper mapper;
     private final MediaPathResolver mediaPathResolver;
     private final FfProbeService probeService;
@@ -57,10 +56,8 @@ public class MediaItemService {
         Path root = Paths.get(mediaPathResolver.getMediaPath());
         String relativePath = root.relativize(path).toString();
 
-        MediaItem item = new MediaItem();
+        FileInfo item = new FileInfo();
         item.setRelativePath(relativePath);
-        item.setFileName(String.valueOf(path.getFileName()));
-        item.setSizeBytes(Files.size(path));
         item.setAddedAt(LocalDateTime.now());
 
         if (probeResult != null) {
@@ -70,46 +67,46 @@ public class MediaItemService {
             item.setDurationSeconds(probeResult.durationSeconds());
         }
 
-        mediaItemRepository.save(item);
+        fileInfoRepository.save(item);
     }
 
-    public void saveMedia(MediaItem mediaItem) {
-        if (mediaItem == null)
+    public void saveMedia(FileInfo fileInfo) {
+        if (fileInfo == null)
             return;
 
-        mediaItemRepository.save(mediaItem);
+        fileInfoRepository.save(fileInfo);
     }
 
     public Set<String> getAllRelativePaths() {
-        return mediaItemRepository.findAll().stream().map(MediaItem::getRelativePath).collect(Collectors.toSet());
+        return fileInfoRepository.findAll().stream().map(FileInfo::getRelativePath).collect(Collectors.toSet());
     }
 
     public Optional<String> getRelativePathById(Long id) {
-        Optional<RelativePathProjection> projection = mediaItemRepository.findById(id, RelativePathProjection.class);
+        Optional<RelativePathProjection> projection = fileInfoRepository.findById(id, RelativePathProjection.class);
         return projection.map(RelativePathProjection::getRelativePath);
     }
 
     public List<MediaItemDto> getAllMedia() {
-        return mediaItemRepository.findAll().stream().map(mapper::from).toList();
+        return fileInfoRepository.findAll().stream().map(mapper::from).toList();
     }
 
     public List<MediaItemDto> getAllMovies() {
-        return mediaItemRepository
+        return fileInfoRepository
                 .findAll()
-                .stream().filter(x -> x.getMetadata() != null && x.getMetadata().getMediaType() == MediaType.MOVIE)
+                .stream().filter(x -> x.getMovieMetadata() != null)
                 .map(mapper::from)
                 .toList();
     }
 
     public MediaItemDto getMediaDtoById(Long id) {
-        return mediaItemRepository
+        return fileInfoRepository
                 .findById(id)
                 .map(mapper::from)
                 .orElse(null);
     }
 
-    public Optional<MediaItem> getMediaById(Long id) {
-        return mediaItemRepository
+    public Optional<FileInfo> getMediaById(Long id) {
+        return fileInfoRepository
                 .findById(id);
     }
 }
