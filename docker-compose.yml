@@ -1,10 +1,12 @@
 services:
   myflix:
+    mem_limit: 1536m
     build: .
     ports:
       - "8080:8080"
     environment:
       - DB_PATH=/data/myflix 
+      - HLS_PATH=/data/hls
       - MEDIA_PATH=/media
       - ADMIN_USER=${ADMIN_USER}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}

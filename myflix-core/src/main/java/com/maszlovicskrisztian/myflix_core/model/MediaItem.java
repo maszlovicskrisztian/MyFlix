@@ -25,6 +25,7 @@ public class MediaItem {
     private Long durationSeconds;
     private String container;
     private String codec;
+    private String audioCodec;
     private LocalDateTime addedAt;
 
     @OneToOne(mappedBy = "mediaItem")

@@ -1,6 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
 import com.maszlovicskrisztian.myflix_core.helpers.FileHelper;
+import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,17 +18,17 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class LibraryScanner {
 
-    @Value("${MEDIA_PATH}")
-    private String mediaPath;
-
     private final MediaItemService mediaItemService;
     private final FileHelper fileHelper;
+    private final MediaPathResolver mediaPathResolver;
 
     public void scan() throws IOException {
+        String mediaPath = mediaPathResolver.getMediaPath();
+
         Path root = Paths.get(mediaPath);
         Set<String> existingItemPaths = mediaItemService.getAllRelativePaths();
 
-        try (Stream<Path> paths = Files.walk(Paths.get(mediaPath))) {
+        try (Stream<Path> paths = Files.walk(root)) {
                 List<Path> videoFiles = paths
                         .filter(Files::isRegularFile)
                         .filter(fileHelper::hasVideoExtension)
