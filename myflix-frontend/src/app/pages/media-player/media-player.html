@@ -8,9 +8,6 @@
       #videoElement
       class="player__video"
       controls
-      autoplay
-      [src]="streamUrl()"
-      (loadedmetadata)="onLoadedMetadata()"
       (timeupdate)="onTimeUpdate()"
     ></video>
   } @else {

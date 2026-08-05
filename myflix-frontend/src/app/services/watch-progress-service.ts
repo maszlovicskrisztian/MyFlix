@@ -7,12 +7,12 @@ import { WatchProgressResponse } from '../model/watch-progress-response';
 export class WatchProgressService {
     http = inject(HttpClient);
     
-    public getProgress(mediaId: string, profileId: number) {
+    public getProgress(mediaId: number, profileId: number) {
         const url = `${environment.apiUrl}/media/${mediaId}/progress?profileId=${profileId}`;
         return this.http.get<WatchProgressResponse>(url);
     }
 
-    public updateProgress(mediaId: string, profileId: number, progressSeconds: number) {
+    public updateProgress(mediaId: number, profileId: number, progressSeconds: number) {
         const url = `${environment.apiUrl}/media/${mediaId}/progress?profileId=${profileId}`;
         return this.http.put(url, { progressSeconds });
     }
