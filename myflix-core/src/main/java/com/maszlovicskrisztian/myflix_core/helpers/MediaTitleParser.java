@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 @Component
 public class MediaTitleParser {
     private static final Pattern YEAR = Pattern.compile("\\b(19|20)\\d{2}\\b");
-    private static final Pattern EPISODE = Pattern.compile("e(\\d{1,3})");
+    private static final Pattern EPISODE = Pattern.compile("(?i)e(\\d{1,3})");
     private static final Pattern SEASON = Pattern.compile("(?i)s(\\d{1,2})");
 
     public String getTitle(Path relativePath) {
