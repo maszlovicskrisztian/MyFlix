@@ -1,15 +1,17 @@
 package com.maszlovicskrisztian.myflix_core.mapping;
 
 import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
+import com.maszlovicskrisztian.myflix_core.helpers.ImageUrlResolver;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.model.MovieMetadata;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class MediaItemMapper {
-    @Value("${tmdb.images.base-url}")
-    private String imagesBase;
+    private final ImageUrlResolver imageUrlResolver;
 
     public MediaItemDto from(FileInfo model) {
         MovieMetadata metadata = model.getMovieMetadata();
@@ -29,9 +31,6 @@ public class MediaItemMapper {
                     null
             );
         } else {
-            String posterPath = toImageUrl(metadata.getPosterPath());
-            String backdropPath = toImageUrl(metadata.getBackdropPath());
-
             return new MediaItemDto(
                     model.getId(),
                     model.getAddedAt(),
@@ -40,19 +39,11 @@ public class MediaItemMapper {
                     metadata.getTmdbId(),
                     metadata.getOverview(),
                     metadata.getTitle(),
-                    posterPath,
-                    backdropPath,
+                    imageUrlResolver.toImageUrl(metadata.getPosterPath()),
+                    imageUrlResolver.toImageUrl(metadata.getBackdropPath()),
                     metadata.getReleaseDate(),
                     metadata.getRuntimeMinutes()
             );
         }
-    }
-
-    private String toImageUrl(String path) {
-        if (path == null || path.isBlank()) {
-            return null;
-        }
-
-        return imagesBase + "/original" + path;
     }
 }

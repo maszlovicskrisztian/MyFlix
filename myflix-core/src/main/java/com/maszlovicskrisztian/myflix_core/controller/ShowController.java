@@ -17,7 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/shows")
+@RequestMapping("api/media/shows")
 public class ShowController {
 
     private final ShowMapper mapper;
@@ -25,7 +25,7 @@ public class ShowController {
 
     @GetMapping
     public List<ShowDto> getShows() {
-        return showRepository.findAll().stream().map(ShowDto::from).toList();
+        return showRepository.findAll().stream().map(mapper::toShow).toList();
     }
 
     @GetMapping("/{id}")

@@ -3,8 +3,11 @@ package com.maszlovicskrisztian.myflix_core.mapping;
 import com.maszlovicskrisztian.myflix_core.dtos.EpisodeDetails;
 import com.maszlovicskrisztian.myflix_core.dtos.SeasonDetails;
 import com.maszlovicskrisztian.myflix_core.dtos.ShowDetails;
+import com.maszlovicskrisztian.myflix_core.dtos.ShowDto;
+import com.maszlovicskrisztian.myflix_core.helpers.ImageUrlResolver;
 import com.maszlovicskrisztian.myflix_core.model.EpisodeMetadata;
 import com.maszlovicskrisztian.myflix_core.model.Show;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
@@ -14,7 +17,18 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class ShowMapper {
+    private final ImageUrlResolver imageUrlResolver;
+
+    public ShowDto toShow(Show model) {
+        return new ShowDto(
+                model.getId(),
+                model.getTitle(),
+                imageUrlResolver.toImageUrl(model.getPosterPath())
+        );
+    }
+
     public ShowDetails toShowDetails(Show model) {
         List<EpisodeMetadata> episodes = model.getEpisodes();
         Map<Integer, List<EpisodeMetadata>> episodesPerSeason = episodes
@@ -30,8 +44,8 @@ public class ShowMapper {
                 model.getId(),
                 model.getTitle(),
                 model.getOverview(),
-                model.getPosterPath(),
-                model.getBackdropPath(),
+                imageUrlResolver.toImageUrl(model.getPosterPath()),
+                imageUrlResolver.toImageUrl(model.getBackdropPath()),
                 model.getSeasonCount(),
                 model.getEpisodeCount(),
                 seasons,
@@ -41,7 +55,7 @@ public class ShowMapper {
 
     public SeasonDetails toSeasonDetails(List<EpisodeMetadata> episodes) {
         EpisodeMetadata base = episodes.getFirst();
-        
+
         List<EpisodeDetails> sortedEpisodes = episodes.stream()
                 .sorted(Comparator.comparing(EpisodeMetadata::getEpisodeNumber))
                 .map(this::toEpisodeDetails)
@@ -50,7 +64,7 @@ public class ShowMapper {
         return new SeasonDetails(
                 base.getSeasonTitle(),
                 base.getSeasonOverview(),
-                base.getSeasonPosterPath(),
+                imageUrlResolver.toImageUrl(base.getSeasonPosterPath()),
                 base.getSeasonNumber(),
                 sortedEpisodes
         );
@@ -60,7 +74,7 @@ public class ShowMapper {
         return new EpisodeDetails(
                 model.getTitle(),
                 model.getOverview(),
-                model.getStillPath(),
+                imageUrlResolver.toImageUrl(model.getStillPath()),
                 model.getReleaseDate(),
                 model.getRuntimeMinutes(),
                 model.getEpisodeNumber(),
