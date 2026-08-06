@@ -32,6 +32,15 @@ public class MediaTitleParser {
         return titlePart.replace('.', ' ').trim();
     }
 
+    public String getYear(Path relativePath) {
+        String folderName = relativePath.getName(relativePath.getNameCount() - 2).toString();
+
+        Matcher yearMatcher = YEAR.matcher(folderName);
+        if (!yearMatcher.find()) return null;
+
+        return yearMatcher.group();
+    }
+
     public Integer getSeason(Path relativePath) {
         String folderName = relativePath.getName(relativePath.getNameCount() - 2).toString();
         Matcher seasonMatcher = SEASON.matcher(folderName);

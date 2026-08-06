@@ -1,15 +1,17 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
 import com.maszlovicskrisztian.myflix_core.dtos.*;
+import com.maszlovicskrisztian.myflix_core.dtos.request.UpdateProgressRequest;
+import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.response.PlaybackInfoResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.response.WatchProgressResponse;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import com.maszlovicskrisztian.myflix_core.helpers.PlaybackCompatibility;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.service.FfProbeService;
 import com.maszlovicskrisztian.myflix_core.service.MediaItemService;
 import com.maszlovicskrisztian.myflix_core.service.WatchProgressService;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -34,28 +36,13 @@ public class MediaController {
         return mediaItemService.getAllMedia();
     }
 
-    @GetMapping("/{id}")
-    public MediaItemDto getMediaById(@PathVariable Long id) {
-        MediaItemDto dto = mediaItemService.getMediaDtoById(id);
-
-        if (dto == null)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-        return dto;
-    }
-
-    @GetMapping("/movies")
-    public List<MediaItemDto> getMovies() {
-        return mediaItemService.getAllMovies();
-    }
-
     @GetMapping("/continue-watching")
-    public List<MediaItemDto> getContinueWatchingList(@RequestParam Long profileId) {
+    public List<MediaBaseResponse> getContinueWatchingList(@RequestParam Long profileId) {
         return watchProgressService.getMediasInWatchByProfile(profileId);
     }
 
     @GetMapping("/{id}/progress")
-    public WatchProgressDto getProgressForMediaByProfile(
+    public WatchProgressResponse getProgressForMediaByProfile(
             @PathVariable Long id,
             @RequestParam Long profileId) {
 
@@ -63,7 +50,7 @@ public class MediaController {
     }
 
     @PutMapping("/{id}/progress")
-    public WatchProgressDto setProgressForMediaByProfile(
+    public WatchProgressResponse setProgressForMediaByProfile(
             @PathVariable Long id,
             @RequestParam Long profileId,
             @RequestBody UpdateProgressRequest request) {
@@ -71,87 +58,32 @@ public class MediaController {
         return watchProgressService.setProgressForMediaByProfile(id, profileId, request.progressSeconds());
     }
 
-    @GetMapping("/{id}/stream")
-    public void stream(@PathVariable Long id,
-                       @RequestHeader HttpHeaders headers,
-                       HttpServletResponse response) throws IOException {
-
-        String relativePath = mediaItemService.getRelativePathById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        File file = Paths.get(mediaPathResolver.getMediaPath()).resolve(relativePath).toFile();
-        long contentLength = file.length();
-        List<HttpRange> ranges = headers.getRange();
-
-        MediaType mediaType = MediaTypeFactory.getMediaType(new FileSystemResource(file))
-                .orElse(MediaType.APPLICATION_OCTET_STREAM);
-
-        response.setHeader(HttpHeaders.ACCEPT_RANGES, "bytes");
-        response.setContentType(mediaType.toString());
-
-        if (ranges.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.setContentLengthLong(contentLength);
-            try (InputStream in = new FileInputStream(file); OutputStream out = response.getOutputStream()) {
-                in.transferTo(out);
-            }
-            return;
-        }
-
-        HttpRange range = ranges.getFirst();
-        long start = range.getRangeStart(contentLength);
-        long end = range.getRangeEnd(contentLength);
-        long rangeLength = Math.min(1_000_000, end - start + 1);
-        long rangeEnd = start + rangeLength - 1;
-
-        response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
-        response.setContentLengthLong(rangeLength);
-        response.setHeader(HttpHeaders.CONTENT_RANGE, "bytes " + start + "-" + rangeEnd + "/" + contentLength);
-
-        try (RandomAccessFile raf = new RandomAccessFile(file, "r");
-             OutputStream out = response.getOutputStream()) {
-            raf.seek(start);
-            byte[] buffer = new byte[8192];
-            long remaining = rangeLength;
-            int read;
-            while (remaining > 0 && (read = raf.read(buffer, 0, (int) Math.min(buffer.length, remaining))) != -1) {
-                out.write(buffer, 0, read);
-                remaining -= read;
-            }
-        }
-    }
-
     @GetMapping("/{id}/playback-info")
-    public PlaybackInfoDto getPlaybackInfo(
+    public PlaybackInfoResponse getPlaybackInfo(
             @PathVariable Long id,
             @RequestParam Long profileId,
-            @RequestParam(defaultValue = "false") boolean supportsMkv) {
+            @RequestParam(defaultValue = "false") boolean supportsMkv) throws IOException {
 
         FileInfo item = mediaItemService.getMediaById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        if (item.getCodec() == null) probeAndPersist(item);
+        MediaProbeResult probeResult;
+        if (item.getCodec() == null) {
+            Path file = Paths.get(mediaPathResolver.getMediaPath()).resolve(item.getRelativePath());
+            probeResult = probeService.probe(file);
+            item.setCodec(probeResult.videoCodec());
+            item.setAudioCodec(probeResult.audioCodec());
+            item.setContainer(probeResult.container());
+            item.setDurationSeconds(probeResult.durationSeconds());
+            mediaItemService.saveMedia(item);
+        } else {
+            probeResult = new MediaProbeResult(item.getCodec(), item.getAudioCodec(), item.getContainer(), item.getDurationSeconds());
+        }
 
-        MediaProbeResult probeResult = new MediaProbeResult(item.getCodec(), item.getAudioCodec(), item.getContainer(), item.getDurationSeconds());
-        WatchProgressDto progress = watchProgressService.getProgressForMediaByProfile(id, profileId);
-        long resumeSeconds = progress != null ? progress.progressSeconds() : 0L;
+        long resumeSeconds = watchProgressService.getProgressSecondsForMediaByProfile(id, profileId);
 
         return PlaybackCompatibility.isDirectPlayCompatible(probeResult, item.getRelativePath(), supportsMkv)
-                ? new PlaybackInfoDto("DIRECT", "/media/" + id + "/stream", resumeSeconds, item.getDurationSeconds())
-                : new PlaybackInfoDto("HLS", "/media/" + id + "/hls/playlist.m3u8", resumeSeconds, item.getDurationSeconds());
-    }
-
-    private void probeAndPersist(FileInfo item) {
-        try {
-            Path file = Paths.get(mediaPathResolver.getMediaPath()).resolve(item.getRelativePath());
-            MediaProbeResult result = probeService.probe(file);
-            item.setCodec(result.videoCodec());
-            item.setAudioCodec(result.audioCodec());
-            item.setContainer(result.container());
-            item.setDurationSeconds(result.durationSeconds());
-            mediaItemService.saveMedia(item);
-        } catch (IOException e) {
-            System.out.println("HIBA " + e.toString());
-        }
+                ? new PlaybackInfoResponse("DIRECT", "/media/" + id + "/stream", resumeSeconds, item.getDurationSeconds())
+                : new PlaybackInfoResponse("HLS", "/media/" + id + "/stream/playlist.m3u8", resumeSeconds, item.getDurationSeconds());
     }
 }

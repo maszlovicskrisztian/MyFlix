@@ -20,7 +20,7 @@ public class TmdbApiClient implements TmdbClient{
     private final RestClient client;
 
     @Override
-    public Optional<TmdbSearchResult> searchBestMatch(String query) {
+    public Optional<TmdbSearchResult> searchBestMatch(String query, String year) {
         TmdbSearchResponse response = client.get()
                 .uri(uriBuilder -> uriBuilder.path("/search/multi")
                         .queryParam("query", query)
@@ -37,6 +37,7 @@ public class TmdbApiClient implements TmdbClient{
 
         return response.results().stream()
                 .filter(x -> Arrays.stream(mediaTypes).anyMatch(t -> t.name().toLowerCase().equals(x.mediaType())))
+                .filter(x -> year == null || (x.releaseDate() != null && x.releaseDate().startsWith(year)))
                 .findFirst();
     }
 

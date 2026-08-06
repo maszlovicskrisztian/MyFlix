@@ -1,7 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
-import com.maszlovicskrisztian.myflix_core.dtos.LoginRequest;
-import com.maszlovicskrisztian.myflix_core.dtos.LoginResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.request.LoginRequest;
+import com.maszlovicskrisztian.myflix_core.dtos.response.LoginResponse;
 import com.maszlovicskrisztian.myflix_core.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,6 +1,6 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
-import com.maszlovicskrisztian.myflix_core.dtos.EnrichRequest;
+import com.maszlovicskrisztian.myflix_core.dtos.request.EnrichRequest;
 import com.maszlovicskrisztian.myflix_core.service.MediaMetadataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

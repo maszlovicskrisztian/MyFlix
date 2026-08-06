@@ -1,8 +1,8 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
-import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
-import com.maszlovicskrisztian.myflix_core.dtos.WatchProgressDto;
-import com.maszlovicskrisztian.myflix_core.mapping.MediaItemMapper;
+import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.response.WatchProgressResponse;
+import com.maszlovicskrisztian.myflix_core.mapping.MediaBaseMapper;
 import com.maszlovicskrisztian.myflix_core.model.WatchProgress;
 import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
 import com.maszlovicskrisztian.myflix_core.repository.ProfileRepository;
@@ -19,16 +19,23 @@ public class WatchProgressService {
     private final WatchProgressRepository watchProgressRepository;
     private final ProfileRepository profileRepository;
     private final FileInfoRepository fileInfoRepository;
-    private final MediaItemMapper mapper;
+    private final MediaBaseMapper mediaBaseMapper;
 
-    public WatchProgressDto getProgressForMediaByProfile(Long id, Long profileId) {
+    public Long getProgressSecondsForMediaByProfile(Long id, Long profileId) {
         return watchProgressRepository
                 .findByProfileIdAndFileInfoId(profileId, id)
-                .map(WatchProgressDto::from)
+                .map(WatchProgress::getProgressSeconds)
+                .orElse(0L);
+    }
+
+    public WatchProgressResponse getProgressForMediaByProfile(Long id, Long profileId) {
+        return watchProgressRepository
+                .findByProfileIdAndFileInfoId(profileId, id)
+                .map(WatchProgressResponse::from)
                 .orElse(null);
     }
 
-    public WatchProgressDto setProgressForMediaByProfile(Long id, Long profileId, Long progressSeconds) {
+    public WatchProgressResponse setProgressForMediaByProfile(Long id, Long profileId, Long progressSeconds) {
         WatchProgress watchProgress = watchProgressRepository
                 .findByProfileIdAndFileInfoId(profileId, id)
                 .orElseGet(() -> {
@@ -42,15 +49,15 @@ public class WatchProgressService {
         watchProgress.setUpdatedAt(LocalDateTime.now());
 
         WatchProgress saved = watchProgressRepository.save(watchProgress);
-        return WatchProgressDto.from(saved);
+        return WatchProgressResponse.from(saved);
     }
 
-    public List<MediaItemDto> getMediasInWatchByProfile(Long profileId) {
+    public List<MediaBaseResponse> getMediasInWatchByProfile(Long profileId) {
         List<WatchProgress> progressList = watchProgressRepository.findAllByProfileId(profileId).orElse(null);
 
         if (progressList == null)
             return null;
 
-        return progressList.stream().map(WatchProgress::getFileInfo).map(mapper::from).toList();
+        return progressList.stream().map(WatchProgress::getFileInfo).map(mediaBaseMapper::fromContinueWatching).toList();
     }
 }

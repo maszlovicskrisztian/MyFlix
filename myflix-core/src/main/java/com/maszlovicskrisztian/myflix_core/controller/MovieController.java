@@ -1,11 +1,12 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
-import com.maszlovicskrisztian.myflix_core.dtos.response.ShowDetailsResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.response.MovieDetailsResponse;
 import com.maszlovicskrisztian.myflix_core.mapping.MediaBaseMapper;
-import com.maszlovicskrisztian.myflix_core.mapping.ShowMapper;
-import com.maszlovicskrisztian.myflix_core.model.Show;
-import com.maszlovicskrisztian.myflix_core.repository.ShowRepository;
+import com.maszlovicskrisztian.myflix_core.mapping.MovieMapper;
+import com.maszlovicskrisztian.myflix_core.model.FileInfo;
+import com.maszlovicskrisztian.myflix_core.service.MediaItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,23 +19,23 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api/shows")
-public class ShowController {
+@RequestMapping("/api/movies")
+public class MovieController {
 
-    private final ShowMapper mapper;
+    private final MediaItemService mediaItemService;
     private final MediaBaseMapper mediaBaseMapper;
-    private final ShowRepository showRepository;
+    private final MovieMapper movieMapper;
 
-    @GetMapping
-    public List<MediaBaseResponse> getShows() {
-        return showRepository.findAll().stream().map(mediaBaseMapper::fromShow).toList();
+    @GetMapping()
+    public List<MediaBaseResponse> getMovies() {
+        return mediaItemService.getAllMovies().stream().map(mediaBaseMapper::fromMovie).toList();
     }
 
     @GetMapping("/{id}")
-    public ShowDetailsResponse getShowDetails(@PathVariable Long id) {
-        Show show = showRepository.findById(id)
+    public MovieDetailsResponse getMovieById(@PathVariable Long id) {
+        FileInfo media = mediaItemService.getMediaById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        return mapper.toShowDetails(show);
+        return movieMapper.toMovieDetails(media);
     }
 }

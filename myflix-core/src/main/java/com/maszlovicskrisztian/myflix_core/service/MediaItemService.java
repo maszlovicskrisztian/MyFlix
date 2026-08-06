@@ -5,7 +5,6 @@ import com.maszlovicskrisztian.myflix_core.dtos.MediaProbeResult;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import com.maszlovicskrisztian.myflix_core.mapping.MediaItemMapper;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
-import com.maszlovicskrisztian.myflix_core.model.MediaType;
 import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
 import com.maszlovicskrisztian.myflix_core.repository.RelativePathProjection;
 import lombok.RequiredArgsConstructor;
@@ -90,23 +89,14 @@ public class MediaItemService {
         return fileInfoRepository.findAll().stream().map(mapper::from).toList();
     }
 
-    public List<MediaItemDto> getAllMovies() {
+    public List<FileInfo> getAllMovies() {
         return fileInfoRepository
                 .findAll()
                 .stream().filter(x -> x.getMovieMetadata() != null)
-                .map(mapper::from)
                 .toList();
     }
 
-    public MediaItemDto getMediaDtoById(Long id) {
-        return fileInfoRepository
-                .findById(id)
-                .map(mapper::from)
-                .orElse(null);
-    }
-
     public Optional<FileInfo> getMediaById(Long id) {
-        return fileInfoRepository
-                .findById(id);
+        return fileInfoRepository.findById(id);
     }
 }

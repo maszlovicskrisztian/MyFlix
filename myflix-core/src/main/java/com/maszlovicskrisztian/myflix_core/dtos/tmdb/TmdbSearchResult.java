@@ -9,5 +9,6 @@ public record TmdbSearchResult(
         @JsonProperty("show_id") Long showId,
         @JsonProperty("media_type") String mediaType,
         @JsonProperty("episode_number") Integer episode,
-        @JsonProperty("season_number") Integer season
+        @JsonProperty("season_number") Integer season,
+        @JsonProperty("release_date") String releaseDate
 ) {}

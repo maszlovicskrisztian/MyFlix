@@ -70,7 +70,8 @@ public class MediaMetadataService {
 
             if (title == null) return;
 
-            TmdbSearchResult result = tmdbClient.searchBestMatch(title).orElse(null);
+            String year = parser.getYear(relativePath);
+            TmdbSearchResult result = tmdbClient.searchBestMatch(title, year).orElse(null);
 
             if (result == null) return; //át kell még gondolni
 

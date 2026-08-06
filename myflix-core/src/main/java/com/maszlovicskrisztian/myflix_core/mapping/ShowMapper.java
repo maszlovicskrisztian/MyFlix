@@ -2,8 +2,8 @@ package com.maszlovicskrisztian.myflix_core.mapping;
 
 import com.maszlovicskrisztian.myflix_core.dtos.EpisodeDetails;
 import com.maszlovicskrisztian.myflix_core.dtos.SeasonDetails;
-import com.maszlovicskrisztian.myflix_core.dtos.ShowDetails;
-import com.maszlovicskrisztian.myflix_core.dtos.ShowDto;
+import com.maszlovicskrisztian.myflix_core.dtos.response.ShowDetailsResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
 import com.maszlovicskrisztian.myflix_core.helpers.ImageUrlResolver;
 import com.maszlovicskrisztian.myflix_core.model.EpisodeMetadata;
 import com.maszlovicskrisztian.myflix_core.model.Show;
@@ -21,15 +21,7 @@ import java.util.stream.Collectors;
 public class ShowMapper {
     private final ImageUrlResolver imageUrlResolver;
 
-    public ShowDto toShow(Show model) {
-        return new ShowDto(
-                model.getId(),
-                model.getTitle(),
-                imageUrlResolver.toImageUrl(model.getPosterPath())
-        );
-    }
-
-    public ShowDetails toShowDetails(Show model) {
+    public ShowDetailsResponse toShowDetails(Show model) {
         List<EpisodeMetadata> episodes = model.getEpisodes();
         Map<Integer, List<EpisodeMetadata>> episodesPerSeason = episodes
                 .stream().collect(Collectors.groupingBy(
@@ -40,7 +32,7 @@ public class ShowMapper {
 
         List<SeasonDetails> seasons = episodesPerSeason.values().stream().map(this::toSeasonDetails).toList();
 
-        return new ShowDetails(
+        return new ShowDetailsResponse(
                 model.getId(),
                 model.getTitle(),
                 model.getOverview(),

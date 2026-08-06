@@ -1,8 +1,10 @@
-package com.maszlovicskrisztian.myflix_core.dtos;
+package com.maszlovicskrisztian.myflix_core.dtos.response;
+
+import com.maszlovicskrisztian.myflix_core.dtos.SeasonDetails;
 
 import java.util.List;
 
-public record ShowDetails(
+public record ShowDetailsResponse(
         Long id,
         String title,
         String overview,

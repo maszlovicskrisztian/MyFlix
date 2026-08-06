@@ -7,7 +7,7 @@ import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchResult;
 import java.util.Optional;
 
 public interface TmdbClient {
-    Optional<TmdbSearchResult> searchBestMatch(String query);
+    Optional<TmdbSearchResult> searchBestMatch(String query, String year);
     ImdbSearchResponse searchByImdbId(String imdbId);
     TmdbDetailsResponse getMovieDetails(Long tmdbId);
     TmdbDetailsResponse getTvDetails(Long tmdbId);
