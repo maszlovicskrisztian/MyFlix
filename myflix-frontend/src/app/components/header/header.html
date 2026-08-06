@@ -6,7 +6,8 @@
             [routerLinkActiveOptions]="{ exact: true }">Kezdőlap</a>
         <a class="topbar__link" [routerLink]="['/movies']" routerLinkActive="topbar__link--active"
             [routerLinkActiveOptions]="{ exact: true }">Filmek</a>
-        <a class="topbar__link">Sorozatok</a>
+        <a class="topbar__link" [routerLink]="['/shows']" routerLinkActive="topbar__link--active"
+            [routerLinkActiveOptions]="{ exact: true }">Sorozatok</a>
         <a class="topbar__link">Kedvencek</a>
     </nav>
 
@@ -60,7 +61,8 @@
         <span class="tabbar__label">Filmek</span>
     </a>
 
-    <a class="tabbar__link">
+    <a class="tabbar__link" [routerLink]="['/shows']" routerLinkActive="tabbar__link--active"
+        [routerLinkActiveOptions]="{ exact: true }">
         <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
             <rect x="2.5" y="6.5" width="19" height="12.5" rx="2" />
             <path d="m8 3 4 3.5L16 3" />

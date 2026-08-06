@@ -3,11 +3,11 @@
     layout="row"
     title="Újdonságok"
     emptyMessage="Nincs elérhető új film."
-    [mediaItems]="newMovies()">
+    [mediaBaseResponses]="newMovies()">
 </app-media-section>
 <app-media-section
     layout="grid"
     title="Összes film"
     emptyMessage="Nincs elérhető film."
-    [mediaItems]="movies()">
+    [mediaBaseResponses]="movies()">
 </app-media-section>

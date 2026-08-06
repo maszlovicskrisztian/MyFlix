@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service, signal } from '@angular/core';
 import { environment } from '../environments/environment';
 import { Profile } from '../model/profile';
+import { Observable } from 'rxjs';
 
 @Service()
 export class ProfileService {
@@ -19,8 +20,8 @@ export class ProfileService {
     return stored ? Number(stored) : null;
   }
 
-  getAllProfiles() {
-    return this.http.get<Profile[]>(`${environment.apiUrl}/profiles`);
+  getAllProfiles(): Observable<Array<Profile>> {
+    return this.http.get<Array<Profile>>(`${environment.apiUrl}/profiles`);
   }
 
   createProfile(name: string, avatarKey: string | null) {

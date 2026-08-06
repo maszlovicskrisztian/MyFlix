@@ -41,6 +41,15 @@
     width: clamp(140px, 16vw, 190px);
     scroll-snap-align: start;
   }
+
+  /* A 16:9 tile needs more width than a poster to end up a comparable height. */
+  &--still#{&}--grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+
+  &--still#{&}--row &__item {
+    width: clamp(220px, 26vw, 320px);
+  }
 }
 
 .empty {
@@ -69,5 +78,13 @@
 
   .items--row .items__item {
     width: 130px;
+  }
+
+  .items--still.items--grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .items--still.items--row .items__item {
+    width: 200px;
   }
 }

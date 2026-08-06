@@ -1,10 +1,10 @@
 import { Component, inject, signal, OnInit, computed } from '@angular/core';
 import { MediaService } from '../../services/media-service';
-import { MediaItem } from '../../model/media-item';
 import { catchError, of } from 'rxjs';
 import { Header } from "../../components/header/header";
 import { MediaSection } from "../../components/media-section/media-section";
 import { ProfileService } from '../../services/profile-service';
+import { MediaBaseResponse } from '../../model/media-base-response';
 
 @Component({
   selector: 'app-home',
@@ -15,10 +15,10 @@ import { ProfileService } from '../../services/profile-service';
 export class Home implements OnInit {
   profileService = inject(ProfileService);
   mediaService = inject(MediaService);
-  continueWatching = signal<MediaItem[]>([]);
-  suggestedMovies = signal<MediaItem[]>([]);
-  suggestedSeries = signal<MediaItem[]>([]);
-  allMedia = signal<MediaItem[]>([]);
+  continueWatching = signal<MediaBaseResponse[]>([]);
+  suggestedMovies = signal<MediaBaseResponse[]>([]);
+  suggestedSeries = signal<MediaBaseResponse[]>([]);
+  allMedia = signal<MediaBaseResponse[]>([]);
   profileId = computed(() => this.profileService.selectedProfileId());
 
   ngOnInit(): void {
@@ -49,16 +49,16 @@ export class Home implements OnInit {
   }
 
   getAllMedia() {
-    this.mediaService
-      .getAllMedia()
-      .subscribe({
-        next: (items) => { this.allMedia.set(items); },
-        error: (error) => {
-          console.error('Error fetching all media items:', error);
-          this.allMedia.set([]);
-        }
-      }
-    );
+    // this.mediaService
+    //   .getAllMedia()
+    //   .subscribe({
+    //     next: (items) => { this.allMedia.set(items); },
+    //     error: (error) => {
+    //       console.error('Error fetching all media items:', error);
+    //       this.allMedia.set([]);
+    //     }
+    //   }
+    // );
   }
 
   getSuggestedMovies() {

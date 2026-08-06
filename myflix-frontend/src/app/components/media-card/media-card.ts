@@ -1,6 +1,7 @@
 import { Component, computed, input, linkedSignal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MediaItem } from '../../model/media-item';
+import { MediaBaseResponse } from '../../model/media-base-response';
+import { MediaCardAspect } from '../../model/media-card-aspect';
 
 @Component({
   selector: 'app-media-card',
@@ -9,15 +10,19 @@ import { MediaItem } from '../../model/media-item';
   styleUrl: './media-card.scss',
 })
 export class MediaCard {
-  mediaItem = input<MediaItem | null>(null);
+  mediaBase = input<MediaBaseResponse | null>(null);
+  routeLink = input<string | null>("/movies");
+
+  /** Shape of the image: a poster by default, 16:9 for lists that hold episodes. */
+  aspect = input<MediaCardAspect>('poster');
 
   displayTitle = computed(() => {
-    const item = this.mediaItem();
-    return item?.title || item?.fileName || '';
+    const item = this.mediaBase();
+    return item?.title || 'Nem elérhető cím';
   });
 
   /** Resets whenever a new item arrives, and is cleared when the image fails to load. */
-  posterUrl = linkedSignal(() => this.mediaItem()?.posterPath ?? null);
+  posterUrl = linkedSignal(() => this.mediaBase()?.imagePath ?? null);
 
   onPosterError(): void {
     this.posterUrl.set(null);

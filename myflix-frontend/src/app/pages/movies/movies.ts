@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { Header } from '../../components/header/header';
 import { MediaSection } from "../../components/media-section/media-section";
-import { MediaService } from '../../services/media-service';
-import { MediaItem } from '../../model/media-item';
+import { MovieService } from '../../services/movie-service';
+import { MediaBaseResponse } from '../../model/media-base-response';
 
 @Component({
   selector: 'app-movies',
@@ -11,15 +11,15 @@ import { MediaItem } from '../../model/media-item';
   styleUrl: './movies.scss',
 })
 export class Movies implements OnInit {
-  mediaService = inject(MediaService);
-  movies = signal<Array<MediaItem>>([]);
-  newMovies = signal<Array<MediaItem>>([]);
+  movieService = inject(MovieService);
+  movies = signal<Array<MediaBaseResponse>>([]);
+  newMovies = signal<Array<MediaBaseResponse>>([]);
 
   ngOnInit(): void {
-    this.mediaService.getMovies().subscribe({
+    this.movieService.getMovies().subscribe({
       next: (movies) => {
         this.movies.set(movies);
-        var newMovies = movies.sort((a, b) => b.id - a.id).slice(-5);
+        var newMovies = movies.sort((a, b) => b.fileInfoId - a.fileInfoId).slice(-5);
         this.newMovies.set(newMovies);
       },
       error: (err) => console.error('Hiba a filmek lekérésekor', err),

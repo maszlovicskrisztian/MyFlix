@@ -2,10 +2,9 @@ import { AfterViewInit, Component, computed, ElementRef, inject, OnDestroy, OnIn
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { AuthService } from '../../services/auth-service';
-import { WatchProgressService } from '../../services/watch-progress-service';
 import { ProfileService } from '../../services/profile-service';
 import Hls from 'hls.js/dist/hls.min.js';
-import { PlaybackService } from '../../services/playback-service';
+import { MediaService } from '../../services/media-service';
 
 @Component({
   selector: 'app-media-player',
@@ -17,8 +16,7 @@ export class MediaPlayer implements AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
   private profileService = inject(ProfileService);
-  private watchProgressService = inject(WatchProgressService);
-  private playbackService = inject(PlaybackService);
+  private mediaService = inject(MediaService);
 
   videoRef = viewChild<ElementRef<HTMLVideoElement>>('videoElement');
   mediaId = signal<number | null>(null);
@@ -45,7 +43,7 @@ export class MediaPlayer implements AfterViewInit, OnDestroy {
 
     if (Math.abs(currentPosition - this.lastSentPosition) >= 10) {
       this.lastSentPosition = currentPosition;
-      this.watchProgressService.updateProgress(mediaId, profileId, currentPosition).subscribe();
+      this.mediaService.updateProgress(mediaId, profileId, currentPosition).subscribe();
     }
   }
 
@@ -61,7 +59,7 @@ export class MediaPlayer implements AfterViewInit, OnDestroy {
     const profileId = this.profileId();
     if (profileId === null) return;
     
-    this.playbackService.getPlaybackInfo(mediaId, profileId).subscribe({
+    this.mediaService.getPlaybackInfo(mediaId, profileId).subscribe({
       next: (info) => {
         this.playbackMode.set(info.mode);
         const fullUrl = `${environment.apiUrl}${info.url}`;

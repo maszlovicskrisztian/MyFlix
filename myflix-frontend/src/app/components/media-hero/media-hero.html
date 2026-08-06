@@ -9,24 +9,23 @@
       <div class="hero__scrim"></div>
 
       <div class="hero__nav">
-        <a class="back" [routerLink]="['/home']" aria-label="Vissza a listához"
-          title="Vissza a listához">
+        <a class="back" [routerLink]="backLink()" [attr.aria-label]="backLabel()"
+          [title]="backLabel()">
           <svg class="back__icon" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M15 5l-7 7 7 7" />
           </svg>
         </a>
       </div>
 
-      @if (mediaItem(); as item) {
+      @if (loaded()) {
         <div class="hero__head">
-          <h1 class="hero__title">{{ item.title || item.fileName }}</h1>
+          <h1 class="hero__title">{{ title() }}</h1>
 
           <div class="hero__meta">
             <span class="badge">HD</span>
-            @if (item.releaseDate) {
-              <span class="hero__meta-item">Bemutatás: {{ item.releaseDate | date: 'longDate' }}</span>
+            @for (item of metaItems(); track item) {
+              <span class="hero__meta-item">{{ item }}</span>
             }
-            <span class="hero__meta-item">Hozzáadva: {{ item.addedAt | date: 'longDate' }}</span>
           </div>
 
           @if (runtime(); as runtime) {
@@ -44,13 +43,15 @@
       }
     </div>
 
-    @if (mediaItem(); as item) {
+    @if (loaded()) {
       <div class="hero__foot">
         <div class="hero__body">
           <div class="hero__actions">
-            <a class="btn btn--play" [routerLink]="['/media', item.id, 'play']">
-              <span class="btn__icon" aria-hidden="true">▶</span> Lejátszás
-            </a>
+            @if (playLink(); as link) {
+              <a class="btn btn--play" [routerLink]="link">
+                <span class="btn__icon" aria-hidden="true">▶</span> Lejátszás
+              </a>
+            }
 
             <button class="btn btn--circle" type="button" aria-label="Kedvencekhez adás"
               title="Kedvencekhez adás">
@@ -60,16 +61,20 @@
               </svg>
             </button>
 
-            <button class="btn btn--ghost" type="button" (click)="openEnrichDialog()"
-              [disabled]="enriching()">
-              {{ enriching() ? 'Enrich…' : 'Enrich' }}
-            </button>
+            @if (enrichMediaId()) {
+              <button class="btn btn--ghost" type="button" (click)="enrichDialogOpen.set(true)">
+                Enrich
+              </button>
+            }
           </div>
 
-          @if (item.overview) {
-            <p class="hero__overview">{{ item.overview }}</p>
+          @if (overview(); as overview) {
+            <p class="hero__overview">{{ overview }}</p>
           }
         </div>
+
+        <!-- Whatever the page puts below the overview, styled by that page. -->
+        <ng-content />
 
         <div class="hero__spacer"></div>
       </div>
@@ -77,7 +82,5 @@
   </div>
 </div>
 
-@if (enrichDialogOpen()) {
-  <app-enrich-dialog [busy]="enriching()" (confirmed)="enrich($event)"
-    (cancelled)="closeEnrichDialog()" />
-}
+<app-enrich-dialog [(open)]="enrichDialogOpen" [mediaId]="enrichMediaId()"
+  (enriched)="enriched.emit()" />

@@ -7,6 +7,11 @@
     z-index: 5;
   }
 
+  /* Episodes only have a 16:9 still, so lists that mix them in ask for that shape. */
+  &--still &__poster {
+    aspect-ratio: 16 / 9;
+  }
+
   &__poster {
     position: relative;
     aspect-ratio: 2 / 3;

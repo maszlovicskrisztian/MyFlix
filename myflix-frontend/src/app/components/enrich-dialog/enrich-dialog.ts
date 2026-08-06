@@ -1,14 +1,18 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
   HostListener,
+  effect,
+  inject,
   input,
+  linkedSignal,
+  model,
   output,
   signal,
   viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MetadataService } from '../../services/metadata-service';
 
 /** Accepts `tt0111161`, `TT0111161` or a bare `0111161`. */
 const IMDB_ID = /^(?:tt)?(\d{7,8})$/i;
@@ -19,19 +23,21 @@ const IMDB_ID = /^(?:tt)?(\d{7,8})$/i;
   templateUrl: './enrich-dialog.html',
   styleUrl: './enrich-dialog.scss',
 })
-export class EnrichDialog implements AfterViewInit {
-  busy = input(false);
+export class EnrichDialog {
+  private metadataService = inject(MetadataService);
 
-  confirmed = output<string>();
-  cancelled = output<void>();
+  open = model(false);
+  mediaId = input<string | null>(null);
+  enriched = output<void>();
+  busy = signal(false);
 
-  imdbId = signal('');
-  error = signal<string | null>(null);
+  imdbId = linkedSignal<boolean, string>({ source: this.open, computation: () => '' });
+  error = linkedSignal<boolean, string | null>({ source: this.open, computation: () => null });
 
   private imdbInput = viewChild<ElementRef<HTMLInputElement>>('imdbInput');
 
-  ngAfterViewInit(): void {
-    this.imdbInput()?.nativeElement.focus();
+  constructor() {
+    effect(() => this.imdbInput()?.nativeElement.focus());
   }
 
   submit(): void {
@@ -42,8 +48,28 @@ export class EnrichDialog implements AfterViewInit {
       return;
     }
 
+    const mediaId = this.mediaId();
+
+    if (!mediaId) {
+      this.error.set('Hiányzik a tartalom azonosítója.');
+      return;
+    }
+
     this.error.set(null);
-    this.confirmed.emit(`tt${match[1]}`);
+    this.busy.set(true);
+
+    this.metadataService.enrichByImdbId(mediaId, `tt${match[1]}`).subscribe({
+      next: () => {
+        this.busy.set(false);
+        this.open.set(false);
+        this.enriched.emit();
+      },
+      error: (error) => {
+        console.error('Error enriching metadata:', error);
+        this.busy.set(false);
+        this.error.set('Nem sikerült betölteni a metaadatokat.');
+      },
+    });
   }
 
   cancel(): void {
@@ -51,11 +77,15 @@ export class EnrichDialog implements AfterViewInit {
       return;
     }
 
-    this.cancelled.emit();
+    this.open.set(false);
   }
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
+    if (!this.open()) {
+      return;
+    }
+
     this.cancel();
   }
 }
