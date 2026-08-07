@@ -30,8 +30,8 @@ export class ShowDetails implements OnInit {
   });
 
   playLink = computed<HeroLink | null>(() => {
-    const item = this.show();
-    return item ? ['/media', item.seasons[0].episodes[0].fileInfoId, 'play'] : null;
+    const item = this.show()?.seasons[0]?.episodes[0];
+    return item ? ['/media', item.fileInfoId, 'play'] : null;
   });
 
   private brokenSeasonPosters = linkedSignal<ShowDetailsResponse | null, Set<number>>({

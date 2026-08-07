@@ -1,5 +1,4 @@
 import { inject, Service } from '@angular/core';
-import { MediaItem } from '../model/media-item';
 import { environment } from '../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { MediaBaseResponse } from '../model/media-base-response';
@@ -21,6 +20,5 @@ export class ShowService {
     }
     
     public getSuggestedSeries() {
-        return Array<MediaItem>();
     }
 }

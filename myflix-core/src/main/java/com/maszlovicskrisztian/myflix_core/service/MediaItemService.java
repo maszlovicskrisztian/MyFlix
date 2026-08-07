@@ -1,9 +1,9 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
-import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
 import com.maszlovicskrisztian.myflix_core.dtos.MediaProbeResult;
+import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
-import com.maszlovicskrisztian.myflix_core.mapping.MediaItemMapper;
+import com.maszlovicskrisztian.myflix_core.mapping.MediaBaseMapper;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
 import com.maszlovicskrisztian.myflix_core.repository.RelativePathProjection;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MediaItemService {
     private final FileInfoRepository fileInfoRepository;
-    private final MediaItemMapper mapper;
+    private final MediaBaseMapper mapper;
     private final MediaPathResolver mediaPathResolver;
     private final FfProbeService probeService;
 
@@ -85,8 +85,11 @@ public class MediaItemService {
         return projection.map(RelativePathProjection::getRelativePath);
     }
 
-    public List<MediaItemDto> getAllMedia() {
-        return fileInfoRepository.findAll().stream().map(mapper::from).toList();
+    public List<MediaBaseResponse> getUnknownMedia() {
+        return fileInfoRepository.findAll().stream()
+                .filter(x -> x.getMovieMetadata() == null && x.getEpisodeMetadata() == null)
+                .map(mapper::fromUnknownMedia)
+                .toList();
     }
 
     public List<FileInfo> getAllMovies() {

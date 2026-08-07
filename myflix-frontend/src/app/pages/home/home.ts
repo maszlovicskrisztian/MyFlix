@@ -18,14 +18,14 @@ export class Home implements OnInit {
   continueWatching = signal<MediaBaseResponse[]>([]);
   suggestedMovies = signal<MediaBaseResponse[]>([]);
   suggestedSeries = signal<MediaBaseResponse[]>([]);
-  allMedia = signal<MediaBaseResponse[]>([]);
+  unknownMedia = signal<MediaBaseResponse[]>([]);
   profileId = computed(() => this.profileService.selectedProfileId());
 
   ngOnInit(): void {
     this.getContinueWatching();
     this.getSuggestedMovies();
     this.getSuggestedSeries();
-    this.getAllMedia();
+    this.getAllUnknownMedia();
   }
 
   getContinueWatching() {
@@ -48,44 +48,22 @@ export class Home implements OnInit {
     });
   }
 
-  getAllMedia() {
-    // this.mediaService
-    //   .getAllMedia()
-    //   .subscribe({
-    //     next: (items) => { this.allMedia.set(items); },
-    //     error: (error) => {
-    //       console.error('Error fetching all media items:', error);
-    //       this.allMedia.set([]);
-    //     }
-    //   }
-    // );
+  getAllUnknownMedia() {
+    this.mediaService
+      .getAllUnknownMedia()
+      .subscribe({
+        next: (items) => { this.unknownMedia.set(items); },
+        error: (error) => {
+          console.error('Error fetching unknown media items:', error);
+          this.unknownMedia.set([]);
+        }
+      }
+    );
   }
 
   getSuggestedMovies() {
-    // this.mediaService
-    //   .getSuggestedMovies()
-    //   .pipe(
-    //     catchError((error) => {
-    //       console.error('Error fetching media items:', error);
-    //       return of([]);
-    //     })
-    //   )
-    //   .subscribe(items => {
-    //     this.suggestedMovies.set(items);
-    // });
   }
 
   getSuggestedSeries() {
-  //   this.mediaService
-  //     .getSuggestedSeries()
-  //     .pipe(
-  //       catchError((error) => {
-  //         console.error('Error fetching media items:', error);
-  //         return of([]);
-  //       })
-  //     )
-  //     .subscribe(items => {
-  //       this.suggestedSeries.set(items);
-  //   });
   }
 }

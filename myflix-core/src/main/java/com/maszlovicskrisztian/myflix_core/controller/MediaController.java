@@ -31,9 +31,9 @@ public class MediaController {
     private final MediaPathResolver mediaPathResolver;
     private final FfProbeService probeService;
 
-    @GetMapping
-    public List<MediaItemDto> getAllMedia() {
-        return mediaItemService.getAllMedia();
+    @GetMapping("/unknown")
+    public List<MediaBaseResponse> getAllUnknownMedia() {
+        return mediaItemService.getUnknownMedia();
     }
 
     @GetMapping("/continue-watching")

@@ -1,6 +1,5 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
-import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MovieDetailsResponse;
 import com.maszlovicskrisztian.myflix_core.mapping.MediaBaseMapper;

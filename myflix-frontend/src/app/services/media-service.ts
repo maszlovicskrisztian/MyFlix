@@ -1,5 +1,4 @@
 import { inject, Service } from '@angular/core';
-import { MediaItem } from '../model/media-item';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../environments/environment';
 import { WatchProgressResponse } from '../model/watch-progress-response';
@@ -11,9 +10,9 @@ import { MediaBaseResponse } from '../model/media-base-response';
 export class MediaService {
     http = inject(HttpClient);
     
-    public getAllMedia(): Observable<Array<MediaItem>> {
-        const url = `${environment.apiUrl}/media`;
-        return this.http.get<Array<MediaItem>>(url);
+    public getAllUnknownMedia(): Observable<Array<MediaBaseResponse>> {
+        const url = `${environment.apiUrl}/media/unknown`;
+        return this.http.get<Array<MediaBaseResponse>>(url);
     }
 
     public getContinueWatching(profileId: number): Observable<Array<MediaBaseResponse>> {

@@ -19,7 +19,7 @@ export class Movies implements OnInit {
     this.movieService.getMovies().subscribe({
       next: (movies) => {
         this.movies.set(movies);
-        var newMovies = movies.sort((a, b) => b.fileInfoId - a.fileInfoId).slice(-5);
+        var newMovies = movies.sort((a, b) => b.fileInfoId! - a.fileInfoId!).slice(-5);
         this.newMovies.set(newMovies);
       },
       error: (err) => console.error('Hiba a filmek lekérésekor', err),

@@ -19,7 +19,7 @@ export class Shows {
     this.showService.getShows().subscribe({
       next: (shows) => {
         this.shows.set(shows);
-        var newEpisodes = shows.sort((a, b) => b.showId - a.showId).slice(-5);
+        var newEpisodes = shows.sort((a, b) => b.showId! - a.showId!).slice(-5);
         this.newEpisodes.set(newEpisodes);
       },
       error: (err) => console.error('Hiba a sorozatok lekérésekor', err),

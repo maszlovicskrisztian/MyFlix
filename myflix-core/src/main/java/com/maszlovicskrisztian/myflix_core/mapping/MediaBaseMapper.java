@@ -48,12 +48,25 @@ public class MediaBaseMapper {
             );
         } else {
             EpisodeMetadata episodeMetadata = model.getEpisodeMetadata();
-            return new MediaBaseResponse(
-                    episodeMetadata.getShow().getId(),
-                    model.getId(),
-                    episodeMetadata.getTitle(),
-                    imageUrlResolver.toImageUrl(episodeMetadata.getStillPath())
-            );
+            if (episodeMetadata != null) {
+                return new MediaBaseResponse(
+                        episodeMetadata.getShow().getId(),
+                        model.getId(),
+                        episodeMetadata.getTitle(),
+                        imageUrlResolver.toImageUrl(episodeMetadata.getStillPath())
+                );
+            }
         }
+
+        return null;
+    }
+
+    public MediaBaseResponse fromUnknownMedia(FileInfo model) {
+        return new MediaBaseResponse(
+                null,
+                model.getId(),
+                model.getRelativePath(),
+                null
+        );
     }
 }

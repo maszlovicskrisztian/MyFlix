@@ -58,6 +58,9 @@ public class WatchProgressService {
         if (progressList == null)
             return null;
 
-        return progressList.stream().map(WatchProgress::getFileInfo).map(mediaBaseMapper::fromContinueWatching).toList();
+        return progressList.stream()
+                .map(WatchProgress::getFileInfo)
+                .filter(x -> x.getMovieMetadata() != null || x.getEpisodeMetadata() != null)
+                .map(mediaBaseMapper::fromContinueWatching).toList();
     }
 }

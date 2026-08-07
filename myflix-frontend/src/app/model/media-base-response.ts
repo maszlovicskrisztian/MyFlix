@@ -1,6 +1,6 @@
 export type MediaBaseResponse = {
-    showId: number;
-    fileInfoId: number;
+    showId: number | null;
+    fileInfoId: number | null;
     title: string;
     imagePath: string;
 }
