@@ -36,6 +36,13 @@ public class MediaMetadataService {
         mediaMissingMetadata.forEach(this::enrichMedia);
     }
 
+    public void enrichMedias(List<FileInfo> files) {
+        if (files == null || files.isEmpty())
+            return;
+
+        files.forEach(this::enrichMedia);
+    }
+
     public void enrichMediaByImdbId(Long fileInfoId,  String imdbId) {
         FileInfo media = fileInfoRepository.findById(fileInfoId).orElse(null);
 

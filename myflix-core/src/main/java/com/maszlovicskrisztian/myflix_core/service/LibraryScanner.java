@@ -2,6 +2,7 @@ package com.maszlovicskrisztian.myflix_core.service;
 
 import com.maszlovicskrisztian.myflix_core.helpers.FileHelper;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
+import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,9 @@ public class LibraryScanner {
     private final FileHelper fileHelper;
     private final MediaPathResolver mediaPathResolver;
 
-    public void scanAndSave() throws IOException {
+    public List<FileInfo> scanAndSave() throws IOException {
         List<Path> files = scanNewFiles();
-        mediaItemService.addMediaItems(files);
+        return mediaItemService.addMediaItems(files);
     }
 
     public List<Path> scanNewFiles() throws IOException {

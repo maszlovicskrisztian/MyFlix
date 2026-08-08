@@ -26,16 +26,16 @@ public class MediaItemService {
     private final MediaPathResolver mediaPathResolver;
     private final TranscodeService transcodeService;
 
-    public void addMediaItems(List<Path> relativePaths) {
+    public List<FileInfo> addMediaItems(List<Path> relativePaths) {
         if (relativePaths == null || relativePaths.isEmpty())
-            return;
+            return null;
 
-        relativePaths.forEach(this::addNewMediaItem);
+        return relativePaths.stream().map(this::addNewMediaItem).toList();
     }
 
-    public void addNewMediaItem(Path relativePath) {
+    public FileInfo addNewMediaItem(Path relativePath) {
         if (relativePath == null)
-            return;
+            return null;
 
         Path absoluteFile = mediaPathResolver.getMediaPath().resolve(relativePath);
         MediaProbeResult probeResult;
@@ -57,7 +57,7 @@ public class MediaItemService {
             item.setDurationSeconds(probeResult.durationSeconds());
         }
 
-        fileInfoRepository.save(item);
+        return fileInfoRepository.save(item);
     }
 
     public void saveMedia(FileInfo fileInfo) {
