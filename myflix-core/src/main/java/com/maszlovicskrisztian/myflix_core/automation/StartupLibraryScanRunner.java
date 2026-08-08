@@ -1,5 +1,6 @@
-package com.maszlovicskrisztian.myflix_core.service;
+package com.maszlovicskrisztian.myflix_core.automation;
 
+import com.maszlovicskrisztian.myflix_core.service.LibraryScanner;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,6 @@ public class StartupLibraryScanRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        libraryScanner.scan();
+        libraryScanner.scanAndSave();
     }
 }

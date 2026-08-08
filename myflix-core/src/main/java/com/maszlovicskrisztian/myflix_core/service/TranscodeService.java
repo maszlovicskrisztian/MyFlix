@@ -1,13 +1,17 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
 import com.maszlovicskrisztian.myflix_core.dtos.HlsSession;
+import com.maszlovicskrisztian.myflix_core.dtos.MediaProbeResult;
 import com.maszlovicskrisztian.myflix_core.helpers.HlsSessionRegistry;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,21 +20,26 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
-public class HlsTranscodeService {
+public class TranscodeService {
 
     private final HlsSessionRegistry sessionRegistry;
+    private final ObjectMapper objectMapper;
 
     @Value("${FFMPEG_PATH:ffmpeg}")
     private String ffmpegPath;
 
     @Value("${HLS_PATH}")
     private String hlsBasePath;
+
+    @Value("${ffprobe.path:ffprobe}")
+    private String ffprobePath;
 
     public void touch(Long mediaId) {
         sessionRegistry.touch(mediaId);
@@ -50,6 +59,72 @@ public class HlsTranscodeService {
             }
         });
         return session.playlistPath();
+    }
+
+    public Path getSessionDir(@NonNull Long mediaId) {
+        return Paths.get(hlsBasePath, mediaId.toString());
+    }
+
+    public void waitForFirstSegment(Path playlist, Duration timeout, Integer minSegments) throws TimeoutException {
+        Path sessionDir = playlist.getParent();
+        Instant deadline = Instant.now().plus(timeout);
+        while (Instant.now().isBefore(deadline)) {
+            if (Files.exists(playlist) && hasMinSegment(sessionDir, minSegments)) {
+                return;
+            }
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new TimeoutException("Megszakítva várakozás közben");
+            }
+        }
+        throw new TimeoutException("A transzkódolás nem készült el időben");
+    }
+
+    public MediaProbeResult probe(Path file) throws IOException {
+        List<String> command = List.of(
+                ffprobePath, "-v", "quiet", "-print_format", "json",
+                "-show_format", "-show_streams", file.toString()
+        );
+
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.redirectError(ProcessBuilder.Redirect.DISCARD);
+
+        Process process = pb.start();
+
+        JsonNode root;
+        try (InputStream stdout = process.getInputStream()) {
+            root = objectMapper.readTree(stdout);
+        }
+
+        boolean finished;
+        try {
+            finished = process.waitFor(15, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("ffprobe megszakítva", e);
+        }
+        if (!finished) {
+            process.destroyForcibly();
+            throw new IOException("ffprobe időtúllépés: " + file);
+        }
+
+        String videoCodec = findCodec(root, "video");
+        String audioCodec = findCodec(root, "audio");
+        long durationSeconds = (long)(root.path("format").path("duration").asDouble());
+        String container = root.path("format").path("format_name").asString(null);
+
+        return new MediaProbeResult(videoCodec, audioCodec, container, durationSeconds);
+    }
+
+    private String findCodec(JsonNode root, String codecType) {
+        for (JsonNode stream : root.path("streams")) {
+            if (codecType.equals(stream.path("codec_type").asString())) {
+                return stream.path("codec_name").asString(null);
+            }
+        }
+        return null;
     }
 
     private HlsSession startSession(Path sourceFile, Long mediaId, long startSeconds) throws IOException {
@@ -89,27 +164,6 @@ public class HlsTranscodeService {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (process.isAlive()) process.destroyForcibly();
         }));
-    }
-
-    public Path getSessionDir(@NonNull Long mediaId) {
-        return Paths.get(hlsBasePath, mediaId.toString());
-    }
-
-    public void waitForFirstSegment(Path playlist, Duration timeout, Integer minSegments) throws TimeoutException {
-        Path sessionDir = playlist.getParent();
-        Instant deadline = Instant.now().plus(timeout);
-        while (Instant.now().isBefore(deadline)) {
-            if (Files.exists(playlist) && hasMinSegment(sessionDir, minSegments)) {
-                return;
-            }
-            try {
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new TimeoutException("Megszakítva várakozás közben");
-            }
-        }
-        throw new TimeoutException("A transzkódolás nem készült el időben");
     }
 
     private boolean hasMinSegment(Path sessionDir, Integer minSegments) {

@@ -1,7 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
-import com.maszlovicskrisztian.myflix_core.service.HlsTranscodeService;
+import com.maszlovicskrisztian.myflix_core.service.TranscodeService;
 import com.maszlovicskrisztian.myflix_core.service.MediaItemService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
@@ -25,7 +24,7 @@ import java.util.concurrent.TimeoutException;
 @RequestMapping("/api/media/{id}/stream")
 public class StreamController {
 
-    private final HlsTranscodeService hlsTranscodeService;
+    private final TranscodeService transcodeService;
     private final MediaItemService mediaItemService;
     private final MediaPathResolver mediaPathResolver;
 
@@ -37,7 +36,7 @@ public class StreamController {
         String relativePath = mediaItemService.getRelativePathById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        File file = Paths.get(mediaPathResolver.getMediaPath()).resolve(relativePath).toFile();
+        File file = mediaPathResolver.getMediaPath().resolve(relativePath).toFile();
         long contentLength = file.length();
         List<HttpRange> ranges = headers.getRange();
 
@@ -87,11 +86,11 @@ public class StreamController {
         String relativePath = mediaItemService.getRelativePathById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        Path sourceFile = Paths.get(mediaPathResolver.getMediaPath()).resolve(relativePath);
-        Path playlist = hlsTranscodeService.getOrStartSession(sourceFile, id, startSeconds);
+        Path sourceFile = mediaPathResolver.getMediaPath().resolve(relativePath);
+        Path playlist = transcodeService.getOrStartSession(sourceFile, id, startSeconds);
 
         try {
-            hlsTranscodeService.waitForFirstSegment(playlist, Duration.ofSeconds(15), 3);
+            transcodeService.waitForFirstSegment(playlist, Duration.ofSeconds(15), 3);
         } catch (TimeoutException e) {
             throw new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT, e.getMessage());
         }
@@ -111,9 +110,9 @@ public class StreamController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        hlsTranscodeService.touch(id);
+        transcodeService.touch(id);
 
-        Path segmentPath = hlsTranscodeService.getSessionDir(id).resolve(segmentName);
+        Path segmentPath = transcodeService.getSessionDir(id).resolve(segmentName);
         if (!Files.exists(segmentPath)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }

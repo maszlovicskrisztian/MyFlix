@@ -1,13 +1,18 @@
 package com.maszlovicskrisztian.myflix_core.helpers;
 
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-@Getter
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Component
 public class MediaPathResolver {
 
     @Value("${MEDIA_PATH}")
-    private String mediaPath;
+    private String mediaPathString;
+
+    public Path getMediaPath() {
+        return Paths.get(mediaPathString);
+    }
 }

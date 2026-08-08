@@ -22,21 +22,26 @@ public class LibraryScanner {
     private final FileHelper fileHelper;
     private final MediaPathResolver mediaPathResolver;
 
-    public void scan() throws IOException {
-        String mediaPath = mediaPathResolver.getMediaPath();
+    public void scanAndSave() throws IOException {
+        List<Path> files = scanNewFiles();
+        mediaItemService.addMediaItems(files);
+    }
 
-        Path root = Paths.get(mediaPath);
+    public List<Path> scanNewFiles() throws IOException {
         Set<String> existingItemPaths = mediaItemService.getAllRelativePaths();
+        return scanAllFiles().stream().filter(p -> !existingItemPaths.contains(p.toString())).toList();
+    }
+
+    public List<Path> scanAllFiles() throws IOException {
+        Path root = mediaPathResolver.getMediaPath();
 
         try (Stream<Path> paths = Files.walk(root)) {
-                List<Path> videoFiles = paths
-                        .filter(Files::isRegularFile)
-                        .filter(fileHelper::hasVideoExtension)
-                        .filter(p -> !fileHelper.isSample(p))
-                        .filter(p -> !existingItemPaths.contains(root.relativize(p).toString()))
-                        .toList();
-
-                mediaItemService.addMediaItems(videoFiles);
+            return paths
+                    .filter(Files::isRegularFile)
+                    .filter(fileHelper::hasVideoExtension)
+                    .filter(p -> !fileHelper.isSample(p))
+                    .map(root::relativize)
+                    .toList();
         }
     }
 }

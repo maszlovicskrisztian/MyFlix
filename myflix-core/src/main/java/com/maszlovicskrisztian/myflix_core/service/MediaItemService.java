@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,38 +24,30 @@ public class MediaItemService {
     private final FileInfoRepository fileInfoRepository;
     private final MediaBaseMapper mapper;
     private final MediaPathResolver mediaPathResolver;
-    private final FfProbeService probeService;
+    private final TranscodeService transcodeService;
 
-    public void addMediaItems(List<Path> paths) {
-        if (paths == null || paths.isEmpty())
+    public void addMediaItems(List<Path> relativePaths) {
+        if (relativePaths == null || relativePaths.isEmpty())
             return;
 
-        paths.forEach(p-> {
-            try {
-                addNewMediaItem(p);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        relativePaths.forEach(this::addNewMediaItem);
     }
 
-    public void addNewMediaItem(Path path) throws IOException {
-        if (path == null)
+    public void addNewMediaItem(Path relativePath) {
+        if (relativePath == null)
             return;
 
+        Path absoluteFile = mediaPathResolver.getMediaPath().resolve(relativePath);
         MediaProbeResult probeResult;
         try {
-            probeResult = probeService.probe(path);
+            probeResult = transcodeService.probe(absoluteFile);
         } catch (IOException e) {
             System.out.println("HIBA " + e.toString());
             probeResult = null;
         }
 
-        Path root = Paths.get(mediaPathResolver.getMediaPath());
-        String relativePath = root.relativize(path).toString();
-
         FileInfo item = new FileInfo();
-        item.setRelativePath(relativePath);
+        item.setRelativePath(relativePath.toString());
         item.setAddedAt(LocalDateTime.now());
 
         if (probeResult != null) {
@@ -77,7 +68,8 @@ public class MediaItemService {
     }
 
     public Set<String> getAllRelativePaths() {
-        return fileInfoRepository.findAll().stream().map(FileInfo::getRelativePath).collect(Collectors.toSet());
+        List<RelativePathProjection> projections = fileInfoRepository.findAllBy(RelativePathProjection.class);
+        return projections.stream().map(RelativePathProjection::getRelativePath).collect(Collectors.toSet());
     }
 
     public Optional<String> getRelativePathById(Long id) {
@@ -101,5 +93,14 @@ public class MediaItemService {
 
     public Optional<FileInfo> getMediaById(Long id) {
         return fileInfoRepository.findById(id);
+    }
+
+    public List<FileInfo> getAll() {
+        return fileInfoRepository
+                .findAll();
+    }
+
+    public void deleteFileInfos(List<FileInfo> files) {
+        fileInfoRepository.deleteAll(files);
     }
 }

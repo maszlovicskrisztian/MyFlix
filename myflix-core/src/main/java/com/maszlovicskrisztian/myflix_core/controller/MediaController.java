@@ -8,8 +8,8 @@ import com.maszlovicskrisztian.myflix_core.dtos.response.WatchProgressResponse;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import com.maszlovicskrisztian.myflix_core.helpers.PlaybackCompatibility;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
-import com.maszlovicskrisztian.myflix_core.service.FfProbeService;
 import com.maszlovicskrisztian.myflix_core.service.MediaItemService;
+import com.maszlovicskrisztian.myflix_core.service.TranscodeService;
 import com.maszlovicskrisztian.myflix_core.service.WatchProgressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
@@ -18,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class MediaController {
     private final MediaItemService mediaItemService;
     private final WatchProgressService watchProgressService;
     private final MediaPathResolver mediaPathResolver;
-    private final FfProbeService probeService;
+    private final TranscodeService transcodeService;
 
     @GetMapping("/unknown")
     public List<MediaBaseResponse> getAllUnknownMedia() {
@@ -69,8 +68,8 @@ public class MediaController {
 
         MediaProbeResult probeResult;
         if (item.getCodec() == null) {
-            Path file = Paths.get(mediaPathResolver.getMediaPath()).resolve(item.getRelativePath());
-            probeResult = probeService.probe(file);
+            Path file = mediaPathResolver.getMediaPath().resolve(item.getRelativePath());
+            probeResult = transcodeService.probe(file);
             item.setCodec(probeResult.videoCodec());
             item.setAudioCodec(probeResult.audioCodec());
             item.setContainer(probeResult.container());
