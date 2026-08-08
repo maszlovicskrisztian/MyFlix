@@ -20,10 +20,11 @@
     [mediaBaseResponses]="suggestedSeries()" 
     emptyMessage="Nézz valamit, hogy tudjunk ajánlani.">
   </app-media-section>
-  <app-media-section 
-    layout="grid"
-    title="Összes média" 
-    [mediaBaseResponses]="unknownMedia()" 
-    emptyMessage="Nincs elérhető média.">
-  </app-media-section>
+  @if (unknownMedia().length > 0) {
+    <app-media-section 
+      layout="grid"
+      title="Ismeretlen média" 
+      [mediaBaseResponses]="unknownMedia()">
+    </app-media-section>
+  }
 </div>
