@@ -1,0 +1,23 @@
+services:
+  myflix:
+    image: ghcr.io/maszlovicskrisztian/myflix:0.1.0
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - LOG_LEVEL=DEBUG
+      - MEDIA_PATH=/media
+      - MEDIA_INCLUDE_FOLDERS=
+      - HLS_PATH=/data/hls
+      - DB_PATH=/data/myflix
+      - HLS_IDLE_TIMEOUT_MINUTES=5
+      - HLS_CLEANUP_INTERVAL_MINUTES=5
+      - WATCHER_DEBOUNCE_MINUTES=10
+      - FILE_INFO_PURGE_INTERVAL_HOURS=24
+      - ADMIN_USER=<admin username>
+      - ADMIN_PASSWORD=<admin password>
+      - JWT_SECRET=<jwt secret>
+      - TMDB_API=<tmdb api read access token>
+    volumes:
+      - <path_to_media>:/media:ro
+      - <path_to_data>:/data

@@ -1,0 +1,86 @@
+<div class="detail">
+  <div class="hero">
+    <div class="hero__stage">
+      <div class="hero__backdrop">
+        @if (backdropUrl(); as backdrop) {
+          <img class="hero__backdrop-img" [src]="backdrop" alt="" (error)="onBackdropError()" />
+        }
+      </div>
+      <div class="hero__scrim"></div>
+
+      <div class="hero__nav">
+        <a class="back" [routerLink]="backLink()" [attr.aria-label]="backLabel()"
+          [title]="backLabel()">
+          <svg class="back__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+        </a>
+      </div>
+
+      @if (loaded()) {
+        <div class="hero__head">
+          <h1 class="hero__title">{{ title() }}</h1>
+
+          <div class="hero__meta">
+            <span class="badge">HD</span>
+            @for (item of metaItems(); track item) {
+              <span class="hero__meta-item">{{ item }}</span>
+            }
+          </div>
+
+          @if (runtime(); as runtime) {
+            <p class="hero__runtime">
+              <span class="hero__runtime-icon" aria-hidden="true">◷</span>
+              Játékidő: <span class="hero__runtime-value">{{ runtime }}</span>
+            </p>
+          }
+        </div>
+      } @else {
+        <div class="loading">
+          <div class="mf-spinner" aria-hidden="true"></div>
+          <p class="loading__text">Betöltés…</p>
+        </div>
+      }
+    </div>
+
+    @if (loaded()) {
+      <div class="hero__foot">
+        <div class="hero__body">
+          <div class="hero__actions">
+            @if (playLink(); as link) {
+              <a class="btn btn--play" [routerLink]="link">
+                <span class="btn__icon" aria-hidden="true">▶</span> Lejátszás
+              </a>
+            }
+
+            <button class="btn btn--circle" type="button" aria-label="Kedvencekhez adás"
+              title="Kedvencekhez adás">
+              <svg class="btn__heart" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            </button>
+
+            @if (enrichMediaId()) {
+              <button class="btn btn--ghost" type="button" (click)="enrichDialogOpen.set(true)">
+                Enrich
+              </button>
+            }
+          </div>
+
+          @if (overview(); as overview) {
+            <p class="hero__overview">{{ overview }}</p>
+          }
+        </div>
+
+        <!-- Whatever the page puts below the overview, styled by that page. -->
+        <ng-content />
+
+        <div class="hero__spacer"></div>
+      </div>
+    }
+  </div>
+</div>
+
+<app-enrich-dialog [(open)]="enrichDialogOpen" [mediaId]="enrichMediaId()"
+  (enriched)="enriched.emit()" />

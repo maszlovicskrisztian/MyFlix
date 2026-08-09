@@ -1,0 +1,52 @@
+<app-media-hero 
+  [loaded]="!!season()" 
+  [title]="season()?.title ?? ''"
+  [overview]="season()?.overview ?? null" 
+  [backdropPath]="show()?.backdropPath ?? null"
+  [metaItems]="metaItems()" 
+  [backLink]="['/shows', showId()]" backLabel="Vissza a sorozathoz"
+  [playLink]="playLink()" 
+  [enrichMediaId]="showId()" 
+  (enriched)="loadShow()">
+
+  @if (season(); as item) {
+    @if (item.episodes.length) {
+      <section class="episodes">
+        <h2 class="episodes__title">Epizódok</h2>
+
+        <div class="episodes__grid">
+          @for (episode of item.episodes; track episode.episodeNumber) {
+            <a class="episode-card" [routerLink]="['/media', episode.fileInfoId, 'play']">
+              <div class="episode-card__still">
+                @if (episodeStillUrl(episode); as still) {
+                  <img class="episode-card__still-img" [src]="still" [alt]="episode.title"
+                    loading="lazy" (error)="onEpisodeStillError(episode)" />
+                } @else {
+                  <span class="episode-card__still-title">{{ episode.title }}</span>
+                }
+
+                <div class="episode-card__overlay">
+                  <span class="episode-card__play" aria-hidden="true">▶</span>
+                </div>
+              </div>
+
+              <div class="episode-card__meta">
+                <span class="episode-card__name">
+                  {{ episode.episodeNumber }}. {{ episode.title }}
+                </span>
+
+                @if (episode.runtimeMinutes) {
+                  <span class="episode-card__sub">{{ episode.runtimeMinutes }} perc</span>
+                }
+
+                @if (episode.overview) {
+                  <p class="episode-card__overview">{{ episode.overview }}</p>
+                }
+              </div>
+            </a>
+          }
+        </div>
+      </section>
+    }
+  }
+</app-media-hero>

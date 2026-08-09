@@ -1,0 +1,51 @@
+<div class="profiles">
+  <header class="profiles__topbar">
+    <span class="profiles__brand">MyFlix</span>
+  </header>
+
+  <main class="profiles__main">
+    <h1 class="profiles__title">Ki nézi most?</h1>
+
+    <div class="profile-grid">
+      @for (profile of profiles(); track profile.id) {
+        <div class="profile-card">
+          <button
+            class="profile-card__select"
+            type="button"
+            (click)="selectProfile(profile)"
+          >
+            <span class="profile-card__avatar">
+              @if (profile.avatarKey) {
+                <img class="profile-card__avatar-img" [src]="avatarUrl(profile.avatarKey)" alt="" />
+              } @else {
+                {{ profile.name.charAt(0) }}
+              }
+            </span>
+          </button>
+
+          <span class="profile-card__name">{{ profile.name }}</span>
+
+          <button
+            class="profile-card__delete"
+            type="button"
+            [attr.aria-label]="'Profil törlése: ' + profile.name"
+            (click)="$event.stopPropagation(); deleteProfile(profile)"
+          >
+            ✕
+          </button>
+        </div>
+      }
+      <div class="profile-card">
+          <button
+            class="profile-card__select"
+            type="button"
+            routerLink="/profiles/add"
+          >
+            <span class="profile-card__avatar">+</span>
+          </button>
+
+          <span class="profile-card__name">Új profil</span>
+        </div>
+    </div>
+  </main>
+</div>

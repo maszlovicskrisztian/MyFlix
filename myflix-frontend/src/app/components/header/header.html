@@ -1,0 +1,80 @@
+<header class="topbar">
+    <a class="topbar__brand">MyFlix</a>
+
+    <nav class="topbar__nav">
+        <a class="topbar__link" [routerLink]="['/home']" routerLinkActive="topbar__link--active"
+            [routerLinkActiveOptions]="{ exact: true }">Kezdőlap</a>
+        <a class="topbar__link" [routerLink]="['/movies']" routerLinkActive="topbar__link--active"
+            [routerLinkActiveOptions]="{ exact: true }">Filmek</a>
+        <a class="topbar__link" [routerLink]="['/shows']" routerLinkActive="topbar__link--active"
+            [routerLinkActiveOptions]="{ exact: true }">Sorozatok</a>
+        <a class="topbar__link">Kedvencek</a>
+    </nav>
+
+    <div class="topbar__profile" #profileMenu>
+        <button class="profile-menu__trigger" type="button" [class.profile-menu__trigger--open]="menuOpen()"
+            [attr.aria-expanded]="menuOpen()" aria-haspopup="menu" aria-label="Profil menü"
+            (click)="toggleMenu()">
+            <span class="profile-menu__avatar">
+                @if (selectedProfileAvatar(); as avatar) {
+                    <img class="profile-menu__avatar-img" [src]="avatarUrl(avatar)" alt="" />
+                } @else {
+                    {{ profileInitial() }}
+                }
+            </span>
+            <span class="profile-menu__caret"></span>
+        </button>
+
+        @if (menuOpen()) {
+            <div class="profile-menu__dropdown" role="menu">
+                <button class="profile-menu__item" type="button" role="menuitem" (click)="switchProfile()">
+                    Profil váltás
+                </button>
+                <button class="profile-menu__item" type="button" role="menuitem" (click)="logout()">
+                    Kijelentkezés
+                </button>
+                <button class="profile-menu__item" type="button" role="menuitem" (click)="refreshLibrary()">
+                    Könyvtár frissítés
+                </button>
+            </div>
+        }
+    </div>
+</header>
+
+<!-- Phone-sized screens only: the topbar cannot fit four links, so they move here. -->
+<nav class="tabbar" aria-label="Fő navigáció">
+    <a class="tabbar__link" [routerLink]="['/home']" routerLinkActive="tabbar__link--active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 10.7 12 3.5l9 7.2" />
+            <path d="M5.7 9.6V20.5h12.6V9.6" />
+        </svg>
+        <span class="tabbar__label">Kezdőlap</span>
+    </a>
+
+    <a class="tabbar__link" [routerLink]="['/movies']" routerLinkActive="tabbar__link--active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="16" rx="2" />
+            <path d="M8 4v16M16 4v16M3 9h5M3 15h5M16 9h5M16 15h5" />
+        </svg>
+        <span class="tabbar__label">Filmek</span>
+    </a>
+
+    <a class="tabbar__link" [routerLink]="['/shows']" routerLinkActive="tabbar__link--active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="2.5" y="6.5" width="19" height="12.5" rx="2" />
+            <path d="m8 3 4 3.5L16 3" />
+        </svg>
+        <span class="tabbar__label">Sorozatok</span>
+    </a>
+
+    <a class="tabbar__link">
+        <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+                d="M12 20.6l-1.3-1.2C6 15.2 3 12.4 3 9.2 3 6.6 5 4.6 7.5 4.6c1.5 0 2.9.7 3.8 1.8.9-1.1 2.3-1.8 3.8-1.8C17.6 4.6 19.6 6.6 19.6 9.2c0 3.2-3 6-7.7 10.2L12 20.6z" />
+        </svg>
+        <span class="tabbar__label">Kedvencek</span>
+    </a>
+</nav>

@@ -1,77 +1,110 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
-import com.maszlovicskrisztian.myflix_core.dtos.MediaItemDto;
-import com.maszlovicskrisztian.myflix_core.model.MediaItem;
-import com.maszlovicskrisztian.myflix_core.repository.MediaItemRepository;
+import com.maszlovicskrisztian.myflix_core.dtos.MediaProbeResult;
+import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
+import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
+import com.maszlovicskrisztian.myflix_core.mapping.MediaBaseMapper;
+import com.maszlovicskrisztian.myflix_core.model.FileInfo;
+import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
+import com.maszlovicskrisztian.myflix_core.repository.RelativePathProjection;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MediaItemService {
-    private final MediaItemRepository mediaItemRepository;
+    private final FileInfoRepository fileInfoRepository;
+    private final MediaBaseMapper mapper;
+    private final MediaPathResolver mediaPathResolver;
+    private final TranscodeService transcodeService;
 
-    @Value("${MEDIA_PATH}")
-    private String mediaPath;
+    public List<FileInfo> addMediaItems(List<Path> relativePaths) {
+        if (relativePaths == null || relativePaths.isEmpty())
+            return null;
 
-    public void addMediaItems(List<Path> paths) {
-        if (paths == null || paths.isEmpty())
-            return;
-
-        paths.forEach(p-> {
-            try {
-                addNewMediaItem(p);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        return relativePaths.stream().map(this::addNewMediaItem).toList();
     }
 
-    public void addNewMediaItem(Path path) throws IOException {
-        if (path == null)
-            return;
+    public FileInfo addNewMediaItem(Path relativePath) {
+        if (relativePath == null)
+            return null;
 
-        Path root = Paths.get(mediaPath);
-        String relativePath = root.relativize(path).toString();
+        Path absoluteFile = mediaPathResolver.getMediaPath().resolve(relativePath);
+        MediaProbeResult probeResult;
+        try {
+            probeResult = transcodeService.probe(absoluteFile);
+        } catch (IOException e) {
+            log.error("Error during ffprobe task: {}", e.getMessage());
+            probeResult = null;
+        }
 
-        MediaItem item = new MediaItem();
-        item.setRelativePath(relativePath);
-        item.setTitle(String.valueOf(path.getFileName()));
-        item.setSizeBytes(Files.size(path));
+        FileInfo item = new FileInfo();
+        item.setRelativePath(relativePath.toString());
         item.setAddedAt(LocalDateTime.now());
-        mediaItemRepository.save(item);
+
+        if (probeResult != null) {
+            item.setCodec(probeResult.videoCodec());
+            item.setAudioCodec(probeResult.audioCodec());
+            item.setContainer(probeResult.container());
+            item.setDurationSeconds(probeResult.durationSeconds());
+        }
+
+        return saveMedia(item);
+    }
+
+    public FileInfo saveMedia(FileInfo fileInfo) {
+        if (fileInfo == null)
+            return null;
+
+        FileInfo saved = fileInfoRepository.save(fileInfo);
+        log.info("Media from: {} saved successfully", fileInfo.getRelativePath());
+        return saved;
     }
 
     public Set<String> getAllRelativePaths() {
-        return mediaItemRepository.findAll().stream().map(MediaItem::getRelativePath).collect(Collectors.toSet());
+        List<RelativePathProjection> projections = fileInfoRepository.findAllBy(RelativePathProjection.class);
+        return projections.stream().map(RelativePathProjection::getRelativePath).collect(Collectors.toSet());
     }
 
-    public List<MediaItemDto> getAllMedia() {
-        return mediaItemRepository.findAll().stream().map(MediaItemDto::from).toList();
+    public Optional<String> getRelativePathById(Long id) {
+        Optional<RelativePathProjection> projection = fileInfoRepository.findById(id, RelativePathProjection.class);
+        return projection.map(RelativePathProjection::getRelativePath);
     }
 
-    public MediaItemDto getMediaDtoById(Long id) {
-        return mediaItemRepository
-                .findById(id)
-                .map(MediaItemDto::from)
-                .orElse(null);
+    public List<MediaBaseResponse> getUnknownMedia() {
+        return fileInfoRepository.findAll().stream()
+                .filter(x -> x.getMovieMetadata() == null && x.getEpisodeMetadata() == null)
+                .map(mapper::fromUnknownMedia)
+                .toList();
     }
 
-    public MediaItem getMediaById(Long id) {
-        return mediaItemRepository
-                .findById(id)
-                .orElse(null);
+    public List<FileInfo> getAllMovies() {
+        return fileInfoRepository
+                .findAll()
+                .stream().filter(x -> x.getMovieMetadata() != null)
+                .toList();
+    }
+
+    public Optional<FileInfo> getMediaById(Long id) {
+        return fileInfoRepository.findById(id);
+    }
+
+    public List<FileInfo> getAll() {
+        return fileInfoRepository
+                .findAll();
+    }
+
+    public void deleteFileInfos(List<FileInfo> files) {
+        fileInfoRepository.deleteAll(files);
     }
 }

@@ -1,0 +1,136 @@
+/* The hero comes from components/media-hero — what is left here is the season
+   grid this page projects under it. Projected content keeps this page's styles. */
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+$gutter: clamp(20px, 5vw, 60px);
+
+/* Mirrors the media-section grid + media-card poster so the seasons read as the
+   same kind of tile as the rows on the list pages. */
+.seasons {
+  padding: 36px $gutter 0;
+  animation: mf-rise-in 0.5s ease both;
+
+  &__title {
+    font-size: clamp(18px, 2.4vw, 24px);
+    font-weight: 700;
+    margin: 0 0 20px;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 28px 16px;
+  }
+}
+
+.season-card {
+  display: block;
+  transition: transform 0.25s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    z-index: 5;
+  }
+
+  &__poster {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+    box-shadow: var(--mf-shadow);
+    background: linear-gradient(160deg, #3a3a3a, #141414);
+  }
+
+  &__poster-img {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__poster-title {
+    position: relative;
+    z-index: 2;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  &:hover &__overlay,
+  &:focus-visible &__overlay {
+    opacity: 1;
+  }
+
+  &__play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid #fff;
+    color: #fff;
+    font-size: 20px;
+    padding-left: 4px;
+    backdrop-filter: blur(2px);
+  }
+
+  &__meta {
+    padding: 10px 2px 0;
+  }
+
+  &__name {
+    display: block;
+    font-size: 14px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__sub {
+    display: block;
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--mf-text-dim);
+  }
+}
+
+/* Poster colour variety by position, as on the media cards. */
+.season-card:nth-child(6n + 1) .season-card__poster { background: linear-gradient(160deg, #5a2a2a, #1a0e0e); }
+.season-card:nth-child(6n + 2) .season-card__poster { background: linear-gradient(160deg, #23405a, #0e1620); }
+.season-card:nth-child(6n + 3) .season-card__poster { background: linear-gradient(160deg, #3d2a5a, #150e20); }
+.season-card:nth-child(6n + 4) .season-card__poster { background: linear-gradient(160deg, #2a5a3d, #0e2016); }
+.season-card:nth-child(6n + 5) .season-card__poster { background: linear-gradient(160deg, #5a4a23, #201a0e); }
+.season-card:nth-child(6n + 6) .season-card__poster { background: linear-gradient(160deg, #4a4a4a, #141414); }
+
+@media (max-width: 600px) {
+  .seasons__grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 20px 12px;
+  }
+}

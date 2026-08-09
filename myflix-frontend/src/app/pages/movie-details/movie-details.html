@@ -1,0 +1,12 @@
+<app-media-hero 
+    [loaded]="!!movie()" 
+    [title]="movie()?.title ?? ''"
+    [overview]="movie()?.overview ?? null" 
+    [backdropPath]="movie()?.backdropPath ?? null"
+    [metaItems]="metaItems()" 
+    [runtime]="runtime()" 
+    [backLink]="['/movies']" backLabel="Vissza a listához" 
+    [playLink]="playLink()" 
+    [enrichMediaId]="movieId()"
+    (enriched)="loadMovie()"
+/>

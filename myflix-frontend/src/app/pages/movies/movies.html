@@ -1,0 +1,13 @@
+<app-header></app-header>
+<app-media-section
+    layout="row"
+    title="Újdonságok"
+    emptyMessage="Nincs elérhető új film."
+    [mediaBaseResponses]="newMovies()">
+</app-media-section>
+<app-media-section
+    layout="grid"
+    title="Összes film"
+    emptyMessage="Nincs elérhető film."
+    [mediaBaseResponses]="movies()">
+</app-media-section>

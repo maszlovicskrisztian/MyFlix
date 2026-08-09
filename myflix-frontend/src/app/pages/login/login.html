@@ -1,0 +1,42 @@
+<div class="login-page">
+  <div class="login-page__backdrop"></div>
+
+  <header class="login-page__header">
+    <span class="brand">MyFlix</span>
+  </header>
+
+  <main class="login-page__main">
+    <form class="login-card" (ngSubmit)="login()">
+      <h1 class="login-card__title">Bejelentkezés</h1>
+
+      <label class="field">
+        <input
+          class="field__input"
+          [(ngModel)]="username"
+          name="username"
+          placeholder=" "
+          autocomplete="username"
+        />
+        <span class="field__label">Felhasználónév</span>
+      </label>
+
+      <label class="field">
+        <input
+          class="field__input"
+          [(ngModel)]="password"
+          name="password"
+          type="password"
+          placeholder=" "
+          autocomplete="current-password"
+        />
+        <span class="field__label">Jelszó</span>
+      </label>
+
+      @if (errorMessage()) {
+        <p class="login-card__error">{{ errorMessage() }}</p>
+      }
+
+      <button class="btn btn--primary" type="submit">Bejelentkezés</button>
+    </form>
+  </main>
+</div>

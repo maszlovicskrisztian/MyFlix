@@ -1,0 +1,16 @@
+@if (mediaBase(); as item) {
+  <div class="card" [class.card--still]="aspect() === 'still'"
+    [routerLink]="[routeLink(), item?.fileInfoId || item?.showId]">
+    <div class="card__poster">
+        @if (posterUrl(); as poster) {
+          <img class="card__poster-img" [src]="poster" [alt]="displayTitle()" loading="lazy"
+            (error)="onPosterError()" />
+        } @else {
+          <span class="card__poster-title">{{ displayTitle() }}</span>
+        }
+    </div>
+    <div class="card__meta">
+        <span class="card__name">{{ displayTitle() }}</span>
+    </div>
+  </div>
+}

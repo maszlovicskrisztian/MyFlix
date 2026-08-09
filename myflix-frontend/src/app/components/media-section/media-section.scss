@@ -1,0 +1,90 @@
+.row {
+  padding: 8px clamp(20px, 5vw, 60px) 60px;
+
+  &__title {
+    font-size: clamp(18px, 2.4vw, 24px);
+    font-weight: 700;
+    margin: 8px 0 20px;
+  }
+}
+
+.items {
+  &--grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 28px 16px;
+  }
+
+  &--row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 16px;
+    overflow-x: auto;
+    /* A scroll container clips the cards' hover scale, so pad it out and pull
+       the padding back off with matching negative margins. */
+    padding: 12px 8px 20px;
+    margin: -12px -8px -20px;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-x: contain;
+
+    /* Scrollable, but without a visible bar. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &--row &__item {
+    flex: 0 0 auto;
+    width: clamp(140px, 16vw, 190px);
+    scroll-snap-align: start;
+  }
+
+  /* A 16:9 tile needs more width than a poster to end up a comparable height. */
+  &--still#{&}--grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+
+  &--still#{&}--row &__item {
+    width: clamp(220px, 26vw, 320px);
+  }
+}
+
+.empty {
+  padding: 60px 0;
+  text-align: center;
+  color: var(--mf-text-dim);
+
+  &__title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 8px;
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 600px) {
+  .items--grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 20px 12px;
+  }
+
+  .items--row .items__item {
+    width: 130px;
+  }
+
+  .items--still.items--grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+
+  .items--still.items--row .items__item {
+    width: 200px;
+  }
+}

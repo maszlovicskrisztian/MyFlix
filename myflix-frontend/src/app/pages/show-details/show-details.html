@@ -1,0 +1,33 @@
+<app-media-hero [loaded]="!!show()" [title]="show()?.title ?? ''"
+  [overview]="show()?.overview ?? null" [backdropPath]="show()?.backdropPath ?? null"
+  [metaItems]="metaItems()" [backLink]="['/shows']" backLabel="Vissza a listához"
+  [playLink]="playLink()" [enrichMediaId]="showId()" (enriched)="loadShow()">
+
+  @if (show(); as item) {
+    @if (item.seasons.length) {
+      <section class="seasons">
+        <h2 class="seasons__title">Évadok</h2>
+
+        <div class="seasons__grid">
+          @for (season of item.seasons; track season.seasonNumber) {
+            <a class="season-card" [routerLink]="['/shows', item.id, 'seasons', season.seasonNumber]">
+              <div class="season-card__poster">
+                @if (seasonPosterUrl(season); as poster) {
+                  <img class="season-card__poster-img" [src]="poster" [alt]="season.title"
+                    loading="lazy" (error)="onSeasonPosterError(season)" />
+                } @else {
+                  <span class="season-card__poster-title">{{ season.title }}</span>
+                }
+              </div>
+
+              <div class="season-card__meta">
+                <span class="season-card__name">{{ season.title }}</span>
+                <span class="season-card__sub">{{ season.episodes.length }} epizód</span>
+              </div>
+            </a>
+          }
+        </div>
+      </section>
+    }
+  }
+</app-media-hero>

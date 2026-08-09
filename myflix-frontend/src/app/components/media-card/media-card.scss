@@ -1,0 +1,97 @@
+.card {
+  display: block;
+  transition: transform 0.25s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    z-index: 5;
+  }
+
+  /* Episodes only have a 16:9 still, so lists that mix them in ask for that shape. */
+  &--still &__poster {
+    aspect-ratio: 16 / 9;
+  }
+
+  &__poster {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 16px;
+    box-shadow: var(--mf-shadow);
+    background: linear-gradient(160deg, #3a3a3a, #141414);
+  }
+
+  &__poster-img {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__poster-title {
+    position: relative;
+    z-index: 2;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  &:hover &__overlay {
+    opacity: 1;
+  }
+
+  &__play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid #fff;
+    color: #fff;
+    font-size: 20px;
+    padding-left: 4px;
+    backdrop-filter: blur(2px);
+  }
+
+  &__meta {
+    padding: 10px 2px 0;
+  }
+
+  &__name {
+    display: block;
+    font-size: 14px;
+    color: var(--mf-text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Poster color variety by position */
+.card:nth-child(6n + 1) .card__poster { background: linear-gradient(160deg, #5a2a2a, #1a0e0e); }
+.card:nth-child(6n + 2) .card__poster { background: linear-gradient(160deg, #23405a, #0e1620); }
+.card:nth-child(6n + 3) .card__poster { background: linear-gradient(160deg, #3d2a5a, #150e20); }
+.card:nth-child(6n + 4) .card__poster { background: linear-gradient(160deg, #2a5a3d, #0e2016); }
+.card:nth-child(6n + 5) .card__poster { background: linear-gradient(160deg, #5a4a23, #201a0e); }
+.card:nth-child(6n + 6) .card__poster { background: linear-gradient(160deg, #4a4a4a, #141414); }
