@@ -12,6 +12,7 @@ import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
 import com.maszlovicskrisztian.myflix_core.repository.MovieMetadataRepository;
 import com.maszlovicskrisztian.myflix_core.repository.ShowRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Path;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MediaMetadataService {
 
     private final MediaTitleParser parser;
@@ -44,15 +46,20 @@ public class MediaMetadataService {
     }
 
     public void enrichMediaByImdbId(Long fileInfoId,  String imdbId) {
+        log.trace("Enriching media by Imdb started.");
         FileInfo media = fileInfoRepository.findById(fileInfoId).orElse(null);
 
-        if (media == null)
+        if (media == null) {
+            log.warn("Could not find file info with id: {}. Enriching is not possible.", fileInfoId);
             return;
+        }
 
         ImdbSearchResponse response = tmdbClient.searchByImdbId(imdbId);
 
-        if (response == null)
+        if (response == null) {
+            log.warn("TMDB query for Imdb id: {} returned no result. Enriching is not possible.", imdbId);
             return;
+        }
 
         TmdbSearchResult result;
         if (response.movieResults() != null) {
@@ -61,26 +68,40 @@ public class MediaMetadataService {
         } else if (response.episodeResults() != null) {
             result = response.episodeResults().getFirst();
             enrichShow(result.showId(), result.season(), result.episode(), media);
+        } else {
+            log.warn("TMDB response for Imdb id {} had neither movie nor episode results", imdbId);
         }
+
+        log.trace("Enriching media by Imdb finished.");
     }
 
     public void enrichMedia(FileInfo fileInfo) {
         if (fileInfo == null)
             return;
 
-        if (fileInfo.getMovieMetadata() != null || fileInfo.getEpisodeMetadata() != null)
+        log.trace("Automatic enrich started for file info: {}", fileInfo.getId());
+
+        if (fileInfo.getMovieMetadata() != null || fileInfo.getEpisodeMetadata() != null) {
+            log.warn("File info: {} already enriched, automatic enrich not possible.", fileInfo.getId());
             return;
+        }
 
         try {
             Path relativePath = Paths.get(fileInfo.getRelativePath());
             String title = parser.getTitle(relativePath);
 
-            if (title == null) return;
+            if (title == null) {
+                log.warn("Could not resolve media title for file info: {}, automatic enrich not possible.", fileInfo.getId());
+                return;
+            }
 
             String year = parser.getYear(relativePath);
             TmdbSearchResult result = tmdbClient.searchBestMatch(title, year).orElse(null);
 
-            if (result == null) return; //át kell még gondolni
+            if (result == null) {
+                log.warn("TMDB query for title: {} year: {} returned no result. Enriching is not possible.", title, year);
+                return;
+            }
 
             boolean isMovie = result.mediaType().equals(MediaType.MOVIE.name().toLowerCase());
             if (isMovie) {
@@ -91,11 +112,16 @@ public class MediaMetadataService {
             Integer season = parser.getSeason(relativePath);
             Integer episode = parser.getEpisode(relativePath);
 
-            if (season == null || episode == null)
+            if (season == null || episode == null){
+                log.warn("TMDB query for title: {} returned a show but season/episode could not be resolved. Enriching is not possible.", title);
                 return;
+            }
 
             enrichShow(result.id(), season, episode, fileInfo);
+
+            log.trace("Automatic enrich finished for file info: {}", fileInfo.getId());
         } catch (Exception e) {
+            log.error("Error during automatic enrich for file info: {}: {}", fileInfo.getId(), e.getMessage());
         }
     }
 
@@ -115,6 +141,7 @@ public class MediaMetadataService {
             show.setPosterPath(showDetails.posterPath());
 
             savedShow = showRepository.save(show);
+            log.info("New show saved: {}", showDetails.name());
         }
 
         TmdbDetailsResponse seasonDetails = tmdbClient.getTvSeasonDetails(showId, season);
@@ -141,6 +168,7 @@ public class MediaMetadataService {
         episodeMetadata.setShow(savedShow);
 
         episodeMetadataRepository.save(episodeMetadata);
+        log.info("Episode {} in {} season {} saved successfully", episode, savedShow.getTitle(), season);
     }
 
     private void enrichMovie(FileInfo fileInfo, Long tmdbId) {
@@ -163,6 +191,7 @@ public class MediaMetadataService {
         metadata.setPosterPath(details.posterPath());
 
         movieMetadataRepository.save(metadata);
+        log.info("New movie saved: {}", details.title());
     }
 
     private LocalDate parseDateOrNull(String date) {

@@ -8,6 +8,7 @@ import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
 import com.maszlovicskrisztian.myflix_core.repository.RelativePathProjection;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MediaItemService {
     private final FileInfoRepository fileInfoRepository;
     private final MediaBaseMapper mapper;
@@ -42,7 +44,7 @@ public class MediaItemService {
         try {
             probeResult = transcodeService.probe(absoluteFile);
         } catch (IOException e) {
-            System.out.println("HIBA " + e.toString());
+            log.error("Error during ffprobe task: {}", e.getMessage());
             probeResult = null;
         }
 
@@ -57,14 +59,16 @@ public class MediaItemService {
             item.setDurationSeconds(probeResult.durationSeconds());
         }
 
-        return fileInfoRepository.save(item);
+        return saveMedia(item);
     }
 
-    public void saveMedia(FileInfo fileInfo) {
+    public FileInfo saveMedia(FileInfo fileInfo) {
         if (fileInfo == null)
-            return;
+            return null;
 
-        fileInfoRepository.save(fileInfo);
+        FileInfo saved = fileInfoRepository.save(fileInfo);
+        log.info("Media from: {} saved successfully", fileInfo.getRelativePath());
+        return saved;
     }
 
     public Set<String> getAllRelativePaths() {

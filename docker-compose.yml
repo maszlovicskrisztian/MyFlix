@@ -4,7 +4,8 @@ services:
     build: .
     ports:
       - "8080:8080"
-    environment:
+    environment:  
+      - LOG_LEVEL=DEBUG
       - MEDIA_PATH=/media
       - MEDIA_INCLUDE_FOLDERS=
       - HLS_PATH=/data/hls

@@ -4,6 +4,7 @@ import com.maszlovicskrisztian.myflix_core.dtos.HlsSession;
 import com.maszlovicskrisztian.myflix_core.dtos.MediaProbeResult;
 import com.maszlovicskrisztian.myflix_core.helpers.HlsSessionRegistry;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class TranscodeService {
 
     private final HlsSessionRegistry sessionRegistry;
@@ -46,6 +48,7 @@ public class TranscodeService {
     }
 
     public Path getOrStartSession(Path sourceFile, Long mediaId, long startSeconds) {
+        log.trace("FFmpeg session request for file info {} started", mediaId);
         HlsSession existing = sessionRegistry.get(mediaId);
         if (existing != null && existing.startSeconds() != startSeconds) {
             sessionRegistry.discardAndStop(mediaId, getSessionDir(mediaId));
@@ -55,9 +58,12 @@ public class TranscodeService {
             try {
                 return startSession(sourceFile, id, startSeconds);
             } catch (IOException e) {
+                log.error("Error during session start: {}", e.getMessage());
                 throw new UncheckedIOException(e);
             }
         });
+
+        log.trace("FFmpeg session request for file info {} finished", mediaId);
         return session.playlistPath();
     }
 
@@ -76,10 +82,12 @@ public class TranscodeService {
                 Thread.sleep(300);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new TimeoutException("Megszakítva várakozás közben");
+                throw new TimeoutException("Waiting for segment cancelled.");
             }
         }
-        throw new TimeoutException("A transzkódolás nem készült el időben");
+
+        log.error("Transcoding did not produce {} segment(s) within {}, playlist exists={}", minSegments, timeout, Files.exists(playlist));
+        throw new TimeoutException("Transcoding was not ready in time.");
     }
 
     public MediaProbeResult probe(Path file) throws IOException {
@@ -88,8 +96,9 @@ public class TranscodeService {
                 "-show_format", "-show_streams", file.toString()
         );
 
+        Path probeLog = Files.createTempFile("ffprobe-", ".log");
         ProcessBuilder pb = new ProcessBuilder(command);
-        pb.redirectError(ProcessBuilder.Redirect.DISCARD);
+        pb.redirectError(probeLog.toFile());
 
         Process process = pb.start();
 
@@ -103,11 +112,12 @@ public class TranscodeService {
             finished = process.waitFor(15, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new IOException("ffprobe megszakítva", e);
+            throw new IOException("ffprobe cancelled", e);
         }
-        if (!finished) {
+        if (!finished || process.exitValue() != 0) {
             process.destroyForcibly();
-            throw new IOException("ffprobe időtúllépés: " + file);
+            log.error("ffprobe failed for {}, exit={}, stderr saved at {}", file, process.exitValue(), probeLog);
+            throw new IOException("ffprobe timeout: " + file);
         }
 
         String videoCodec = findCodec(root, "video");
@@ -128,6 +138,7 @@ public class TranscodeService {
     }
 
     private HlsSession startSession(Path sourceFile, Long mediaId, long startSeconds) throws IOException {
+        log.trace("Starting FFmpeg session for file info: {}.", mediaId);
         Path sessionDir = Paths.get(hlsBasePath, mediaId.toString());
         Files.createDirectories(sessionDir);
         Path playlistPath = sessionDir.resolve("playlist.m3u8");
@@ -157,6 +168,7 @@ public class TranscodeService {
         Process process = pb.start();
         registerShutdownCleanup(process);
 
+        log.trace("FFmpeg session for file info: {} started.", mediaId);
         return new HlsSession(playlistPath, process, new AtomicReference<>(Instant.now()), startSeconds);
     }
 
@@ -170,6 +182,7 @@ public class TranscodeService {
         try (Stream<Path> files = Files.list(sessionDir)) {
             return files.filter(p -> p.toString().endsWith(".ts")).count() >= minSegments;
         } catch (IOException e) {
+            log.debug("Could not list segment dir {}: {}", sessionDir, e.getMessage());
             return false;
         }
     }

@@ -4,6 +4,7 @@ import com.maszlovicskrisztian.myflix_core.helpers.FileHelper;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LibraryScanner {
 
     private final MediaItemService mediaItemService;
@@ -29,7 +31,7 @@ public class LibraryScanner {
             List<FileInfo> newFiles = scanAndSave();
             mediaMetadataService.enrichMedias(newFiles);
         } catch (IOException e) {
-            // logoljuk majd
+            log.error("Error saving new files with metadata: {}", e.getMessage());
         }
     }
 
@@ -40,21 +42,27 @@ public class LibraryScanner {
 
     public List<Path> scanNewFiles() throws IOException {
         Set<String> existingItemPaths = mediaItemService.getAllRelativePaths();
-        return scanAllFiles().stream().filter(p -> !existingItemPaths.contains(p.toString())).toList();
+        List<Path> newFiles = scanAllFiles().stream().filter(p -> !existingItemPaths.contains(p.toString())).toList();
+        log.info("Scan found {} new files", newFiles.size());
+        return newFiles;
     }
 
     public List<Path> scanAllFiles() throws IOException {
+        log.trace("File scan started.");
         Path root = mediaPathResolver.getMediaPath();
         Set<String> includeFolders = mediaPathResolver.getIncludeFolders();
 
         try (Stream<Path> paths = Files.walk(root)) {
-            return paths
+            List<Path> result = paths
                     .filter(Files::isRegularFile)
                     .filter(fileHelper::hasVideoExtension)
                     .filter(p -> !fileHelper.isSample(p))
                     .map(root::relativize)
                     .filter(p -> includeFolders.isEmpty() || includeFolders.contains(fileHelper.topLevelFolder(p)))
                     .toList();
+
+            log.trace("File scan finished.");
+            return result;
         }
     }
 }
