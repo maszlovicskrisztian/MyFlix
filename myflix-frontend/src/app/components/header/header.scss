@@ -23,6 +23,9 @@
     gap: 20px;
     /* Without this the nav refuses to shrink below its content and widens the page. */
     min-width: 0;
+    /* Together with the profile's auto margin this splits the free space evenly,
+       centring the nav between the brand and the avatar. */
+    margin-left: auto;
   }
 
   &__link {
@@ -38,6 +41,9 @@
     &--active {
       color: #fff;
       font-weight: 600;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 6px;
     }
   }
 
