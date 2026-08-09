@@ -22,6 +22,16 @@ public class LibraryScanner {
     private final MediaItemService mediaItemService;
     private final FileHelper fileHelper;
     private final MediaPathResolver mediaPathResolver;
+    private final MediaMetadataService mediaMetadataService;
+
+    public void runScanAndEnrich() {
+        try {
+            List<FileInfo> newFiles = scanAndSave();
+            mediaMetadataService.enrichMedias(newFiles);
+        } catch (IOException e) {
+            // logoljuk majd
+        }
+    }
 
     public List<FileInfo> scanAndSave() throws IOException {
         List<Path> files = scanNewFiles();

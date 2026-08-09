@@ -12,7 +12,7 @@ public class StartupLibraryScanRunner implements CommandLineRunner {
     private final LibraryScanner libraryScanner;
 
     @Override
-    public void run(String... args) throws Exception {
-        libraryScanner.scanAndSave();
+    public void run(String... args) {
+        libraryScanner.runScanAndEnrich();
     }
 }

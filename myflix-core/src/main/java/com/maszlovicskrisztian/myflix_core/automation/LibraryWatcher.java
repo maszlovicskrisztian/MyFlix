@@ -109,15 +109,6 @@ public class LibraryWatcher {
             existing.cancel(false);
         }
         pendingTask.set(debounceExecutor.schedule(
-                this::runScanAndEnrich, debounceMinutes, TimeUnit.MINUTES));
-    }
-
-    private void runScanAndEnrich() {
-        try {
-            List<FileInfo> newFiles = libraryScanner.scanAndSave();
-            mediaMetadataService.enrichMedias(newFiles);
-        } catch (IOException e) {
-            // logoljuk majd
-        }
+                libraryScanner::runScanAndEnrich, debounceMinutes, TimeUnit.MINUTES));
     }
 }
