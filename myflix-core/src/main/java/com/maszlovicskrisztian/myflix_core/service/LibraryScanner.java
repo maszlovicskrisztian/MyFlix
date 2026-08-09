@@ -35,6 +35,7 @@ public class LibraryScanner {
 
     public List<Path> scanAllFiles() throws IOException {
         Path root = mediaPathResolver.getMediaPath();
+        Set<String> includeFolders = mediaPathResolver.getIncludeFolders();
 
         try (Stream<Path> paths = Files.walk(root)) {
             return paths
@@ -42,6 +43,7 @@ public class LibraryScanner {
                     .filter(fileHelper::hasVideoExtension)
                     .filter(p -> !fileHelper.isSample(p))
                     .map(root::relativize)
+                    .filter(p -> includeFolders.isEmpty() || includeFolders.contains(fileHelper.topLevelFolder(p)))
                     .toList();
         }
     }

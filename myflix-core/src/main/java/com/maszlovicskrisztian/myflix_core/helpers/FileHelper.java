@@ -34,4 +34,8 @@ public class FileHelper {
         }
         return "";
     }
+
+    public String topLevelFolder(Path relative) {
+        return relative.getNameCount() > 0 ? relative.getName(0).toString() : "";
+    }
 }
