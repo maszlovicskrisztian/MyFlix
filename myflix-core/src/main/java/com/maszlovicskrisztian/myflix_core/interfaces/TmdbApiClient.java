@@ -37,7 +37,7 @@ public class TmdbApiClient implements TmdbClient{
 
         return response.results().stream()
                 .filter(x -> Arrays.stream(mediaTypes).anyMatch(t -> t.name().toLowerCase().equals(x.mediaType())))
-                .filter(x -> year == null || (x.releaseDate() != null && x.releaseDate().startsWith(year)))
+                .filter(x -> year == null || x.releaseDate() == null || x.releaseDate().startsWith(year))
                 .findFirst();
     }
 

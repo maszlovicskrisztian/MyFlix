@@ -16,14 +16,16 @@ public class MediaTitleParser {
         String folderName = relativePath.getName(relativePath.getNameCount() - 2).toString();
 
         String titlePart = null;
+
         Matcher seasonMatcher = SEASON.matcher(folderName);
         if (seasonMatcher.find()) {
             titlePart = folderName.substring(0, seasonMatcher.start());
-        } else {
-            Matcher yearMatcher = YEAR.matcher(folderName);
-            if (yearMatcher.find()) {
-                titlePart = folderName.substring(0, yearMatcher.start());
-            }
+        }
+
+        String toBeMatched = titlePart == null ? folderName : titlePart;
+        Matcher yearMatcher = YEAR.matcher(toBeMatched);
+        if (yearMatcher.find()) {
+            titlePart = folderName.substring(0, yearMatcher.start());
         }
 
         if (titlePart == null)

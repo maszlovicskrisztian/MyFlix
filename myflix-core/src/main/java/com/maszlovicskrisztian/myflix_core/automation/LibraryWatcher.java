@@ -1,9 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.automation;
 
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
-import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.service.LibraryScanner;
-import com.maszlovicskrisztian.myflix_core.service.MediaMetadataService;
 import lombok.RequiredArgsConstructor;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -12,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,7 +21,6 @@ import static java.nio.file.StandardWatchEventKinds.*;
 public class LibraryWatcher {
 
     private final LibraryScanner libraryScanner;
-    private final MediaMetadataService mediaMetadataService;
     private final MediaPathResolver mediaPathResolver;
 
     @Value("${WATCHER_DEBOUNCE_MINUTES}")

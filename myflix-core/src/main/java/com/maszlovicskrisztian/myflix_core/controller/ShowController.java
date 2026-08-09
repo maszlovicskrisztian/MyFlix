@@ -5,7 +5,7 @@ import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
 import com.maszlovicskrisztian.myflix_core.mapping.MediaBaseMapper;
 import com.maszlovicskrisztian.myflix_core.mapping.ShowMapper;
 import com.maszlovicskrisztian.myflix_core.model.Show;
-import com.maszlovicskrisztian.myflix_core.repository.ShowRepository;
+import com.maszlovicskrisztian.myflix_core.service.ShowService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,16 +23,16 @@ public class ShowController {
 
     private final ShowMapper mapper;
     private final MediaBaseMapper mediaBaseMapper;
-    private final ShowRepository showRepository;
+    private final ShowService showService;
 
     @GetMapping
     public List<MediaBaseResponse> getShows() {
-        return showRepository.findAll().stream().map(mediaBaseMapper::fromShow).toList();
+        return showService.getShows().stream().map(mediaBaseMapper::fromShow).toList();
     }
 
     @GetMapping("/{id}")
     public ShowDetailsResponse getShowDetails(@PathVariable Long id) {
-        Show show = showRepository.findById(id)
+        Show show = showService.getShowById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return mapper.toShowDetails(show);
