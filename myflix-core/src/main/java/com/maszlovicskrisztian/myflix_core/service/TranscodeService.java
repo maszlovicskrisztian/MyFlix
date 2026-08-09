@@ -32,13 +32,13 @@ public class TranscodeService {
     private final HlsSessionRegistry sessionRegistry;
     private final ObjectMapper objectMapper;
 
-    @Value("${FFMPEG_PATH:ffmpeg}")
+    @Value("${ffmpeg.path}")
     private String ffmpegPath;
 
     @Value("${HLS_PATH}")
     private String hlsBasePath;
 
-    @Value("${ffprobe.path:ffprobe}")
+    @Value("${ffprobe.path}")
     private String ffprobePath;
 
     public void touch(Long mediaId) {

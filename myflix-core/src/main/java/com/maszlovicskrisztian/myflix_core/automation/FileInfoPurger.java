@@ -19,7 +19,7 @@ public class FileInfoPurger {
     private final LibraryScanner libraryScanner;
     private final MediaItemService mediaItemService;
 
-    @Scheduled(fixedDelay = 24, timeUnit = TimeUnit.HOURS)
+    @Scheduled(fixedDelayString = "${FILE_INFO_PURGE_INTERVAL_HOURS}", timeUnit = TimeUnit.HOURS)
     public void purgeFileInfoWithMissingFile() {
         try {
             Set<String> files = libraryScanner.scanAllFiles().stream().map(Path::toString).collect(Collectors.toSet());

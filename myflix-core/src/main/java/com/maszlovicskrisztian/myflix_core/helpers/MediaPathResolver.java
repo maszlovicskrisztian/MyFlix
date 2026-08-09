@@ -15,7 +15,7 @@ public class MediaPathResolver {
     @Value("${MEDIA_PATH}")
     private String mediaPathString;
 
-    @Value("${MEDIA_INCLUDE_FOLDERS:}")
+    @Value("${MEDIA_INCLUDE_FOLDERS}")
     private String includeFoldersRaw;
 
     public Path getMediaPath() {

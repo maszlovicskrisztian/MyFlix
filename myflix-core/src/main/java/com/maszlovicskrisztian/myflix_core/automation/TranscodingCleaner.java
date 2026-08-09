@@ -19,10 +19,10 @@ public class TranscodingCleaner {
     private final HlsSessionRegistry sessionRegistry;
     private final TranscodeService transcodeService;
 
-    @Value("${HLS_IDLE_TIMEOUT_MINUTES:5}")
+    @Value("${HLS_IDLE_TIMEOUT_MINUTES}")
     private int idleTimeoutMinutes;
 
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES)
+    @Scheduled(fixedDelayString = "${HLS_CLEANUP_INTERVAL_MINUTES}", timeUnit = TimeUnit.MINUTES)
     public void cleanupIdleSessions() {
         Instant idleThreshold = Instant.now().minus(Duration.ofMinutes(idleTimeoutMinutes));
 

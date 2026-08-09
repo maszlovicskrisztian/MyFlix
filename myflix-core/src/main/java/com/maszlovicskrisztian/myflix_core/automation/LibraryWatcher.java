@@ -27,7 +27,7 @@ public class LibraryWatcher {
     private final MediaMetadataService mediaMetadataService;
     private final MediaPathResolver mediaPathResolver;
 
-    @Value("${WATCHER_DEBOUNCE_MINUTES:10}")
+    @Value("${WATCHER_DEBOUNCE_MINUTES}")
     private int debounceMinutes;
 
     private WatchService watchService;
