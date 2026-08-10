@@ -29,6 +29,8 @@ public class EpisodeMetadata {
     private Integer episodeNumber;
 
     private String seasonTitle;
+
+    @Lob
     private String seasonOverview;
     private String seasonPosterPath;
 
