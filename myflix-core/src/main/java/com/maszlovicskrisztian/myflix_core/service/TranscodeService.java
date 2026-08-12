@@ -43,11 +43,17 @@ public class TranscodeService {
     @Value("${ffprobe.path}")
     private String ffprobePath;
 
+    @Value("${FFMPEG_HW_ACCEL:none}")
+    private String hwAccel;
+
+    @Value("${VAAPI_DEVICE:/dev/dri/renderD128}")
+    private String vaapiDevice;
+
     public void touch(Long mediaId) {
         sessionRegistry.touch(mediaId);
     }
 
-    public Path getOrStartSession(Path sourceFile, Long mediaId, long startSeconds) {
+    public Path getOrStartSession(Path sourceFile, Long mediaId, long startSeconds, Integer resHeight) {
         log.trace("FFmpeg session request for file info {} started", mediaId);
         HlsSession existing = sessionRegistry.get(mediaId);
         if (existing != null && existing.startSeconds() != startSeconds) {
@@ -56,7 +62,7 @@ public class TranscodeService {
 
         var session = sessionRegistry.getOrCreate(mediaId, id -> {
             try {
-                return startSession(sourceFile, id, startSeconds);
+                return startSession(sourceFile, id, startSeconds, resHeight);
             } catch (IOException e) {
                 log.error("Error during session start: {}", e.getMessage());
                 throw new UncheckedIOException(e);
@@ -122,10 +128,21 @@ public class TranscodeService {
 
         String videoCodec = findCodec(root, "video");
         String audioCodec = findCodec(root, "audio");
-        long durationSeconds = (long)(root.path("format").path("duration").asDouble());
         String container = root.path("format").path("format_name").asString(null);
+        long durationSeconds = (long)(root.path("format").path("duration").asDouble());
+        Integer height = findHeight(root);
 
-        return new MediaProbeResult(videoCodec, audioCodec, container, durationSeconds);
+        return new MediaProbeResult(videoCodec, audioCodec, container, durationSeconds, height);
+    }
+
+    private Integer findHeight(JsonNode root) {
+        for (JsonNode stream : root.path("streams")) {
+            if ("video".equals(stream.path("codec_type").asText())) {
+                int h = stream.path("height").asInt(0);
+                return h > 0 ? h : null;
+            }
+        }
+        return null;
     }
 
     private String findCodec(JsonNode root, String codecType) {
@@ -137,7 +154,7 @@ public class TranscodeService {
         return null;
     }
 
-    private HlsSession startSession(Path sourceFile, Long mediaId, long startSeconds) throws IOException {
+    private HlsSession startSession(Path sourceFile, Long mediaId, long startSeconds, Integer resHeight) throws IOException {
         log.trace("Starting FFmpeg session for file info: {}.", mediaId);
         Path sessionDir = Paths.get(hlsBasePath, mediaId.toString());
         Files.createDirectories(sessionDir);
@@ -149,13 +166,34 @@ public class TranscodeService {
             command.add("-ss");
             command.add(String.valueOf(startSeconds));
         }
+
+        boolean useVaapi = "vaapi".equalsIgnoreCase(hwAccel);
+        if (useVaapi) {
+            command.add("-vaapi_device");
+            command.add(vaapiDevice);
+        }
+
         command.add("-i");
         command.add(sourceFile.toString());
+        command.addAll(List.of("-map", "0:v:0", "-map", "0:a:0"));
+
+        boolean needsDownscale = resHeight != null && resHeight > 1080;
+
+        if (useVaapi) {
+            command.add("-vf");
+            command.add(needsDownscale ? "format=nv12,hwupload,scale_vaapi=w=-2:h=1080" : "format=nv12,hwupload");
+            command.addAll(List.of("-c:v", "h264_vaapi"));
+        } else {
+            if (needsDownscale) {
+                command.addAll(List.of("-vf", "scale=-2:1080"));
+            }
+            command.addAll(List.of("-c:v", "libx264", "-preset", "ultrafast"));
+        }
+
         command.addAll(List.of(
-                "-map", "0:v:0", "-map", "0:a:0",
-                "-c:v", "libx264", "-preset", "ultrafast",
                 "-c:a", "aac", "-ac", "2",
-                "-vsync", "cfr", "-avoid_negative_ts", "make_zero",
+                "-fps_mode", "cfr", "-avoid_negative_ts", "make_zero",
+                "-sc_threshold", "0",
                 "-start_number", "0", "-hls_time", "4", "-hls_list_size", "0",
                 "-hls_playlist_type", "event",
                 "-f", "hls", playlistPath.toString()

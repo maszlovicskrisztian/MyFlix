@@ -74,9 +74,10 @@ public class MediaController {
             item.setAudioCodec(probeResult.audioCodec());
             item.setContainer(probeResult.container());
             item.setDurationSeconds(probeResult.durationSeconds());
+            item.setResHeight(probeResult.resHeight());
             mediaItemService.saveMedia(item);
         } else {
-            probeResult = new MediaProbeResult(item.getCodec(), item.getAudioCodec(), item.getContainer(), item.getDurationSeconds());
+            probeResult = new MediaProbeResult(item.getCodec(), item.getAudioCodec(), item.getContainer(), item.getDurationSeconds(), item.getResHeight());
         }
 
         long resumeSeconds = watchProgressService.getProgressSecondsForMediaByProfile(id, profileId);

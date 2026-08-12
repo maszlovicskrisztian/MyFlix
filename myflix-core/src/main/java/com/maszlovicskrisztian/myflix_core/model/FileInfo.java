@@ -21,6 +21,7 @@ public class FileInfo {
     private Long id;
     private String relativePath;
     private Long durationSeconds;
+    private Integer resHeight;
     private String container;
     private String codec;
     private String audioCodec;

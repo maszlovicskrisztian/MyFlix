@@ -57,6 +57,7 @@ public class MediaItemService {
             item.setAudioCodec(probeResult.audioCodec());
             item.setContainer(probeResult.container());
             item.setDurationSeconds(probeResult.durationSeconds());
+            item.setResHeight(probeResult.resHeight());
         }
 
         return saveMedia(item);

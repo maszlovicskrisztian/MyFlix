@@ -1,6 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
+import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.service.TranscodeService;
 import com.maszlovicskrisztian.myflix_core.service.MediaItemService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -83,11 +84,11 @@ public class StreamController {
             @PathVariable Long id,
             @RequestParam(defaultValue = "0") long startSeconds,
             HttpServletRequest request) throws IOException {
-        String relativePath = mediaItemService.getRelativePathById(id)
+        FileInfo media = mediaItemService.getMediaById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        Path sourceFile = mediaPathResolver.getMediaPath().resolve(relativePath);
-        Path playlist = transcodeService.getOrStartSession(sourceFile, id, startSeconds);
+        Path sourceFile = mediaPathResolver.getMediaPath().resolve(media.getRelativePath());
+        Path playlist = transcodeService.getOrStartSession(sourceFile, id, startSeconds, media.getResHeight());
 
         try {
             transcodeService.waitForFirstSegment(playlist, Duration.ofSeconds(15), 3);
