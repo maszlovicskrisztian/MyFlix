@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "file_info")
+@Table(name = "file_info", uniqueConstraints = @UniqueConstraint(columnNames = {"relative_path"}))
 @Getter
 @Setter
 @NoArgsConstructor
