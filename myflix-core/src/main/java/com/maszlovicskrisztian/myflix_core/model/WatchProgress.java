@@ -8,7 +8,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "watch_progress")
+@Table(name = "watch_progress", uniqueConstraints = @UniqueConstraint(columnNames = {"profile_id", "file_info_id"}))
 @NoArgsConstructor
 @Getter
 @Setter

@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "movie_metadata")
+@Table(name = "movie_metadata", uniqueConstraints = @UniqueConstraint(columnNames = {"title", "release_date"}))
 public class MovieMetadata {
 
     @Id

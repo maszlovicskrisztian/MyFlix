@@ -1,44 +1,136 @@
 package com.maszlovicskrisztian.myflix_core.interfaces;
 
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.ImdbSearchResponse;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbDetailsResponse;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchResponse;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchResult;
+import com.maszlovicskrisztian.myflix_core.dtos.tmdb.*;
 import com.maszlovicskrisztian.myflix_core.model.MediaType;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.apache.commons.text.similarity.JaroWinklerDistance;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TmdbApiClient implements TmdbClient{
 
     private final RestClient client;
 
     @Override
-    public Optional<TmdbSearchResult> searchBestMatch(String query, String year) {
+    public TmdbSearchResult searchBestMatch(TmdbSearchRequest request) {
+        if (request == null)
+            return null;
+
+        List<TmdbSearchResult> searchResults;
+        MediaType mediaType;
+        if (request.season() != null && request.episode() != null) {
+            searchResults = searchTV(request.title(), request.year());
+            mediaType = MediaType.TV;
+        }
+        else {
+            searchResults = searchMovie(request.title(), request.year());
+            mediaType = MediaType.MOVIE;
+        }
+
+        if (searchResults.size() > 1) {
+            log.debug("TMDB search resulted more than one element, returning the closest match.");
+
+            if (mediaType == MediaType.MOVIE)
+                searchResults.sort((x1, x2) ->
+                        getWinklerDistance(x1.movieTitle().toLowerCase(), request.title().toLowerCase()) -
+                                getWinklerDistance(x2.movieTitle().toLowerCase(), request.title().toLowerCase()));
+            else
+                searchResults.sort((x1, x2) ->
+                        getWinklerDistance(x1.showTitle().toLowerCase(), request.title().toLowerCase()) -
+                                getWinklerDistance(x2.showTitle().toLowerCase(), request.title().toLowerCase()));
+        }
+
+        return searchResults.isEmpty() ? null : searchResults.getFirst();
+    }
+
+    private int getWinklerDistance(String foundTitle, String searchTitle) {
+        JaroWinklerDistance winklerDistance = new JaroWinklerDistance();
+        return ((int) (winklerDistance.apply(foundTitle, searchTitle) * 100));
+    }
+
+    private List<TmdbSearchResult> searchMovie(String title, String year) {
+        if (title == null)
+            return List.of();
+
         TmdbSearchResponse response = client.get()
-                .uri(uriBuilder -> uriBuilder.path("/search/multi")
-                        .queryParam("query", query)
+                .uri(uriBuilder -> uriBuilder.path("/search/movie")
+                        .queryParam("query", title)
+                        .queryParamIfPresent("primary_release_year", Optional.ofNullable(year))
                         .build())
                 .retrieve()
                 .body(TmdbSearchResponse.class);
 
         if (response == null)
-            return Optional.empty();
+            return List.of();
 
-        MediaType[] mediaTypes = Arrays.stream(MediaType.values())
-                .filter(x -> x != MediaType.TV_EPISODE)
-                .toArray(MediaType[]::new);
+        List<TmdbSearchResult> results = response.results();
+        if (response.pages() > 1) {
+            Integer currentPage = response.currentPage();
+            int pageCount = response.pages() + 1;
 
-        return response.results().stream()
-                .filter(x -> Arrays.stream(mediaTypes).anyMatch(t -> t.name().toLowerCase().equals(x.mediaType())))
-                .filter(x -> year == null || x.releaseDate() == null || x.releaseDate().startsWith(year))
-                .findFirst();
+            for (int i = currentPage + 1; i < pageCount; i++) {
+                int finalI = i;
+                response = client.get()
+                        .uri(uriBuilder -> uriBuilder.path("/search/movie")
+                                .queryParam("query", title)
+                                .queryParamIfPresent("primary_release_year", Optional.ofNullable(year))
+                                .queryParam("page", finalI)
+                                .build())
+                        .retrieve()
+                        .body(TmdbSearchResponse.class);
+
+                if (response != null)
+                    results.addAll(response.results());
+            }
+        }
+
+        return results;
+    }
+
+    private List<TmdbSearchResult> searchTV(String title, String year) {
+        if (title == null)
+            return List.of();
+
+        TmdbSearchResponse response = client.get()
+                .uri(uriBuilder -> uriBuilder.path("/search/tv")
+                        .queryParam("query", title)
+                        .queryParamIfPresent("year", Optional.ofNullable(year))
+                        .build())
+                .retrieve()
+                .body(TmdbSearchResponse.class);
+
+        if (response == null)
+            return List.of();
+
+        List<TmdbSearchResult> results = response.results();
+        if (response.pages() > 1) {
+            Integer currentPage = response.currentPage();
+            int pageCount = response.pages() + 1;
+
+            for (int i = currentPage + 1; i < pageCount; i++) {
+                int finalI = i;
+                response = client.get()
+                        .uri(uriBuilder -> uriBuilder.path("/search/tv")
+                                .queryParam("query", title)
+                                .queryParamIfPresent("year", Optional.ofNullable(year))
+                                .queryParam("page", finalI)
+                                .build())
+                        .retrieve()
+                        .body(TmdbSearchResponse.class);
+
+                if (response != null)
+                    results.addAll(response.results());
+            }
+        }
+
+        return results;
     }
 
     @Override

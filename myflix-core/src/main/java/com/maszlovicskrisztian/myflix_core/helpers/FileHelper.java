@@ -24,6 +24,17 @@ public class FileHelper {
         return extensions.contains(getFileExtension(p.toString()).toLowerCase());
     }
 
+    public String stripExtension(String filename) {
+        if (filename == null)
+            return null;
+
+        int lastDotIndex = filename.lastIndexOf(".");
+        if (lastDotIndex >= 0)
+            return filename.substring(0, lastDotIndex);
+
+        return filename;
+    }
+
     public String getFileExtension(String filename) {
         if (filename == null)
             return null;

@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "show")
+@Table(name = "show", uniqueConstraints = @UniqueConstraint(columnNames = {"title", "first_air_date"}))
 public class Show {
 
     @Id

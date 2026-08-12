@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -38,10 +38,17 @@ public class LibraryWatcher {
     public void start() throws IOException {
         watchService = FileSystems.getDefault().newWatchService();
         Path root = mediaPathResolver.getMediaPath();
-        log.info("LibraryWatcher starting, root={}, debounceMinutes={}", root, debounceMinutes);
+        Set<String> includeFolders = mediaPathResolver.getIncludeFolders();
 
-        registerRecursive(root);
-        log.info("LibraryWatcher registered {} directories under {}", keyToPath.size(), root);
+        List<Path> paths = includeFolders.isEmpty()
+                ? List.of(root)
+                : includeFolders.stream().map(x -> Paths.get(root.toString(), x)).toList();
+
+        for (Path path : paths) {
+            log.info("LibraryWatcher starting, root={}, debounceMinutes={}", path, debounceMinutes);
+            registerRecursive(path);
+            log.info("LibraryWatcher registered {} directories under {}", keyToPath.size(), path);
+        }
 
         Thread.ofVirtual().name("library-watcher").start(this::watchLoop);
     }
@@ -61,7 +68,6 @@ public class LibraryWatcher {
                     WatchKey key = dir.register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
                     keyToPath.put(key, dir);
                 } catch (IOException e) {
-                    // pl. inotify watch-limit (fs.inotify.max_user_watches) elérve
                     log.error("Failed to register watch for directory: {}", dir, e);
                 }
             }
