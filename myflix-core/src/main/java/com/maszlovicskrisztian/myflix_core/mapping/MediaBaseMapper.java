@@ -20,7 +20,8 @@ public class MediaBaseMapper {
                 model.getId(),
                 null,
                 model.getTitle(),
-                imageUrlResolver.toImageUrl(model.getPosterPath())
+                imageUrlResolver.toImageUrl(model.getPosterPath()),
+                model.getGenres()
         );
     }
 
@@ -33,7 +34,8 @@ public class MediaBaseMapper {
                 null,
                 model.getId(),
                 metadata.getTitle(),
-                imageUrlResolver.toImageUrl(metadata.getPosterPath())
+                imageUrlResolver.toImageUrl(metadata.getPosterPath()),
+                metadata.getGenres()
         );
     }
 
@@ -44,7 +46,8 @@ public class MediaBaseMapper {
                     null,
                     model.getId(),
                     movieMetadata.getTitle(),
-                    imageUrlResolver.toImageUrl(movieMetadata.getBackdropPath())
+                    imageUrlResolver.toImageUrl(movieMetadata.getBackdropPath()),
+                    movieMetadata.getGenres()
             );
         } else {
             EpisodeMetadata episodeMetadata = model.getEpisodeMetadata();
@@ -53,7 +56,8 @@ public class MediaBaseMapper {
                         episodeMetadata.getShow().getId(),
                         model.getId(),
                         episodeMetadata.getTitle(),
-                        imageUrlResolver.toImageUrl(episodeMetadata.getStillPath())
+                        imageUrlResolver.toImageUrl(episodeMetadata.getStillPath()),
+                        episodeMetadata.getShow().getGenres()
                 );
             }
         }
@@ -66,6 +70,7 @@ public class MediaBaseMapper {
                 null,
                 model.getId(),
                 model.getRelativePath(),
+                null,
                 null
         );
     }

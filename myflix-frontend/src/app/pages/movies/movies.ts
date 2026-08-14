@@ -14,13 +14,16 @@ export class Movies implements OnInit {
   movieService = inject(MovieService);
   movies = signal<Array<MediaBaseResponse>>([]);
   newMovies = signal<Array<MediaBaseResponse>>([]);
+  actionMovies = signal<Array<MediaBaseResponse>>([]);
 
   ngOnInit(): void {
     this.movieService.getMovies().subscribe({
       next: (movies) => {
         const newMovies = movies.values().next().value ? Array.from(movies.values()).sort((a, b) => b.fileInfoId! - a.fileInfoId!).slice(0, 5) : [];
+        const actionMovies = movies.filter((m) => m.genres.includes('Action'));
         this.movies.set(movies);
         this.newMovies.set(newMovies);
+        this.actionMovies.set(actionMovies);
       },
       error: (err) => console.error('Hiba a filmek lekérésekor', err),
     });

@@ -6,9 +6,16 @@
     [mediaBaseResponses]="newMovies()">
 </app-media-section>
 <app-media-section
+    layout="row"
+    title="Akció filmek"
+    emptyMessage="Nincs elérhető akció film."
+    [mediaBaseResponses]="actionMovies()"
+    [maxCapacity]="50">
+</app-media-section>
+<app-media-section
     layout="grid"
     title="Összes film"
     emptyMessage="Nincs elérhető film."
     [mediaBaseResponses]="movies()"
-    [maxCapacity]="50">
+    [maxCapacity]="30">
 </app-media-section>

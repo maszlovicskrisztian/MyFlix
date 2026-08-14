@@ -3,4 +3,5 @@ export type MediaBaseResponse = {
     fileInfoId: number | null;
     title: string;
     imagePath: string;
+    genres: Array<string>;
 }
