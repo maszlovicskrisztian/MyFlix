@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,7 +28,9 @@ public class ShowController {
 
     @GetMapping
     public List<MediaBaseResponse> getShows() {
-        return showService.getShows().stream().map(mediaBaseMapper::fromShow).toList();
+        var shows = new ArrayList<>(showService.getShows().stream().map(mediaBaseMapper::fromShow).toList());
+        shows.sort((s1, s2) -> s1.title().compareTo(s2.title()));
+        return shows;
     }
 
     @GetMapping("/{id}")

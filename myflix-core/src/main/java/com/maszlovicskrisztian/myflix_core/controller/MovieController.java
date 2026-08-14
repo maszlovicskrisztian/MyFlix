@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,9 +26,11 @@ public class MovieController {
     private final MediaBaseMapper mediaBaseMapper;
     private final MovieMapper movieMapper;
 
-    @GetMapping()
+    @GetMapping
     public List<MediaBaseResponse> getMovies() {
-        return mediaItemService.getAllMovies().stream().map(mediaBaseMapper::fromMovie).toList();
+        var movies = new ArrayList<>(mediaItemService.getAllMovies().stream().map(mediaBaseMapper::fromMovie).toList());
+        movies.sort((m1, m2) -> m1.title().compareTo(m2.title()));
+        return movies;
     }
 
     @GetMapping("/{id}")
