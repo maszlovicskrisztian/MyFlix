@@ -18,8 +18,8 @@ export class Shows {
   ngOnInit(): void {
     this.showService.getShows().subscribe({
       next: (shows) => {
+        const newEpisodes = shows.values().next().value ? Array.from(shows.values()).sort((a, b) => b.showId! - a.showId!).slice(0, 5) : [];
         this.shows.set(shows);
-        var newEpisodes = shows.sort((a, b) => b.showId! - a.showId!).slice(-5);
         this.newEpisodes.set(newEpisodes);
       },
       error: (err) => console.error('Hiba a sorozatok lekérésekor', err),

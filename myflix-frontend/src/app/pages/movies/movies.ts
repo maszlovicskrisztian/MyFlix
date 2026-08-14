@@ -18,8 +18,8 @@ export class Movies implements OnInit {
   ngOnInit(): void {
     this.movieService.getMovies().subscribe({
       next: (movies) => {
+        const newMovies = movies.values().next().value ? Array.from(movies.values()).sort((a, b) => b.fileInfoId! - a.fileInfoId!).slice(0, 5) : [];
         this.movies.set(movies);
-        var newMovies = movies.sort((a, b) => b.fileInfoId! - a.fileInfoId!).slice(-5);
         this.newMovies.set(newMovies);
       },
       error: (err) => console.error('Hiba a filmek lekérésekor', err),
