@@ -45,6 +45,15 @@
       text-decoration-thickness: 2px;
       text-underline-offset: 6px;
     }
+
+    /* Opens a dialog rather than navigating, so it is a button — strip the
+       chrome the browser gives one back to the anchors' look. */
+    &--action {
+      padding: 0;
+      border: none;
+      background: none;
+      font-family: inherit;
+    }
   }
 
   &__profile {
@@ -164,6 +173,12 @@
 
     &--active {
       color: #fff;
+    }
+
+    &--action {
+      border: none;
+      background: none;
+      font-family: inherit;
     }
   }
 

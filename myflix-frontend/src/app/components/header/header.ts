@@ -4,10 +4,11 @@ import { AuthService } from '../../services/auth-service';
 import { ProfileService } from '../../services/profile-service';
 import { avatarUrl } from '../../model/avatar';
 import { MetadataService } from '../../services/metadata-service';
+import { MediaSearchDialog } from '../media-search-dialog/media-search-dialog';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, MediaSearchDialog],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
@@ -23,11 +24,17 @@ export class Header {
   selectedProfileAvatar = this.profileService.selectedProfileAvatar;
   profileInitial = computed(() => this.selectedProfileName()?.charAt(0) ?? '');
   menuOpen = signal(false);
+  searchOpen = signal(false);
 
   private profileMenu = viewChild<ElementRef<HTMLElement>>('profileMenu');
 
   toggleMenu() {
     this.menuOpen.update((open) => !open);
+  }
+
+  openSearch() {
+    this.menuOpen.set(false);
+    this.searchOpen.set(true);
   }
 
   @HostListener('document:click', ['$event'])

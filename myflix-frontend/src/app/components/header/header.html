@@ -9,6 +9,9 @@
         <a class="topbar__link" [routerLink]="['/shows']" routerLinkActive="topbar__link--active"
             [routerLinkActiveOptions]="{ exact: true }">Sorozatok</a>
         <a class="topbar__link">Kedvencek</a>
+        <button class="topbar__link topbar__link--action" type="button" (click)="openSearch()">
+            Keresés
+        </button>
     </nav>
 
     <div class="topbar__profile" #profileMenu>
@@ -77,4 +80,14 @@
         </svg>
         <span class="tabbar__label">Kedvencek</span>
     </a>
+
+    <button class="tabbar__link tabbar__link--action" type="button" (click)="openSearch()">
+        <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4.5 4.5" />
+        </svg>
+        <span class="tabbar__label">Keresés</span>
+    </button>
 </nav>
+
+<app-media-search-dialog [(open)]="searchOpen"></app-media-search-dialog>

@@ -5,6 +5,7 @@ import { WatchProgressResponse } from '../model/watch-progress-response';
 import { Observable } from 'rxjs';
 import { PlaybackInfo } from '../model/playback-info';
 import { MediaBaseResponse } from '../model/media-base-response';
+import { MediaSearchResponse } from '../model/media-search-response';
 
 @Service()
 export class MediaService {
@@ -36,5 +37,10 @@ export class MediaService {
         return this.http.get<PlaybackInfo>(
             `${environment.apiUrl}/media/${mediaId}/playback-info?profileId=${profileId}&supportsMkv=${supportsMkv}`
         );
+    }
+
+    public searchMedia(query: string): Observable<Array<MediaSearchResponse>> {
+        const url = `${environment.apiUrl}/media/search?query=${encodeURIComponent(query)}`;
+        return this.http.get<Array<MediaSearchResponse>>(url);
     }
 }
