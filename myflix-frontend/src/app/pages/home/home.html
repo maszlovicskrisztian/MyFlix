@@ -1,12 +1,12 @@
 <div class="browse">
   <app-header></app-header>
-  <!-- Holds episodes as well as movies, and an episode only has a 16:9 still. -->
   <app-media-section
     layout="row"
     aspect="still"
     title="Megtekintés folytatása"
     [mediaBaseResponses]="continueWatching()"
-    emptyMessage="Nincs megtekintés alatt álló tartalom.">
+    emptyMessage="Nincs megtekintés alatt álló tartalom.",
+    [routeLink]="'/media'">
   </app-media-section>
   <app-media-section 
     layout="row"

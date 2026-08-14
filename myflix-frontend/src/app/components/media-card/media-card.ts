@@ -12,8 +12,15 @@ import { MediaCardAspect } from '../../model/media-card-aspect';
 export class MediaCard {
   mediaBase = input<MediaBaseResponse | null>(null);
   routeLink = input<string | null>("/movies");
+  route = computed<string>(() => {
+    const url = this.routeLink() + (this.mediaBase()?.fileInfoId || this.mediaBase()?.showId ? `/${this.mediaBase()?.fileInfoId || this.mediaBase()?.showId}` : "");
+    if (this.routeLink() == "/media"){
+      return url + "/play";
+    }
 
-  /** Shape of the image: a poster by default, 16:9 for lists that hold episodes. */
+    return url
+  });
+
   aspect = input<MediaCardAspect>('poster');
 
   displayTitle = computed(() => {
@@ -21,7 +28,6 @@ export class MediaCard {
     return item?.title || 'Nem elérhető cím';
   });
 
-  /** Resets whenever a new item arrives, and is cleared when the image fails to load. */
   posterUrl = linkedSignal(() => this.mediaBase()?.imagePath ?? null);
 
   onPosterError(): void {

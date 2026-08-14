@@ -13,17 +13,13 @@ import { MediaCardAspect } from '../../model/media-card-aspect';
 export class MediaSection {
   layout = input<MediaSectionLayout>('grid');
 
-  /** Handed to every card, and widens the tiles to match the 16:9 shape. */
   aspect = input<MediaCardAspect>('poster');
   title = input('');
   emptyMessage = input('Nincs elérhető tartalom.');
   routeLink = input<string | null>("/movies");
   mediaBaseResponses = input<Array<MediaBaseResponse>>([]);
 
-  /** How many items fit on one page; 0 (the default) puts them all on one. */
   maxCapacity = input(0);
-
-  /** Only the grid pages — the row layout already scrolls horizontally. */
   paginated = computed(
     () =>
       this.layout() === 'grid' &&
