@@ -1,12 +1,24 @@
 <section class="row">
-    @if (title()) {
-      <h2 class="row__title">{{ title() }}</h2>
+    @if (title() || paginated()) {
+      <div class="row__head">
+        <h2 class="row__title">{{ title() }}</h2>
+
+        @if (paginated()) {
+          <div class="pager">
+            <button type="button" class="pager__btn" aria-label="Előző oldal"
+              [disabled]="pageIndex() === 0" (click)="previousPage()">&lsaquo;</button>
+            <span class="pager__status">{{ pageIndex() + 1 }} / {{ pageCount() }}</span>
+            <button type="button" class="pager__btn" aria-label="Következő oldal"
+              [disabled]="pageIndex() === pageCount() - 1" (click)="nextPage()">&rsaquo;</button>
+          </div>
+        }
+      </div>
     }
 
     @if (mediaBaseResponses().length) {
       <div class="items" [class.items--grid]="layout() === 'grid'" [class.items--row]="layout() === 'row'"
         [class.items--still]="aspect() === 'still'">
-        @for (item of mediaBaseResponses(); track item.fileInfoId || item.showId) {
+        @for (item of visibleItems(); track item.fileInfoId || item.showId) {
           <app-media-card class="items__item" [mediaBase]="item" [routeLink]="routeLink()"
             [aspect]="aspect()"></app-media-card>
         }

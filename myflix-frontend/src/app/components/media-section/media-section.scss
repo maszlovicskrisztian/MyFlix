@@ -1,10 +1,57 @@
 .row {
   padding: 8px clamp(20px, 5vw, 60px) 60px;
 
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
   &__title {
     font-size: clamp(18px, 2.4vw, 24px);
     font-weight: 700;
     margin: 8px 0 20px;
+  }
+}
+
+.pager {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 20px;
+
+  &__status {
+    font-size: 14px;
+    color: var(--mf-text-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__btn {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--mf-text);
+    background: var(--mf-surface-2);
+    border: 1px solid var(--mf-border);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+
+    &:hover:not(:disabled) {
+      background: var(--mf-text);
+      border-color: var(--mf-text);
+      color: var(--mf-black);
+    }
+
+    &:disabled {
+      color: var(--mf-text-faint);
+      cursor: default;
+      opacity: 0.5;
+    }
   }
 }
 
