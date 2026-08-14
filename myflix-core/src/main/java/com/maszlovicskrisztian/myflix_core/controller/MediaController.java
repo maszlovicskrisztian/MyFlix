@@ -3,25 +3,30 @@ package com.maszlovicskrisztian.myflix_core.controller;
 import com.maszlovicskrisztian.myflix_core.dtos.*;
 import com.maszlovicskrisztian.myflix_core.dtos.request.UpdateProgressRequest;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.response.MediaSearchResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.PlaybackInfoResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.WatchProgressResponse;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import com.maszlovicskrisztian.myflix_core.helpers.PlaybackCompatibility;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.service.MediaItemService;
+import com.maszlovicskrisztian.myflix_core.service.ShowService;
 import com.maszlovicskrisztian.myflix_core.service.TranscodeService;
 import com.maszlovicskrisztian.myflix_core.service.WatchProgressService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 @RequestMapping("/api/media")
 public class MediaController {
 
@@ -29,6 +34,20 @@ public class MediaController {
     private final WatchProgressService watchProgressService;
     private final MediaPathResolver mediaPathResolver;
     private final TranscodeService transcodeService;
+    private final ShowService showService;
+
+    @GetMapping("/search")
+    public List<MediaSearchResponse> searchMedia(@RequestParam String query) {
+        try {
+            List<MediaSearchResponse> results = new ArrayList<>(showService.findAllTitleWithIdByQuery(query));
+            results.addAll(mediaItemService.findAllTitleWithIdByQuery(query));
+
+            return results;
+        } catch (Exception exception) {
+            log.error(exception.getLocalizedMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, exception.getLocalizedMessage());
+        }
+    }
 
     @GetMapping("/unknown")
     public List<MediaBaseResponse> getAllUnknownMedia() {

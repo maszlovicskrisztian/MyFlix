@@ -2,11 +2,15 @@ package com.maszlovicskrisztian.myflix_core.service;
 
 import com.maszlovicskrisztian.myflix_core.dtos.MediaProbeResult;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.response.MediaSearchResponse;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import com.maszlovicskrisztian.myflix_core.mapping.MediaBaseMapper;
+import com.maszlovicskrisztian.myflix_core.mapping.MediaSearchMapper;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
-import com.maszlovicskrisztian.myflix_core.repository.RelativePathProjection;
+import com.maszlovicskrisztian.myflix_core.repository.MovieMetadataRepository;
+import com.maszlovicskrisztian.myflix_core.repository.projection.RelativePathProjection;
+import com.maszlovicskrisztian.myflix_core.repository.projection.TitleProjection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,6 +31,8 @@ public class MediaItemService {
     private final MediaBaseMapper mapper;
     private final MediaPathResolver mediaPathResolver;
     private final TranscodeService transcodeService;
+    private final MovieMetadataRepository movieMetadataRepository;
+    private final MediaSearchMapper searchMapper;
 
     public List<FileInfo> addMediaItems(List<Path> relativePaths) {
         if (relativePaths == null || relativePaths.isEmpty())
@@ -93,6 +99,13 @@ public class MediaItemService {
         return fileInfoRepository
                 .findAll()
                 .stream().filter(x -> x.getMovieMetadata() != null)
+                .toList();
+    }
+
+    public List<MediaSearchResponse> findAllTitleWithIdByQuery(String query) {
+        return movieMetadataRepository.findAllBy(TitleProjection.class)
+                .stream().filter(x -> x.getTitle().contains(query))
+                .map(searchMapper::fromMovie)
                 .toList();
     }
 
