@@ -1,7 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.mapping;
 
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaSearchResponse;
-import com.maszlovicskrisztian.myflix_core.model.MediaType;
+import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
 import com.maszlovicskrisztian.myflix_core.repository.projection.TitleProjection;
 import org.springframework.stereotype.Component;
 

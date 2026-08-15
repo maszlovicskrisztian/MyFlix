@@ -27,27 +27,26 @@ public class LibraryScanner {
     private final MediaMetadataService mediaMetadataService;
 
     public void runScanAndEnrich() {
-        try {
-            List<FileInfo> newFiles = scanAndSave();
-            mediaMetadataService.enrichMedias(newFiles);
-        } catch (IOException e) {
-            log.error("Error saving new files with metadata: {}", e.getMessage());
-        }
+        List<FileInfo> newFiles = scanAndSave();
+        newFiles.forEach(mediaMetadataService::enrichMedia);
     }
 
-    public List<FileInfo> scanAndSave() throws IOException {
+    public List<FileInfo> scanAndSave() {
         List<Path> files = scanNewFiles();
         return mediaItemService.addMediaItems(files);
     }
 
-    public List<Path> scanNewFiles() throws IOException {
+    public List<Path> scanNewFiles() {
         Set<String> existingItemPaths = mediaItemService.getAllRelativePaths();
-        List<Path> newFiles = scanAllFiles().stream().filter(p -> !existingItemPaths.contains(p.toString())).toList();
+        List<Path> newFiles = scanAllFiles()
+                .stream().filter(p -> !existingItemPaths.contains(p.toString()))
+                .toList();
+
         log.info("Scan found {} new files", newFiles.size());
         return newFiles;
     }
 
-    public List<Path> scanAllFiles() throws IOException {
+    public List<Path> scanAllFiles() {
         log.trace("File scan started.");
         Path root = mediaPathResolver.getMediaPath();
         Set<String> includeFolders = mediaPathResolver.getIncludeFolders();
@@ -63,6 +62,9 @@ public class LibraryScanner {
 
             log.trace("File scan finished.");
             return result;
+        } catch (IOException exception) {
+            log.error("Error during library scan: {}", exception.getLocalizedMessage());
+            return List.of();
         }
     }
 }

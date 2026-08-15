@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface WatchProgressRepository extends JpaRepository<WatchProgress, Long> {
     Optional<WatchProgress> findByProfileIdAndFileInfoId(Long profileId, Long fileInfoId);
-    Optional<List<WatchProgress>> findAllByProfileId(Long profileId);
+    List<WatchProgress> findAllByProfileId(Long profileId);
 }

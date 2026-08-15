@@ -1,7 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.interfaces;
 
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.*;
-import com.maszlovicskrisztian.myflix_core.model.MediaType;
+import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.*;
+import com.maszlovicskrisztian.myflix_core.exception.ResourceNotFoundException;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaTitleParser;
 import com.maszlovicskrisztian.myflix_core.interfaces.TmdbClient;
 import com.maszlovicskrisztian.myflix_core.model.*;
@@ -31,30 +32,23 @@ public class MediaMetadataService {
     private final ShowRepository showRepository;
 
     public void enrich() {
-        List<FileInfo> mediaMissingMetadata = fileInfoRepository.findAll().stream().filter(x -> x.getMovieMetadata() == null && x.getEpisodeMetadata() == null).toList();
+        List<FileInfo> mediaMissingMetadata = fileInfoRepository
+                .findAll()
+                .stream().filter(x -> x.getMovieMetadata() == null && x.getEpisodeMetadata() == null)
+                .toList();
+
         mediaMissingMetadata.forEach(this::enrichMedia);
-    }
-
-    public void enrichMedias(List<FileInfo> files) {
-        if (files == null || files.isEmpty())
-            return;
-
-        files.forEach(this::enrichMedia);
     }
 
     public void enrichMediaByImdbId(Long fileInfoId,  String imdbId) {
         log.trace("Enriching media by Imdb started.");
-        FileInfo media = fileInfoRepository.findById(fileInfoId).orElse(null);
-
-        if (media == null) {
-            log.warn("Could not find file info with id: {}. Enriching is not possible.", fileInfoId);
-            return;
-        }
+        FileInfo media = fileInfoRepository.findById(fileInfoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find file info by id: " + fileInfoId));
 
         ImdbSearchResponse response = tmdbClient.searchByImdbId(imdbId);
 
         if (response == null) {
-            log.warn("TMDB query for Imdb id: {} returned no result. Enriching is not possible.", imdbId);
+            log.info("TMDB query for Imdb id: {} returned no result. Enriching is not possible.", imdbId);
             return;
         }
 
@@ -66,7 +60,7 @@ public class MediaMetadataService {
             result = response.episodeResults().getFirst();
             enrichShow(result.showId(), result.season(), result.episode(), media);
         } else {
-            log.warn("TMDB response for Imdb id {} had neither movie nor episode results", imdbId);
+            log.info("TMDB response for Imdb id {} had neither movie nor episode results", imdbId);
         }
 
         log.trace("Enriching media by Imdb finished.");

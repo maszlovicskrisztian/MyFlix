@@ -2,7 +2,6 @@ package com.maszlovicskrisztian.myflix_core.controller;
 
 import com.maszlovicskrisztian.myflix_core.dtos.ProfileDto;
 import com.maszlovicskrisztian.myflix_core.model.Profile;
-import com.maszlovicskrisztian.myflix_core.repository.ProfileRepository;
 import com.maszlovicskrisztian.myflix_core.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,12 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProfileController {
 
-    private final ProfileRepository profileRepository;
     private final ProfileService profileService;
 
     @GetMapping
     public List<ProfileDto> getAllProfiles() {
-        return profileRepository.findAll().stream().map(ProfileDto::from).toList();
+        return profileService.getAllProfiles();
     }
 
     @PostMapping

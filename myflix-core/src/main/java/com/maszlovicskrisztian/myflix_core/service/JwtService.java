@@ -45,16 +45,12 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token) {
-        try {
-            Claims claims = parseClaims(token);
+        Claims claims = parseClaims(token);
 
-            if (claims == null)
-                return false;
-
-            return claims.getExpiration().after(new Date());
-        } catch (JwtException | IllegalArgumentException e) {
+        if (claims == null)
             return false;
-        }
+
+        return claims.getExpiration().after(new Date());
     }
 
     private SecretKey getSignedKey() {

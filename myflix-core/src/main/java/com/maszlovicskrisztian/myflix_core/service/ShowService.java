@@ -1,7 +1,12 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
+import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaSearchResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.response.ShowDetailsResponse;
+import com.maszlovicskrisztian.myflix_core.exception.ResourceNotFoundException;
+import com.maszlovicskrisztian.myflix_core.mapping.MediaBaseMapper;
 import com.maszlovicskrisztian.myflix_core.mapping.MediaSearchMapper;
+import com.maszlovicskrisztian.myflix_core.mapping.ShowMapper;
 import com.maszlovicskrisztian.myflix_core.model.Show;
 import com.maszlovicskrisztian.myflix_core.repository.ShowRepository;
 import com.maszlovicskrisztian.myflix_core.repository.projection.TitleProjection;
@@ -18,13 +23,21 @@ import java.util.*;
 public class ShowService {
     private final ShowRepository showRepository;
     private final MediaSearchMapper searchMapper;
+    private final ShowMapper mapper;
+    private final MediaBaseMapper mediaBaseMapper;
 
-    public List<Show> getShows() {
-        return showRepository.findAll();
+    public List<MediaBaseResponse> getShows() {
+        return showRepository
+                .findAll()
+                .stream().map(mediaBaseMapper::fromShow)
+                .sorted(Comparator.comparing(MediaBaseResponse::title))
+                .toList();
     }
 
-    public Optional<Show> getShowById(Long id) {
-        return showRepository.findById(id);
+    public ShowDetailsResponse getShowById(Long id) {
+        return showRepository.findById(id)
+                .map(mapper::toShowDetails)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find show by id: " + id));
     }
 
     public List<MediaSearchResponse> findAllTitleWithIdByQuery(String query) {

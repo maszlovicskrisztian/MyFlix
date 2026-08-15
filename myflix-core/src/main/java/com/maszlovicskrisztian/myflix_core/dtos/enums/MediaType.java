@@ -1,4 +1,4 @@
-package com.maszlovicskrisztian.myflix_core.model;
+package com.maszlovicskrisztian.myflix_core.dtos.enums;
 
 public enum MediaType {
     MOVIE,

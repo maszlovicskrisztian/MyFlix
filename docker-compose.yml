@@ -4,10 +4,10 @@ services:
     build: .
     ports:
       - "8080:8080"
-    environment:  
+    environment:
       - LOG_LEVEL=DEBUG
       - MEDIA_PATH=/media
-      - MEDIA_INCLUDE_FOLDERS=
+      - MEDIA_INCLUDE_FOLDERS=Filmek,Sorozatok
       - HLS_PATH=/data/hls
       - DB_PATH=/data/myflix
       - HLS_IDLE_TIMEOUT_MINUTES=1
@@ -19,5 +19,13 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - TMDB_API=${TMDB_API}
     volumes:
-      - ./test-media:/media:ro
+      - media:/media:ro
       - ./test-data:/data
+
+volumes:
+  media:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: "//${NAS_HOST}/${NAS_SHARE}"
+      o: "username=${NAS_USER},password=${NAS_PASSWORD},vers=3.0,ro"

@@ -2,6 +2,8 @@ package com.maszlovicskrisztian.myflix_core.service;
 
 import com.maszlovicskrisztian.myflix_core.dtos.HlsSession;
 import com.maszlovicskrisztian.myflix_core.dtos.MediaProbeResult;
+import com.maszlovicskrisztian.myflix_core.dtos.enums.ExceptionReason;
+import com.maszlovicskrisztian.myflix_core.exception.MediaProcessingException;
 import com.maszlovicskrisztian.myflix_core.helpers.HlsSessionRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +14,6 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +23,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
@@ -77,7 +77,7 @@ public class TranscodeService {
         return Paths.get(hlsBasePath, mediaId.toString());
     }
 
-    public void waitForFirstSegment(Path playlist, Duration timeout, Integer minSegments) throws TimeoutException {
+    public void waitForFirstSegment(Path playlist, Duration timeout, Integer minSegments) {
         Path sessionDir = playlist.getParent();
         Instant deadline = Instant.now().plus(timeout);
         while (Instant.now().isBefore(deadline)) {
@@ -88,42 +88,41 @@ public class TranscodeService {
                 Thread.sleep(300);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                throw new TimeoutException("Waiting for segment cancelled.");
+                throw new MediaProcessingException("Waiting for segment cancelled.", ExceptionReason.INTERRUPTED, e);
             }
         }
 
         log.error("Transcoding did not produce {} segment(s) within {}, playlist exists={}", minSegments, timeout, Files.exists(playlist));
-        throw new TimeoutException("Transcoding was not ready in time.");
+        throw new MediaProcessingException("Transcoding was not ready in time.", ExceptionReason.TIMEOUT, null);
     }
 
-    public MediaProbeResult probe(Path file) throws IOException {
+    public MediaProbeResult probe(Path file) {
         List<String> command = List.of(
                 ffprobePath, "-v", "quiet", "-print_format", "json",
                 "-show_format", "-show_streams", file.toString()
         );
 
-        Path probeLog = Files.createTempFile("ffprobe-", ".log");
-        ProcessBuilder pb = new ProcessBuilder(command);
-        pb.redirectError(probeLog.toFile());
-
-        Process process = pb.start();
-
-        JsonNode root;
-        try (InputStream stdout = process.getInputStream()) {
-            root = objectMapper.readTree(stdout);
-        }
-
         boolean finished;
+        JsonNode root;
+        Process process;
+        Path probeLog;
         try {
+            probeLog = Files.createTempFile("ffprobe-", ".log");
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.redirectError(probeLog.toFile());
+            process = pb.start();
+            root = objectMapper.readTree(process.getInputStream());
             finished = process.waitFor(15, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new IOException("ffprobe cancelled", e);
+            throw new MediaProcessingException("ffprobe cancelled", ExceptionReason.INTERRUPTED, e);
+        } catch (IOException e) {
+            throw new MediaProcessingException("ffprobe I/O error for " + file, ExceptionReason.IO_ERROR, e);
         }
+
         if (!finished || process.exitValue() != 0) {
             process.destroyForcibly();
-            log.error("ffprobe failed for {}, exit={}, stderr saved at {}", file, process.exitValue(), probeLog);
-            throw new IOException("ffprobe timeout: " + file);
+            throw new MediaProcessingException("ffprobe timed out or failed for " + file, ExceptionReason.TIMEOUT, null);
         }
 
         String videoCodec = findCodec(root, "video");
@@ -137,7 +136,7 @@ public class TranscodeService {
 
     private Integer findHeight(JsonNode root) {
         for (JsonNode stream : root.path("streams")) {
-            if ("video".equals(stream.path("codec_type").asText())) {
+            if ("video".equals(stream.path("codec_type").asString())) {
                 int h = stream.path("height").asInt(0);
                 return h > 0 ? h : null;
             }

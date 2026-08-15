@@ -21,27 +21,27 @@ public class WatchProgressService {
     private final FileInfoRepository fileInfoRepository;
     private final MediaBaseMapper mediaBaseMapper;
 
-    public Long getProgressSecondsForMediaByProfile(Long id, Long profileId) {
+    public Long getProgressSecondsForMediaByProfile(Long fileInfoId, Long profileId) {
         return watchProgressRepository
-                .findByProfileIdAndFileInfoId(profileId, id)
+                .findByProfileIdAndFileInfoId(profileId, fileInfoId)
                 .map(WatchProgress::getProgressSeconds)
                 .orElse(0L);
     }
 
-    public WatchProgressResponse getProgressForMediaByProfile(Long id, Long profileId) {
+    public WatchProgressResponse getProgressForMediaByProfile(Long fileInfoId, Long profileId) {
         return watchProgressRepository
-                .findByProfileIdAndFileInfoId(profileId, id)
+                .findByProfileIdAndFileInfoId(profileId, fileInfoId)
                 .map(WatchProgressResponse::from)
                 .orElse(null);
     }
 
-    public WatchProgressResponse setProgressForMediaByProfile(Long id, Long profileId, Long progressSeconds) {
+    public WatchProgressResponse setProgressForMediaByProfile(Long fileInfoId, Long profileId, Long progressSeconds) {
         WatchProgress watchProgress = watchProgressRepository
-                .findByProfileIdAndFileInfoId(profileId, id)
+                .findByProfileIdAndFileInfoId(profileId, fileInfoId)
                 .orElseGet(() -> {
                     WatchProgress newProgress = new WatchProgress();
                     newProgress.setProfile(profileRepository.getReferenceById(profileId));
-                    newProgress.setFileInfo(fileInfoRepository.getReferenceById(id));
+                    newProgress.setFileInfo(fileInfoRepository.getReferenceById(fileInfoId));
                     return newProgress;
                 });
 
@@ -53,14 +53,11 @@ public class WatchProgressService {
     }
 
     public List<MediaBaseResponse> getMediasInWatchByProfile(Long profileId) {
-        List<WatchProgress> progressList = watchProgressRepository.findAllByProfileId(profileId).orElse(null);
-
-        if (progressList == null)
-            return null;
-
-        return progressList.stream()
-                .map(WatchProgress::getFileInfo)
+        return watchProgressRepository
+                .findAllByProfileId(profileId)
+                .stream().map(WatchProgress::getFileInfo)
                 .filter(x -> x.getMovieMetadata() != null || x.getEpisodeMetadata() != null)
-                .map(mediaBaseMapper::fromContinueWatching).toList();
+                .map(mediaBaseMapper::fromContinueWatching)
+                .toList();
     }
 }

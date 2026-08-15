@@ -1,5 +1,7 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
+import com.maszlovicskrisztian.myflix_core.dtos.enums.ExceptionReason;
+import com.maszlovicskrisztian.myflix_core.exception.MediaProcessingException;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.service.TranscodeService;
@@ -18,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 @RequiredArgsConstructor
 @RestController
@@ -34,9 +35,7 @@ public class StreamController {
                        @RequestHeader HttpHeaders headers,
                        HttpServletResponse response) throws IOException {
 
-        String relativePath = mediaItemService.getRelativePathById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
+        String relativePath = mediaItemService.getRelativePathById(id);
         File file = mediaPathResolver.getMediaPath().resolve(relativePath).toFile();
         long contentLength = file.length();
         List<HttpRange> ranges = headers.getRange();
@@ -83,18 +82,12 @@ public class StreamController {
     public ResponseEntity<String> getPlaylist(
             @PathVariable Long id,
             @RequestParam(defaultValue = "0") long startSeconds,
-            HttpServletRequest request) throws IOException {
-        FileInfo media = mediaItemService.getMediaById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            HttpServletRequest request) {
 
+        FileInfo media = mediaItemService.getMediaById(id);
         Path sourceFile = mediaPathResolver.getMediaPath().resolve(media.getRelativePath());
         Path playlist = transcodeService.getOrStartSession(sourceFile, id, startSeconds, media.getResHeight());
-
-        try {
-            transcodeService.waitForFirstSegment(playlist, Duration.ofSeconds(15), 3);
-        } catch (TimeoutException e) {
-            throw new ResponseStatusException(HttpStatus.GATEWAY_TIMEOUT, e.getMessage());
-        }
+        transcodeService.waitForFirstSegment(playlist, Duration.ofSeconds(15), 3);
 
         String token = extractToken(request);
         String rewritten = rewriteSegmentUrls(playlist, id, token);
@@ -131,17 +124,21 @@ public class StreamController {
         return request.getParameter("token");
     }
 
-    private String rewriteSegmentUrls(Path playlist, Long mediaId, String token) throws IOException {
-        StringBuilder result = new StringBuilder();
-        for (String line : Files.readAllLines(playlist)) {
-            if (line.endsWith(".ts")) {
-                result.append("/api/media/").append(mediaId).append("/stream/").append(line)
-                        .append("?token=").append(token);
-            } else {
-                result.append(line);
+    private String rewriteSegmentUrls(Path playlist, Long mediaId, String token) {
+        try {
+            StringBuilder result = new StringBuilder();
+            for (String line : Files.readAllLines(playlist)) {
+                if (line.endsWith(".ts")) {
+                    result.append("/api/media/").append(mediaId).append("/stream/").append(line)
+                            .append("?token=").append(token);
+                } else {
+                    result.append(line);
+                }
+                result.append("\n");
             }
-            result.append("\n");
+            return result.toString();
+        } catch (IOException e) {
+            throw new MediaProcessingException("Error during stream: Playlist file damaged or missing", ExceptionReason.IO_ERROR, e);
         }
-        return result.toString();
     }
 }
