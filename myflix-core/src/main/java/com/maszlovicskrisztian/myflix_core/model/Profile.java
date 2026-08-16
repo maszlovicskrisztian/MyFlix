@@ -20,6 +20,7 @@ public class Profile {
 
     private String name;
     private String avatarKey;
+    private String preferredLanguage;
 
     @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<WatchProgress> watchProgressEntries = new ArrayList<>();

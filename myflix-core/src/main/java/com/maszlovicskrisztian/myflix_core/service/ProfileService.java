@@ -24,6 +24,7 @@ public class ProfileService {
         Profile profile = new Profile();
         profile.setName(profileDto.name());
         profile.setAvatarKey(profileDto.avatarKey());
+        profile.setPreferredLanguage(profileDto.preferredLanguage());
 
         Profile saved = profileRepository.save(profile);
         log.info("Saved new profile: {}", profileDto.name());
