@@ -6,10 +6,12 @@ import { Observable } from 'rxjs';
 import { PlaybackInfo } from '../model/playback-info';
 import { MediaBaseResponse } from '../model/media-base-response';
 import { MediaSearchResponse } from '../model/media-search-response';
+import { LanguageService } from './language-service';
 
 @Service()
 export class MediaService {
-    http = inject(HttpClient);
+    private http = inject(HttpClient);
+    private languageService = inject(LanguageService);
     
     public getAllUnknownMedia(): Observable<Array<MediaBaseResponse>> {
         const url = `${environment.apiUrl}/media/unknown`;
@@ -40,7 +42,7 @@ export class MediaService {
     }
 
     public searchMedia(query: string): Observable<Array<MediaSearchResponse>> {
-        const url = `${environment.apiUrl}/media/search?query=${encodeURIComponent(query)}&languageCode=${environment.languageCode}`;
+        const url = `${environment.apiUrl}/media/search?query=${encodeURIComponent(query)}&languageCode=${this.languageService.getCurrentLanguage()}`;
         return this.http.get<Array<MediaSearchResponse>>(url);
     }
 }

@@ -4,18 +4,20 @@ import { HttpClient } from '@angular/common/http';
 import { MediaBaseResponse } from '../model/media-base-response';
 import { Observable } from 'rxjs';
 import { MovieDetailsResponse } from '../model/movie-details-response';
+import { LanguageService } from './language-service';
 
 @Service()
 export class MovieService {
-    http = inject(HttpClient);
+    private http = inject(HttpClient);
+    private languageService = inject(LanguageService);
 
     public getMovies(): Observable<Array<MediaBaseResponse>> {
-        const url = `${environment.apiUrl}/movies?languageCode=${environment.languageCode}`;
+        const url = `${environment.apiUrl}/movies?languageCode=${this.languageService.getCurrentLanguage()}`;
         return this.http.get<Array<MediaBaseResponse>>(url);
     }
         
     public getMovieById(id: string): Observable<MovieDetailsResponse> {
-        const url = `${environment.apiUrl}/movies/${id}?languageCode=${environment.languageCode}`;
+        const url = `${environment.apiUrl}/movies/${id}?languageCode=${this.languageService.getCurrentLanguage()}`;
         return this.http.get<MovieDetailsResponse>(url);
     }
     

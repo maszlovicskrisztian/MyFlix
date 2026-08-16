@@ -3,10 +3,12 @@ import { inject, Service, signal } from '@angular/core';
 import { environment } from '../environments/environment';
 import { Profile } from '../model/profile';
 import { Observable } from 'rxjs';
+import { LanguageService } from './language-service';
 
 @Service()
 export class ProfileService {
   private http = inject(HttpClient);
+  private languageService = inject(LanguageService);
   private readonly PROFILE_KEY = 'myflix_selected_profile';
   private readonly PROFILE_NAME_KEY = 'myflix_selected_profile_name';
   private readonly PROFILE_AVATAR_KEY = 'myflix_selected_profile_avatar';
@@ -24,8 +26,12 @@ export class ProfileService {
     return this.http.get<Array<Profile>>(`${environment.apiUrl}/profiles`);
   }
 
-  createProfile(name: string, avatarKey: string | null) {
-    return this.http.post<Profile>(`${environment.apiUrl}/profiles`, { name, avatarKey });
+  createProfile(name: string, avatarKey: string | null, preferredLanguage: string) {
+    return this.http.post<Profile>(`${environment.apiUrl}/profiles`, {
+      name,
+      avatarKey,
+      preferredLanguage,
+    });
   }
 
   selectProfile(profile: Profile): void {
@@ -33,6 +39,7 @@ export class ProfileService {
     localStorage.setItem(this.PROFILE_NAME_KEY, profile.name);
     this.selectedProfileId.set(profile.id);
     this.selectedProfileName.set(profile.name);
+    this.languageService.setLanguage(profile.preferredLanguage);
 
     // Profiles created before avatars existed have none — fall back to the initial.
     if (profile.avatarKey) {
