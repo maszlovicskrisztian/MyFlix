@@ -16,8 +16,13 @@ export class AddProfile {
   router = inject(Router);
 
   readonly avatars = AVATARS;
+  readonly languages = [
+    { code: 'en', label: 'English' },
+    { code: 'hu', label: 'Magyar' },
+  ];
 
   profileName = signal<string>('');
+  preferredLanguage = signal<string>('en');
   selectedIndex = signal<number>(0);
   errorMessage = signal<string>('');
 
@@ -52,7 +57,7 @@ export class AddProfile {
 
     this.errorMessage.set('');
 
-    this.profileService.createProfile(name, this.selectedAvatar()).subscribe({
+    this.profileService.createProfile(name, this.selectedAvatar(), this.preferredLanguage()).subscribe({
       next: () => this.router.navigate(['/profiles']),
       error: (err: HttpErrorResponse) => {
         console.error('Profil létrehozása sikertelen', err);

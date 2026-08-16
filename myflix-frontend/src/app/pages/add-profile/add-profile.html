@@ -48,6 +48,19 @@
                 <span class="field__label">Profilnév</span>
             </label>
 
+            <label class="field field--select">
+                <select
+                    class="field__input field__select"
+                    [(ngModel)]="preferredLanguage"
+                    name="preferredLanguage"
+                >
+                    @for (language of languages; track language.code) {
+                        <option [value]="language.code">{{ language.label }}</option>
+                    }
+                </select>
+                <span class="field__label">Preferred Language</span>
+            </label>
+
             @if (errorMessage()) {
                 <p class="profile-form__error">{{ errorMessage() }}</p>
             }

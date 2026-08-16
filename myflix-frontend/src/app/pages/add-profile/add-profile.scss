@@ -177,6 +177,38 @@
     font-size: 11px;
     color: var(--mf-text-dim);
   }
+
+  /* A select always has a value, so its label stays up rather than floating. */
+  &--select &__label {
+    transform: translateY(-140%);
+    font-size: 11px;
+    color: var(--mf-text-dim);
+  }
+
+  &--select::after {
+    content: "";
+    position: absolute;
+    right: 18px;
+    bottom: 20px;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--mf-text-dim);
+    border-bottom: 2px solid var(--mf-text-dim);
+    transform: rotate(45deg);
+    pointer-events: none;
+  }
+
+  &__select {
+    appearance: none;
+    padding-right: 40px;
+    cursor: pointer;
+
+    /* The popup list is drawn by the OS, which otherwise defaults to light. */
+    option {
+      background: #333333;
+      color: #fff;
+    }
+  }
 }
 
 .btn {

@@ -29,17 +29,6 @@ export class ProfileSelector implements OnInit {
     this.router.navigate(['/home']);
   }
 
-  addProfile(): void {
-    const name = prompt('Profil neve:');
-    if (!name) return;
-
-    this.profileService.createProfile(name, null).subscribe({
-      next: (newProfile) => {
-        this.profiles.set([...this.profiles(), newProfile]);
-      },
-    });
-  }
-
   deleteProfile(profile: Profile): void {
     this.profileService.deleteProfile(profile.id).subscribe({
       next: () => {
