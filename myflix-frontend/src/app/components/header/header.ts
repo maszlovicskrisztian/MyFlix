@@ -5,10 +5,11 @@ import { ProfileService } from '../../services/profile-service';
 import { avatarUrl } from '../../model/avatar';
 import { MetadataService } from '../../services/metadata-service';
 import { MediaSearchDialog } from '../media-search-dialog/media-search-dialog';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive, MediaSearchDialog],
+  imports: [RouterLink, RouterLinkActive, MediaSearchDialog, TranslocoModule],
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })

@@ -3,14 +3,15 @@
 
     <nav class="topbar__nav">
         <a class="topbar__link" [routerLink]="['/home']" routerLinkActive="topbar__link--active"
-            [routerLinkActiveOptions]="{ exact: true }">Kezdőlap</a>
+            [routerLinkActiveOptions]="{ exact: true }">{{ 'HEADER.HOME' | transloco}}</a>
         <a class="topbar__link" [routerLink]="['/movies']" routerLinkActive="topbar__link--active"
-            [routerLinkActiveOptions]="{ exact: true }">Filmek</a>
+            [routerLinkActiveOptions]="{ exact: true }">{{ 'HEADER.MOVIES' | transloco}}</a>
         <a class="topbar__link" [routerLink]="['/shows']" routerLinkActive="topbar__link--active"
-            [routerLinkActiveOptions]="{ exact: true }">Sorozatok</a>
-        <a class="topbar__link">Kedvencek</a>
+            [routerLinkActiveOptions]="{ exact: true }">{{ 'HEADER.SHOWS' | transloco}}</a>
+        <a class="topbar__link" [routerLink]="['/favorites']" routerLinkActive="topbar__link--active"
+            [routerLinkActiveOptions]="{ exact: true }">{{ 'HEADER.FAVORITES' | transloco}}</a>
         <button class="topbar__link topbar__link--action" type="button" (click)="openSearch()">
-            Keresés
+            {{ 'HEADER.SEARCH' | transloco}}
         </button>
     </nav>
 
@@ -31,13 +32,13 @@
         @if (menuOpen()) {
             <div class="profile-menu__dropdown" role="menu">
                 <button class="profile-menu__item" type="button" role="menuitem" (click)="switchProfile()">
-                    Profil váltás
+                    {{ 'HEADER.DROPDOWN.SWITCH_PROFILE' | transloco }}
                 </button>
                 <button class="profile-menu__item" type="button" role="menuitem" (click)="logout()">
-                    Kijelentkezés
+                    {{ 'HEADER.DROPDOWN.LOGOUT' | transloco }}
                 </button>
                 <button class="profile-menu__item" type="button" role="menuitem" (click)="refreshLibrary()">
-                    Könyvtár frissítés
+                    {{ 'HEADER.DROPDOWN.LIBRARY_SCAN' | transloco }}
                 </button>
             </div>
         }
@@ -52,7 +53,7 @@
             <path d="M3 10.7 12 3.5l9 7.2" />
             <path d="M5.7 9.6V20.5h12.6V9.6" />
         </svg>
-        <span class="tabbar__label">Kezdőlap</span>
+        <span class="tabbar__label">{{ 'HEADER.HOME' | transloco }}</span>
     </a>
 
     <a class="tabbar__link" [routerLink]="['/movies']" routerLinkActive="tabbar__link--active"
@@ -61,7 +62,7 @@
             <rect x="3" y="4" width="18" height="16" rx="2" />
             <path d="M8 4v16M16 4v16M3 9h5M3 15h5M16 9h5M16 15h5" />
         </svg>
-        <span class="tabbar__label">Filmek</span>
+        <span class="tabbar__label">{{ 'HEADER.MOVIES' | transloco }}</span>
     </a>
 
     <a class="tabbar__link" [routerLink]="['/shows']" routerLinkActive="tabbar__link--active"
@@ -70,7 +71,7 @@
             <rect x="2.5" y="6.5" width="19" height="12.5" rx="2" />
             <path d="m8 3 4 3.5L16 3" />
         </svg>
-        <span class="tabbar__label">Sorozatok</span>
+        <span class="tabbar__label">{{ 'HEADER.SHOWS' | transloco }}</span>
     </a>
 
     <a class="tabbar__link">
@@ -78,7 +79,7 @@
             <path
                 d="M12 20.6l-1.3-1.2C6 15.2 3 12.4 3 9.2 3 6.6 5 4.6 7.5 4.6c1.5 0 2.9.7 3.8 1.8.9-1.1 2.3-1.8 3.8-1.8C17.6 4.6 19.6 6.6 19.6 9.2c0 3.2-3 6-7.7 10.2L12 20.6z" />
         </svg>
-        <span class="tabbar__label">Kedvencek</span>
+        <span class="tabbar__label">{{ 'HEADER.FAVORITES' | transloco }}</span>
     </a>
 
     <button class="tabbar__link tabbar__link--action" type="button" (click)="openSearch()">
@@ -86,7 +87,7 @@
             <circle cx="11" cy="11" r="6.5" />
             <path d="m16 16 4.5 4.5" />
         </svg>
-        <span class="tabbar__label">Keresés</span>
+        <span class="tabbar__label">{{ 'HEADER.SEARCH' | transloco }}</span>
     </button>
 </nav>
 

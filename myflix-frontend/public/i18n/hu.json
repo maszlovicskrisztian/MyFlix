@@ -1,1 +1,14 @@
-{}
+{
+    "HEADER": {
+        "HOME": "Kezdőlap",
+        "MOVIES": "Filmek",
+        "SHOWS": "Sorozatok",
+        "FAVORITES": "Kedvencek",
+        "SEARCH": "Keresés",
+        "DROPDOWN": {
+            "SWITCH_PROFILE": "Profil váltás",
+            "LOGOUT": "Kijelentkezés",
+            "LIBRARY_SCAN": "Könyvtár frissítés"
+        }
+    }
+}

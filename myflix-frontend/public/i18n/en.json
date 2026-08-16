@@ -1,1 +1,14 @@
-{}
+{
+    "HEADER": {
+        "HOME": "Home",
+        "MOVIES": "Movies",
+        "SHOWS": "Shows",
+        "FAVORITES": "Favorites",
+        "SEARCH": "Search",
+        "DROPDOWN": {
+            "SWITCH_PROFILE": "Switch Profile",
+            "LOGOUT": "Logout",
+            "LIBRARY_SCAN": "Refresh Library"
+        }
+    }
+}
