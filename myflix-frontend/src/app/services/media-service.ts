@@ -40,7 +40,7 @@ export class MediaService {
     }
 
     public searchMedia(query: string): Observable<Array<MediaSearchResponse>> {
-        const url = `${environment.apiUrl}/media/search?query=${encodeURIComponent(query)}`;
+        const url = `${environment.apiUrl}/media/search?query=${encodeURIComponent(query)}&languageCode=${environment.languageCode}`;
         return this.http.get<Array<MediaSearchResponse>>(url);
     }
 }

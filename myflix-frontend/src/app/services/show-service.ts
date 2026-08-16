@@ -10,12 +10,12 @@ export class ShowService {
     http = inject(HttpClient);
     
     public getShows(): Observable<Array<MediaBaseResponse>> {
-        const url = `${environment.apiUrl}/shows`;
+        const url = `${environment.apiUrl}/shows?languageCode=${environment.languageCode}`;
         return this.http.get<Array<MediaBaseResponse>>(url);
     }
 
     public getShowById(id: string): Observable<ShowDetailsResponse> {
-        const url = `${environment.apiUrl}/shows/${id}`;
+        const url = `${environment.apiUrl}/shows/${id}?languageCode=${environment.languageCode}`;
         return this.http.get<ShowDetailsResponse>(url);
     }
     

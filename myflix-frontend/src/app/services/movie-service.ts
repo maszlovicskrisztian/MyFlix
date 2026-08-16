@@ -10,12 +10,12 @@ export class MovieService {
     http = inject(HttpClient);
 
     public getMovies(): Observable<Array<MediaBaseResponse>> {
-        const url = `${environment.apiUrl}/movies`;
+        const url = `${environment.apiUrl}/movies?languageCode=${environment.languageCode}`;
         return this.http.get<Array<MediaBaseResponse>>(url);
     }
         
     public getMovieById(id: string): Observable<MovieDetailsResponse> {
-        const url = `${environment.apiUrl}/movies/${id}`;
+        const url = `${environment.apiUrl}/movies/${id}?languageCode=${environment.languageCode}`;
         return this.http.get<MovieDetailsResponse>(url);
     }
     
