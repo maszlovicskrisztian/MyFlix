@@ -96,15 +96,15 @@ public class TranscodeService {
         throw new MediaProcessingException("Transcoding was not ready in time.", ExceptionReason.TIMEOUT, null);
     }
 
-    public MediaProbeResult probe(Path file) {
+    public MediaProbeResult probe(Path file, boolean throwException) {
         List<String> command = List.of(
                 ffprobePath, "-v", "quiet", "-print_format", "json",
                 "-show_format", "-show_streams", file.toString()
         );
 
-        boolean finished;
-        JsonNode root;
-        Process process;
+        boolean finished = false;
+        JsonNode root = null;
+        Process process = null;
         Path probeLog;
         try {
             probeLog = Files.createTempFile("ffprobe-", ".log");
@@ -115,14 +115,23 @@ public class TranscodeService {
             finished = process.waitFor(15, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new MediaProcessingException("ffprobe cancelled", ExceptionReason.INTERRUPTED, e);
+            if (throwException)
+                throw new MediaProcessingException("ffprobe cancelled", ExceptionReason.INTERRUPTED, e);
+            else
+                log.warn("ffprobe cancelled");
         } catch (IOException e) {
-            throw new MediaProcessingException("ffprobe I/O error for " + file, ExceptionReason.IO_ERROR, e);
+            if (throwException)
+                throw new MediaProcessingException("ffprobe I/O error for " + file, ExceptionReason.IO_ERROR, e);
+            else
+                log.warn("ffprobe I/O error for {}", file);
         }
 
-        if (!finished || process.exitValue() != 0) {
+        if (process != null && (process.exitValue() != 0 || !finished)) {
             process.destroyForcibly();
-            throw new MediaProcessingException("ffprobe timed out or failed for " + file, ExceptionReason.TIMEOUT, null);
+            if (throwException)
+                throw new MediaProcessingException("ffprobe timed out or failed for " + file, ExceptionReason.TIMEOUT, null);
+            else
+                log.warn("ffprobe timed out or failed for {}", file);
         }
 
         String videoCodec = findCodec(root, "video");

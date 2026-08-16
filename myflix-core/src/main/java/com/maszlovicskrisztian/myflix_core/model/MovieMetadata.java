@@ -28,7 +28,7 @@ public class MovieMetadata {
     private LocalDate releaseDate;
     private Integer runtimeMinutes;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "file_info_id", nullable = false, unique = true)
     private FileInfo fileInfo;
 

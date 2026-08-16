@@ -30,9 +30,9 @@ public class MediaController {
     private final MovieService movieService;
 
     @GetMapping("/search")
-    public List<MediaSearchResponse> searchMedia(@RequestParam String query) {
-        List<MediaSearchResponse> results = new ArrayList<>(showService.findAllTitleWithIdByQuery(query));
-        results.addAll(movieService.findAllTitleWithIdByQuery(query));
+    public List<MediaSearchResponse> searchMedia(@RequestParam String query, @RequestParam String languageCode) {
+        List<MediaSearchResponse> results = new ArrayList<>(showService.findAllTitleWithIdByQuery(query, languageCode));
+        results.addAll(movieService.findAllTitleWithIdByQuery(query, languageCode));
 
         return results;
     }

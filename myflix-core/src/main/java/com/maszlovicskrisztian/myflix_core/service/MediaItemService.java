@@ -39,7 +39,7 @@ public class MediaItemService {
             return null;
 
         Path absoluteFile = mediaPathResolver.getMediaPath().resolve(relativePath);
-        MediaProbeResult probeResult = transcodeService.probe(absoluteFile);
+        MediaProbeResult probeResult = transcodeService.probe(absoluteFile, false);
 
         FileInfo item = new FileInfo();
         item.setRelativePath(relativePath.toString());
@@ -102,7 +102,7 @@ public class MediaItemService {
 
     public FileInfo saveFileMetadata(FileInfo item) {
         Path file = mediaPathResolver.getMediaPath().resolve(item.getRelativePath());
-        MediaProbeResult probeResult = transcodeService.probe(file);
+        MediaProbeResult probeResult = transcodeService.probe(file, true);
         item.setCodec(probeResult.videoCodec());
         item.setAudioCodec(probeResult.audioCodec());
         item.setContainer(probeResult.container());

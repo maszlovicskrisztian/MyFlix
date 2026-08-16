@@ -44,7 +44,7 @@ public class MediaTitleParser {
         else
             log.info("Episode could not be resolved");
 
-        return new TmdbSearchRequest(title, year, season, episode);
+        return new TmdbSearchRequest(title, year, season, episode, "en");
     }
 
     private String getTitle(Path relativePath) {

@@ -109,7 +109,7 @@ public class MediaMetadataService {
     private void enrichShow(Long showId, Integer season, Integer episode, FileInfo fileInfo) {
         Show savedShow = showRepository.findByTmdbId(showId).orElse(null);
         if (savedShow == null) {
-            TmdbDetailsResponse showDetails = tmdbClient.getTvDetails(showId);
+            TmdbDetailsResponse showDetails = tmdbClient.getTvDetails(showId, "en");
             Show show = new Show();
             show.setTmdbId(showId);
             show.setBackdropPath(showDetails.backdropPath());
@@ -125,8 +125,8 @@ public class MediaMetadataService {
             log.info("New show saved: {}", showDetails.name());
         }
 
-        TmdbDetailsResponse seasonDetails = tmdbClient.getTvSeasonDetails(showId, season);
-        TmdbDetailsResponse episodeDetails = tmdbClient.getTvEpisodeDetails(showId, season, episode);
+        TmdbDetailsResponse seasonDetails = tmdbClient.getTvSeasonDetails(showId, season, "en");
+        TmdbDetailsResponse episodeDetails = tmdbClient.getTvEpisodeDetails(showId, season, episode, "en");
 
         EpisodeMetadata episodeMetadata = fileInfo.getEpisodeMetadata();
 
@@ -160,7 +160,7 @@ public class MediaMetadataService {
             metadata.setFileInfo(fileInfo);
         }
 
-        TmdbDetailsResponse details = tmdbClient.getMovieDetails(tmdbId);
+        TmdbDetailsResponse details = tmdbClient.getMovieDetails(tmdbId, "en");
 
         metadata.setTmdbId(tmdbId);
         metadata.setTitle(details.title());

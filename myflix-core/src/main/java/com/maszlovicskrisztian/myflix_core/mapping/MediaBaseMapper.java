@@ -15,30 +15,6 @@ public class MediaBaseMapper {
 
     private final ImageUrlResolver imageUrlResolver;
 
-    public MediaBaseResponse fromShow(Show model) {
-        return new MediaBaseResponse(
-                model.getId(),
-                null,
-                model.getTitle(),
-                imageUrlResolver.toImageUrl(model.getPosterPath()),
-                model.getGenres()
-        );
-    }
-
-    public MediaBaseResponse fromMovie(FileInfo model) {
-        MovieMetadata metadata = model.getMovieMetadata();
-        if (metadata == null)
-            return null;
-
-        return new MediaBaseResponse(
-                null,
-                model.getId(),
-                metadata.getTitle(),
-                imageUrlResolver.toImageUrl(metadata.getPosterPath()),
-                metadata.getGenres()
-        );
-    }
-
     public MediaBaseResponse fromContinueWatching(FileInfo model) {
         MovieMetadata movieMetadata = model.getMovieMetadata();
         if (movieMetadata != null) {

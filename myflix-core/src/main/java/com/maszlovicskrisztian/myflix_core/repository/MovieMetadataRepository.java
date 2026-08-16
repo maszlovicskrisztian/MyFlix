@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface MovieMetadataRepository extends JpaRepository<MovieMetadata, Long> {
     <T> List<T> findAllBy(Class<T> type);
+    Optional<MovieMetadata> findByTmdbId(Long tmdbId);
 }
