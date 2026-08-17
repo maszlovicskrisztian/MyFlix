@@ -1,23 +1,24 @@
 <div class="detail">
-  <div class="hero">
-    <div class="hero__stage">
-      <div class="hero__backdrop">
-        @if (backdropUrl(); as backdrop) {
-          <img class="hero__backdrop-img" [src]="backdrop" alt="" (error)="onBackdropError()" />
-        }
-      </div>
-      <div class="hero__scrim"></div>
+  @if (!loaded()) { <app-loading-overlay></app-loading-overlay>}
+  @else {
+    <div class="hero">
+      <div class="hero__stage">
+        <div class="hero__backdrop">
+          @if (backdropUrl(); as backdrop) {
+            <img class="hero__backdrop-img" [src]="backdrop" alt="" (error)="onBackdropError()" />
+          }
+        </div>
+        <div class="hero__scrim"></div>
 
-      <div class="hero__nav">
-        <a class="back" [routerLink]="backLink()" [attr.aria-label]="backLabel()"
-          [title]="backLabel()">
-          <svg class="back__icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M15 5l-7 7 7 7" />
-          </svg>
-        </a>
-      </div>
+        <div class="hero__nav">
+          <a class="back" [routerLink]="backLink()" [attr.aria-label]="backLabel()"
+            [title]="backLabel()">
+            <svg class="back__icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M15 5l-7 7 7 7" />
+            </svg>
+          </a>
+        </div>
 
-      @if (loaded()) {
         <div class="hero__head">
           <h1 class="hero__title">{{ title() }}</h1>
 
@@ -35,15 +36,8 @@
             </p>
           }
         </div>
-      } @else {
-        <div class="loading">
-          <div class="mf-spinner" aria-hidden="true"></div>
-          <p class="loading__text">Betöltés…</p>
-        </div>
-      }
-    </div>
+      </div>
 
-    @if (loaded()) {
       <div class="hero__foot">
         <div class="hero__body">
           <div class="hero__actions">
@@ -73,13 +67,12 @@
           }
         </div>
 
-        <!-- Whatever the page puts below the overview, styled by that page. -->
         <ng-content />
 
         <div class="hero__spacer"></div>
       </div>
-    }
-  </div>
+    </div>
+  }
 </div>
 
 <app-enrich-dialog [(open)]="enrichDialogOpen" [mediaId]="enrichMediaId()"

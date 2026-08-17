@@ -1,21 +1,26 @@
 <app-header></app-header>
-<app-media-section
-    layout="row"
-    title="Újdonságok"
-    emptyMessage="Nincs elérhető új film."
-    [mediaBaseResponses]="newMovies()">
-</app-media-section>
-<app-media-section
-    layout="row"
-    title="Akció filmek"
-    emptyMessage="Nincs elérhető akció film."
-    [mediaBaseResponses]="actionMovies()"
-    [maxCapacity]="50">
-</app-media-section>
-<app-media-section
-    layout="grid"
-    title="Összes film"
-    emptyMessage="Nincs elérhető film."
-    [mediaBaseResponses]="movies()"
-    [maxCapacity]="30">
-</app-media-section>
+
+@if (loading()) {
+    <app-loading-overlay></app-loading-overlay>
+} @else {
+    <app-media-section
+        layout="row"
+        title="Újdonságok"
+        emptyMessage="Nincs elérhető új film."
+        [mediaBaseResponses]="newMovies()">
+    </app-media-section>
+    <app-media-section
+        layout="row"
+        title="Akció filmek"
+        emptyMessage="Nincs elérhető akció film."
+        [mediaBaseResponses]="actionMovies()"
+        [maxCapacity]="50">
+    </app-media-section>
+    <app-media-section
+        layout="grid"
+        title="Összes film"
+        emptyMessage="Nincs elérhető film."
+        [mediaBaseResponses]="movies()"
+        [maxCapacity]="30">
+    </app-media-section>
+}

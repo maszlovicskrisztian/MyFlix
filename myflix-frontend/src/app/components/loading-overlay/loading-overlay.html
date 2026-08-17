@@ -1,0 +1,7 @@
+<div class="overlay" role="status" aria-live="polite" [attr.aria-label]="label() || 'Betöltés…'">
+  <div class="mf-spinner" aria-hidden="true"></div>
+
+  @if (label()) {
+    <p class="overlay__text">{{ label() }}</p>
+  }
+</div>

@@ -3,10 +3,12 @@ import { Header } from '../../components/header/header';
 import { MediaSection } from "../../components/media-section/media-section";
 import { MovieService } from '../../services/movie-service';
 import { MediaBaseResponse } from '../../model/media-base-response';
+import { finalize } from 'rxjs';
+import { LoadingOverlay } from '../../components/loading-overlay/loading-overlay';
 
 @Component({
   selector: 'app-movies',
-  imports: [Header, MediaSection],
+  imports: [Header, MediaSection, LoadingOverlay],
   templateUrl: './movies.html',
   styleUrl: './movies.scss',
 })
@@ -15,9 +17,12 @@ export class Movies implements OnInit {
   movies = signal<Array<MediaBaseResponse>>([]);
   newMovies = signal<Array<MediaBaseResponse>>([]);
   actionMovies = signal<Array<MediaBaseResponse>>([]);
+  loading = signal(true);
 
   ngOnInit(): void {
-    this.movieService.getMovies().subscribe({
+    this.movieService.getMovies()
+    .pipe(finalize(() => this.loading.set(false)))
+    .subscribe({
       next: (movies) => {
         const newMovies = movies.values().next().value ? Array.from(movies.values()).sort((a, b) => b.fileInfoId! - a.fileInfoId!).slice(0, 5) : [];
         const actionMovies = movies.filter((m) => m.genres.includes('Action'));

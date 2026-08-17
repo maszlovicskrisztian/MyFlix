@@ -1,16 +1,21 @@
 <app-header></app-header>
-<app-media-section
-    layout="row"
-    title="Újdonságok"
-    emptyMessage="Nincs elérhető új sorozat."
-    [mediaBaseResponses]="newEpisodes()"
-    [routeLink]="'/shows'">
-</app-media-section>
-<app-media-section
-    layout="grid"
-    title="Összes sorozat"
-    emptyMessage="Nincs elérhető sorozat."
-    [mediaBaseResponses]="shows()"
-    [maxCapacity]="50"
-    [routeLink]="'/shows'">
-</app-media-section>
+
+@if (loading()) {
+    <app-loading-overlay></app-loading-overlay>
+} @else {
+    <app-media-section
+        layout="row"
+        title="Újdonságok"
+        emptyMessage="Nincs elérhető új sorozat."
+        [mediaBaseResponses]="newEpisodes()"
+        [routeLink]="'/shows'">
+    </app-media-section>
+    <app-media-section
+        layout="grid"
+        title="Összes sorozat"
+        emptyMessage="Nincs elérhető sorozat."
+        [mediaBaseResponses]="shows()"
+        [maxCapacity]="50"
+        [routeLink]="'/shows'">
+    </app-media-section>
+}

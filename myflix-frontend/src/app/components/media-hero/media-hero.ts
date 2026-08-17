@@ -1,6 +1,7 @@
 import { Component, input, linkedSignal, output, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { EnrichDialog } from '../enrich-dialog/enrich-dialog';
+import { LoadingOverlay } from "../loading-overlay/loading-overlay";
 
 /** A `routerLink` target, e.g. `['/shows', showId()]`. */
 export type HeroLink = Array<string | number | null>;
@@ -12,7 +13,7 @@ export type HeroLink = Array<string | number | null>;
  */
 @Component({
   selector: 'app-media-hero',
-  imports: [RouterLink, EnrichDialog],
+  imports: [RouterLink, EnrichDialog, LoadingOverlay],
   templateUrl: './media-hero.html',
   styleUrl: './media-hero.scss',
 })
