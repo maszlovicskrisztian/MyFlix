@@ -13,9 +13,8 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MetadataService } from '../../services/metadata-service';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
-/** Accepts `tt0111161`, `TT0111161` or a bare `0111161`. */
 const IMDB_ID = /^(?:tt)?(\d{7,8})$/i;
 
 @Component({
@@ -26,6 +25,7 @@ const IMDB_ID = /^(?:tt)?(\d{7,8})$/i;
 })
 export class EnrichDialog {
   private metadataService = inject(MetadataService);
+  private translocoService = inject(TranslocoService);
 
   open = model(false);
   mediaId = input<string | null>(null);
@@ -45,14 +45,14 @@ export class EnrichDialog {
     const match = IMDB_ID.exec(this.imdbId().trim());
 
     if (!match) {
-      this.error.set('Érvénytelen azonosító. Például: tt0111161');
+      this.error.set(this.translocoService.translate('ENRICHMENT.ERRORS.INVALID_ID'));
       return;
     }
 
     const mediaId = this.mediaId();
 
     if (!mediaId) {
-      this.error.set('Hiányzik a tartalom azonosítója.');
+      this.error.set(this.translocoService.translate('ENRICHMENT.ERRORS.MISSING_MEDIA_ID'));
       return;
     }
 
@@ -68,7 +68,7 @@ export class EnrichDialog {
       error: (error) => {
         console.error('Error enriching metadata:', error);
         this.busy.set(false);
-        this.error.set('Nem sikerült betölteni a metaadatokat.');
+        this.error.set(this.translocoService.translate('ENRICHMENT.ERRORS.GENERIC'));
       },
     });
   }

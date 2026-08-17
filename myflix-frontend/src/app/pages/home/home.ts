@@ -6,10 +6,11 @@ import { MediaSection } from "../../components/media-section/media-section";
 import { LoadingOverlay } from "../../components/loading-overlay/loading-overlay";
 import { ProfileService } from '../../services/profile-service';
 import { MediaBaseResponse } from '../../model/media-base-response';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-home',
-  imports: [Header, MediaSection, LoadingOverlay],
+  imports: [Header, MediaSection, LoadingOverlay, TranslocoModule],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })

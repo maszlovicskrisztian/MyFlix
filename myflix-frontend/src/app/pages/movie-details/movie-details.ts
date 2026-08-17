@@ -5,10 +5,11 @@ import { catchError, of } from 'rxjs';
 import { MovieService } from '../../services/movie-service';
 import { MovieDetailsResponse } from '../../model/movie-details-response';
 import { HeroLink, MediaHero } from '../../components/media-hero/media-hero';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-movie-details',
-  imports: [MediaHero],
+  imports: [MediaHero, TranslocoModule],
   templateUrl: './movie-details.html',
   styleUrl: './movie-details.scss',
 })
@@ -16,6 +17,7 @@ export class MovieDetails implements OnInit {
   private route = inject(ActivatedRoute);
   private movieService = inject(MovieService);
   private locale = inject(LOCALE_ID);
+  private translocoService = inject(TranslocoService);
 
   movieId = signal<string | null>(null);
   movie = signal<MovieDetailsResponse | null>(null);
@@ -28,8 +30,8 @@ export class MovieDetails implements OnInit {
     }
 
     return [
-      ...(item.releaseDate ? [`Bemutatás: ${this.longDate(item.releaseDate)}`] : []),
-      `Hozzáadva: ${this.longDate(item.addedAt)}`,
+      ...(item.releaseDate ? [`${this.translocoService.translate('MOVIE_DETAILS.RELEASE_DATE')}: ${this.longDate(item.releaseDate)}`] : []),
+      `${this.translocoService.translate('MOVIE_DETAILS.ADDED_AT')}: ${this.longDate(item.addedAt)}`,
     ];
   });
 

@@ -32,7 +32,7 @@
           @if (runtime(); as runtime) {
             <p class="hero__runtime">
               <span class="hero__runtime-icon" aria-hidden="true">◷</span>
-              Játékidő: <span class="hero__runtime-value">{{ runtime }}</span>
+              {{ 'MEDIA_HERO.RUNTIME' | transloco }}: <span class="hero__runtime-value">{{ runtime }}</span>
             </p>
           }
         </div>
@@ -43,12 +43,12 @@
           <div class="hero__actions">
             @if (playLink(); as link) {
               <a class="btn btn--play" [routerLink]="link">
-                <span class="btn__icon" aria-hidden="true">▶</span> Lejátszás
+                <span class="btn__icon" aria-hidden="true">▶</span> {{ 'MEDIA_HERO.PLAY' | transloco }}
               </a>
             }
 
-            <button class="btn btn--circle" type="button" aria-label="Kedvencekhez adás"
-              title="Kedvencekhez adás">
+            <button class="btn btn--circle" type="button" aria-label="{{ 'MEDIA_HERO.ADD_TO_FAVORITES' | transloco }}"
+              title="{{ 'MEDIA_HERO.ADD_TO_FAVORITES' | transloco }}">
               <svg class="btn__heart" viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
@@ -57,7 +57,7 @@
 
             @if (enrichMediaId()) {
               <button class="btn btn--ghost" type="button" (click)="enrichDialogOpen.set(true)">
-                Enrich
+                {{ 'MEDIA_HERO.ENRICH' | transloco }}
               </button>
             }
           </div>

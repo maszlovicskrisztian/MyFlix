@@ -5,14 +5,14 @@
 } @else {
     <app-media-section
         layout="row"
-        title="Újdonságok"
+        title=" {{ 'MEDIA_SECTION.TITLES.NEWLY_ADDED' | transloco }} "
         emptyMessage="Nincs elérhető új sorozat."
         [mediaBaseResponses]="newEpisodes()"
         [routeLink]="'/shows'">
     </app-media-section>
     <app-media-section
         layout="grid"
-        title="Összes sorozat"
+        title=" {{ 'MEDIA_SECTION.TITLES.ALL_SHOWS' | transloco }} "
         emptyMessage="Nincs elérhető sorozat."
         [mediaBaseResponses]="shows()"
         [maxCapacity]="50"

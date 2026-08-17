@@ -6,7 +6,7 @@
   @if (show(); as item) {
     @if (item.seasons.length) {
       <section class="seasons">
-        <h2 class="seasons__title">Évadok</h2>
+        <h2 class="seasons__title"> {{ 'SHOW_DETAILS.SEASONS' | transloco}}</h2>
 
         <div class="seasons__grid">
           @for (season of item.seasons; track season.seasonNumber) {
@@ -22,7 +22,7 @@
 
               <div class="season-card__meta">
                 <span class="season-card__name">{{ season.title }}</span>
-                <span class="season-card__sub">{{ season.episodes.length }} epizód</span>
+                <span class="season-card__sub">{{ season.episodes.length }} {{ 'SHOW_DETAILS.EPISODE' | transloco }}</span>
               </div>
             </a>
           }

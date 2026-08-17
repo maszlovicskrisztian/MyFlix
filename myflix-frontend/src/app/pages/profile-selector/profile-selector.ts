@@ -3,10 +3,11 @@ import { ProfileService } from '../../services/profile-service';
 import { Router, RouterLink } from '@angular/router';
 import { Profile } from '../../model/profile';
 import { avatarUrl } from '../../model/avatar';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-profile-selector',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslocoModule],
   templateUrl: './profile-selector.html',
   styleUrl: './profile-selector.scss',
 })

@@ -4,30 +4,31 @@
   @if (loading()) {
     <app-loading-overlay></app-loading-overlay>
   } @else {
+    @if (continueWatching().length > 0) {
+      <app-media-section
+        layout="row"
+        aspect="still"
+        title=" {{ 'MEDIA_SECTION.TITLES.CONTINUE_WATCHING' | transloco }} "
+        [mediaBaseResponses]="continueWatching()"
+        [routeLink]="'/media'">
+      </app-media-section>
+    }
     <app-media-section
       layout="row"
-      aspect="still"
-      title="Megtekintés folytatása"
-      [mediaBaseResponses]="continueWatching()"
-      emptyMessage="Nincs megtekintés alatt álló tartalom."
-      [routeLink]="'/media'">
-    </app-media-section>
-    <app-media-section
-      layout="row"
-      title="Ajánlott filmek"
+      title=" {{ 'MEDIA_SECTION.TITLES.SUGGESTED_MOVIES' | transloco }} "
       [mediaBaseResponses]="suggestedMovies()"
-      emptyMessage="Nézz valamit, hogy tudjunk ajánlani.">
+      emptyMessage="{{ 'MEDIA_SECTION.EMPTY_TEXTS.NO_SUGGESTIONS' | transloco }}">
     </app-media-section>
     <app-media-section
       layout="row"
-      title="Ajánlott Sorozatok"
+      title=" {{ 'MEDIA_SECTION.TITLES.SUGGESTED_SHOWS' | transloco }} "
       [mediaBaseResponses]="suggestedSeries()"
-      emptyMessage="Nézz valamit, hogy tudjunk ajánlani.">
+      emptyMessage="{{ 'MEDIA_SECTION.EMPTY_TEXTS.NO_SUGGESTIONS' | transloco }}">
     </app-media-section>
     @if (unknownMedia().length > 0) {
       <app-media-section
         layout="grid"
-        title="Ismeretlen média"
+        title=" {{ 'MEDIA_SECTION.TITLES.UNKNOWN_MEDIA' | transloco }} "
         [mediaBaseResponses]="unknownMedia()">
       </app-media-section>
     }

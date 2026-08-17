@@ -2,11 +2,11 @@
   <div class="overlay" (click)="close()">
     <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="search-dialog-title"
       (click)="$event.stopPropagation()">
-      <h2 class="dialog__title" id="search-dialog-title">Keresés</h2>
+      <h2 class="dialog__title" id="search-dialog-title">{{ 'SEARCHBAR.SEARCH' | transloco }}</h2>
 
       <div class="searchbar">
         <input #queryInput class="searchbar__input" type="search" name="query" [ngModel]="query()"
-          (ngModelChange)="onQueryChange($event)" placeholder="Film vagy sorozat címe"
+          (ngModelChange)="onQueryChange($event)" [placeholder]="('SEARCHBAR.SEARCH_PLACEHOLDER' | transloco)"
           autocomplete="off" />
         <span class="searchbar__status" aria-hidden="true">
           @if (busy()) {
@@ -33,7 +33,7 @@
           }
         </ul>
       } @else if (searched() && !busy()) {
-        <p class="dialog__empty">Nincs találat erre: „{{ query().trim() }}”</p>
+        <p class="dialog__empty">{{ 'SEARCHBAR.NO_RESULTS' | transloco }}</p>
       }
     </div>
   </div>

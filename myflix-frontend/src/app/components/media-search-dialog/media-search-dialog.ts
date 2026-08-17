@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { Subject, catchError, debounceTime, distinctUntilChanged, map, of, switchMap } from 'rxjs';
 import { MediaService } from '../../services/media-service';
 import { MediaSearchResponse } from '../../model/media-search-response';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 const SEARCH_DEBOUNCE_MS = 250;
 const MIN_QUERY_LENGTH = 2;
@@ -27,13 +28,14 @@ type SearchOutcome = {
 
 @Component({
   selector: 'app-media-search-dialog',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslocoModule],
   templateUrl: './media-search-dialog.html',
   styleUrl: './media-search-dialog.scss',
 })
 export class MediaSearchDialog {
   private mediaService = inject(MediaService);
   private router = inject(Router);
+  private translocoService = inject(TranslocoService);
 
   open = model(false);
 
@@ -83,7 +85,7 @@ export class MediaSearchDialog {
         this.busy.set(false);
         this.results.set(results);
         this.searched.set(searched);
-        this.error.set(failed ? 'Nem sikerült lefuttatni a keresést.' : null);
+        this.error.set(failed ? this.translocoService.translate('SEARCHBAR.ERROR') : null);
       });
   }
 

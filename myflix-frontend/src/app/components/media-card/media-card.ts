@@ -25,7 +25,7 @@ export class MediaCard {
 
   displayTitle = computed(() => {
     const item = this.mediaBase();
-    return item?.title || 'Nem elérhető cím';
+    return item?.title || '';
   });
 
   posterUrl = linkedSignal(() => this.mediaBase()?.imagePath ?? null);

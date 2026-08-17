@@ -16,6 +16,64 @@
         "DESCRIPTION": "Paste the IMDb ID of the movie or show you want to enrich, and we will fetch the details for you. The IMDb ID can be found in the URL of the title's page on IMDb.",
         "CANCEL": "Cancel",
         "SUBMIT": "Load",
-        "SUBMITTING": "Loading…"
+        "SUBMITTING": "Loading…",
+        "ERRORS": {
+            "INVALID_ID": "Invalid imdb id. Id should look like this: tt0111161",
+            "MISSING_MEDIA_ID": "The media you want to enrich is missing.",
+            "GENERIC": "Failed to load metadata."
+        }
+    },
+    "MEDIA_HERO": {
+        "RUNTIME": "Runtime",
+        "PLAY": "Play",
+        "ADD_TO_FAVORITES": "Add to Favorites",
+        "REMOVE_FROM_FAVORITES": "Remove from Favorites",
+        "ENRICH": "Enrich"
+    },
+    "SEARCHBAR": {
+        "SEARCH": "Search",
+        "SEARCH_PLACEHOLDER": "Search for movies or shows",
+        "NO_RESULTS": "No results found.",
+        "ERROR": "An error occurred while searching. Please try again later."
+    },
+    "MEDIA_SECTION": {
+        "EMPTY_TITLE": "No available media yet",
+        "NEXT_PAGE": "Next Page",
+        "PREVIOUS_PAGE": "Previous Page",
+        "TITLES": {
+            "CONTINUE_WATCHING": "Continue Watching",
+            "UNKNOWN_MEDIA": "Unknown Media",
+            "ACTION_MOVIES": "Action Movies",
+            "ALL_MOVIES": "All Movies",
+            "ALL_SHOWS": "All Shows",
+            "NEWLY_ADDED": "Newly Added",
+            "SUGGESTED_MOVIES": "Suggested Movies",
+            "SUGGESTED_SHOWS": "Suggested Shows"
+        },
+        "EMPTY_TEXTS": {
+            "NO_SUGGESTIONS": "Watch somethings so we can suggest"
+        }
+    },
+    "DETAILS": {
+        "BACK_TO_LIST": "Back to List"
+    },
+    "MOVIE_DETAILS": {
+        "RELEASE_DATE": "Release Date",
+        "ADDED_AT": "Added At"
+    },
+    "SHOW_DETAILS": {
+        "SEASONS": "Seasons",
+        "SEASON_COUNT": "Seasons",
+        "EPISODE_COUNT": "Episodes",
+        "EPISODE": "Episode",
+        "FIRST_AIR_DATE": "First Air Date"
+    },
+    "SEASON_DETAILS": {
+        "EPISODES": "Episodes",
+        "MINUTES": "minutes"
+    },
+    "PROFILE_SELECTOR": {
+        "WHOS_WATCHING": "Who's watching",
+        "NEW_PROFILE": "New profile"
     }
 }

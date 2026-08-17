@@ -1,21 +1,24 @@
-import { Component, computed, input, linkedSignal } from '@angular/core';
+import { Component, computed, inject, input, linkedSignal } from '@angular/core';
 import { MediaCard } from '../media-card/media-card';
 import { MediaSectionLayout } from '../../model/media-section-layout';
 import { MediaBaseResponse } from '../../model/media-base-response';
 import { MediaCardAspect } from '../../model/media-card-aspect';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-media-section',
-  imports: [MediaCard],
+  imports: [MediaCard, TranslocoModule],
   templateUrl: './media-section.html',
   styleUrl: './media-section.scss',
 })
 export class MediaSection {
+  private translocoService = inject(TranslocoService);
+  
   layout = input<MediaSectionLayout>('grid');
 
   aspect = input<MediaCardAspect>('poster');
   title = input('');
-  emptyMessage = input('Nincs elérhető tartalom.');
+  emptyMessage = input(this.translocoService.translate('MEDIA_SECTION.EMPTY_TITLE'));
   routeLink = input<string | null>("/movies");
   mediaBaseResponses = input<Array<MediaBaseResponse>>([]);
 
@@ -31,7 +34,6 @@ export class MediaSection {
     this.paginated() ? Math.ceil(this.mediaBaseResponses().length / this.maxCapacity()) : 1
   );
 
-  /** Back to the first page whenever the items or the capacity change under it. */
   pageIndex = linkedSignal({
     source: () => ({ items: this.mediaBaseResponses(), capacity: this.maxCapacity() }),
     computation: () => 0,

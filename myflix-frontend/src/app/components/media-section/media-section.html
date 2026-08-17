@@ -5,10 +5,10 @@
 
         @if (paginated()) {
           <div class="pager">
-            <button type="button" class="pager__btn" aria-label="Előző oldal"
+            <button type="button" class="pager__btn" aria-label="{{ 'MEDIA_SECTION.PREVIOUS_PAGE' | transloco }}"
               [disabled]="pageIndex() === 0" (click)="previousPage()">&lsaquo;</button>
             <span class="pager__status">{{ pageIndex() + 1 }} / {{ pageCount() }}</span>
-            <button type="button" class="pager__btn" aria-label="Következő oldal"
+            <button type="button" class="pager__btn" aria-label="{{ 'MEDIA_SECTION.NEXT_PAGE' | transloco }}"
               [disabled]="pageIndex() === pageCount() - 1" (click)="nextPage()">&rsaquo;</button>
           </div>
         }
@@ -24,7 +24,7 @@
       </div>
     } @else {
       <div class="empty">
-        <p class="empty__title">Egyelőre nincs elérhető média</p>
+        <p class="empty__title">{{ 'MEDIA_SECTION.EMPTY_TITLE' | transloco }}</p>
         <p class="empty__text">{{ emptyMessage() }}</p>
       </div>
     }

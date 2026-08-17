@@ -5,20 +5,20 @@
 } @else {
     <app-media-section
         layout="row"
-        title="Újdonságok"
+        title=" {{ 'MEDIA_SECTION.TITLES.NEWLY_ADDED' | transloco }} "
         emptyMessage="Nincs elérhető új film."
         [mediaBaseResponses]="newMovies()">
     </app-media-section>
     <app-media-section
         layout="row"
-        title="Akció filmek"
+        title=" {{ 'MEDIA_SECTION.TITLES.ACTION_MOVIES' | transloco }} "
         emptyMessage="Nincs elérhető akció film."
         [mediaBaseResponses]="actionMovies()"
         [maxCapacity]="50">
     </app-media-section>
     <app-media-section
         layout="grid"
-        title="Összes film"
+        title=" {{ 'MEDIA_SECTION.TITLES.ALL_MOVIES' | transloco }} "
         emptyMessage="Nincs elérhető film."
         [mediaBaseResponses]="movies()"
         [maxCapacity]="30">

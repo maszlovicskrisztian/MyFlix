@@ -5,7 +5,7 @@
     [backdropPath]="movie()?.backdropPath ?? null"
     [metaItems]="metaItems()" 
     [runtime]="runtime()" 
-    [backLink]="['/movies']" backLabel="Vissza a listához" 
+    [backLink]="['/movies']" backLabel=" {{ 'MOVIE_DETAILS.BACK_TO_LIST' | transloco }} " 
     [playLink]="playLink()" 
     [enrichMediaId]="movieId()"
     (enriched)="loadMovie()"

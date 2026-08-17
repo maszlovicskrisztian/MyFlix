@@ -5,10 +5,11 @@ import { ShowService } from '../../services/show-service';
 import { MediaBaseResponse } from '../../model/media-base-response';
 import { LoadingOverlay } from '../../components/loading-overlay/loading-overlay';
 import { finalize } from 'rxjs';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-shows',
-  imports: [Header, MediaSection, LoadingOverlay],
+  imports: [Header, MediaSection, LoadingOverlay, TranslocoModule],
   templateUrl: './shows.html',
   styleUrl: './shows.scss',
 })

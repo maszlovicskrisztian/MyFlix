@@ -4,7 +4,7 @@
   [overview]="season()?.overview ?? null" 
   [backdropPath]="show()?.backdropPath ?? null"
   [metaItems]="metaItems()" 
-  [backLink]="['/shows', showId()]" backLabel="Vissza a sorozathoz"
+  [backLink]="['/shows', showId()]" backLabel="{{ 'DETAILS.BACK_TO_LIST' | transloco}}"
   [playLink]="playLink()" 
   [enrichMediaId]="showId()" 
   (enriched)="loadShow()">
@@ -12,7 +12,7 @@
   @if (season(); as item) {
     @if (item.episodes.length) {
       <section class="episodes">
-        <h2 class="episodes__title">Epizódok</h2>
+        <h2 class="episodes__title">{{ 'SEASON_DETAILS.EPISODES' | transloco}}</h2>
 
         <div class="episodes__grid">
           @for (episode of item.episodes; track episode.episodeNumber) {
@@ -36,7 +36,7 @@
                 </span>
 
                 @if (episode.runtimeMinutes) {
-                  <span class="episode-card__sub">{{ episode.runtimeMinutes }} perc</span>
+                  <span class="episode-card__sub">{{ episode.runtimeMinutes }} {{'SEASON_DETAILS.MINUTES' | transloco}}</span>
                 }
 
                 @if (episode.overview) {

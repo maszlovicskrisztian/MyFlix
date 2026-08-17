@@ -5,10 +5,11 @@ import { MovieService } from '../../services/movie-service';
 import { MediaBaseResponse } from '../../model/media-base-response';
 import { finalize } from 'rxjs';
 import { LoadingOverlay } from '../../components/loading-overlay/loading-overlay';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-movies',
-  imports: [Header, MediaSection, LoadingOverlay],
+  imports: [Header, MediaSection, LoadingOverlay, TranslocoModule],
   templateUrl: './movies.html',
   styleUrl: './movies.scss',
 })

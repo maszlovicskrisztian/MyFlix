@@ -16,6 +16,64 @@
         "DESCRIPTION": "Add meg annak a filmnek vagy sorozatnak az IMDb azonosítóját, amelyet szeretnél kiegészíteni, és mi lekérjük a részleteket számodra. Az IMDb azonosító megtalálható a cím oldalának URL-jében az IMDb-n.",
         "CANCEL": "Mégse",
         "SUBMIT": "Betöltés",
-        "SUBMITTING": "Betöltés…"
+        "SUBMITTING": "Betöltés…",
+        "ERRORS": {
+            "INVALID_ID": "Érvénytelen azonosító. Például: tt0111161",
+            "MISSING_MEDIA_ID": "Hiányzik a tartalom azonosítója.",
+            "GENERIC": "Nem sikerült betölteni a metaadatokat."
+        }
+    },
+    "MEDIA_HERO": {
+        "RUNTIME": "Játékidő",
+        "PLAY": "Lejátszás",
+        "ADD_TO_FAVORITES": "Hozzáadás a kedvencekhez",
+        "REMOVE_FROM_FAVORITES": "Eltávolítás a kedvencekből",
+        "ENRICH": "Azonosítás"
+    },
+    "SEARCHBAR": {
+        "SEARCH": "Keresés",
+        "SEARCH_PLACEHOLDER": "Keress filmeket vagy sorozatokat",
+        "NO_RESULTS": "Nincs találat.",
+        "ERROR": "Hiba történt a keresés során. Kérlek, próbáld újra később."
+    },
+    "MEDIA_SECTION": {
+        "EMPTY_TITLE": "Egyelőre nincs elérhető média",
+        "NEXT_PAGE": "Következő oldal",
+        "PREVIOUS_PAGE": "Előző oldal",
+        "TITLES": {
+            "CONTINUE_WATCHING": "Megtekintés folytatása",
+            "UNKNOWN_MEDIA": "Ismeretlen Média",
+            "ACTION_MOVIES": "Akció Filmek",
+            "ALL_MOVIES": "Összes Film",
+            "ALL_SHOWS": "Összes Sorozat",
+            "NEWLY_ADDED": "Újonnan Hozzáadott",
+            "SUGGESTED_MOVIES": "Ajánlott Filmek",
+            "SUGGESTED_SHOWS": "Ajánlott Sorozatok"
+        },
+        "EMPTY_TEXTS": {
+            "NO_SUGGESTIONS": "Nézz valamit, hogy tudjunk ajánlani"
+        }
+    },
+    "DETAILS": {
+        "BACK_TO_LIST": "Vissza a listához"
+    },
+    "MOVIE_DETAILS": {
+        "RELEASE_DATE": "Megjelenés Dátuma",
+        "ADDED_AT": "Hozzáadva"
+    },
+    "SHOW_DETAILS": {
+        "SEASONS": "Évadok",
+        "SEASON_COUNT": "Évadok Száma",
+        "EPISODE_COUNT": "Epizódok Száma",
+        "EPISODE": "Epizód",
+        "FIRST_AIR_DATE": "Bemutatás dátuma"
+    },
+    "SEASON_DETAILS": {
+        "EPISODES": "Epizódok",
+        "MINUTES": "perc"
+    },
+    "PROFILE_SELECTOR": {
+        "WHOS_WATCHING": "Ki nézi most",
+        "NEW_PROFILE": "Új profil"
     }
 }

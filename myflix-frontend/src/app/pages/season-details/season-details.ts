@@ -6,16 +6,18 @@ import { ShowDetailsResponse } from '../../model/show-details-response';
 import { SeasonDetails as SeasonDetailsModel } from '../../model/season-details';
 import { EpisodeDetails } from '../../model/episode-details';
 import { HeroLink, MediaHero } from '../../components/media-hero/media-hero';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-season-details',
-  imports: [RouterLink, MediaHero],
+  imports: [RouterLink, MediaHero, TranslocoModule],
   templateUrl: './season-details.html',
   styleUrl: './season-details.scss',
 })
 export class SeasonDetails implements OnInit {
   private route = inject(ActivatedRoute);
   private showService = inject(ShowService);
+  private translocoService = inject(TranslocoService)
 
   showId = signal<string | null>(null);
   seasonNumber = signal<number | null>(null);
@@ -28,7 +30,7 @@ export class SeasonDetails implements OnInit {
 
   metaItems = computed(() => {
     const item = this.season();
-    return item ? [`Epizódok száma: ${item.episodes.length}`] : [];
+    return item ? [`${this.translocoService.translate('SHOW_DETAILS.SEASONS')}: ${item.episodes.length}`] : [];
   });
 
   playLink = computed<HeroLink | null>(() => {

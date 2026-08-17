@@ -5,16 +5,18 @@ import { ShowService } from '../../services/show-service';
 import { ShowDetailsResponse } from '../../model/show-details-response';
 import { SeasonDetails } from '../../model/season-details';
 import { HeroLink, MediaHero } from '../../components/media-hero/media-hero';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-show-details',
-  imports: [RouterLink, MediaHero],
+  imports: [RouterLink, MediaHero, TranslocoModule],
   templateUrl: './show-details.html',
   styleUrl: './show-details.scss',
 })
 export class ShowDetails implements OnInit {
   private route = inject(ActivatedRoute);
   private showService = inject(ShowService);
+  private translocoService = inject(TranslocoService)
 
   showId = signal<string | null>(null);
   show = signal<ShowDetailsResponse | null>(null);
@@ -26,7 +28,10 @@ export class ShowDetails implements OnInit {
       return [];
     }
 
-    return [`Évadok száma: ${item.seasonCount}`, `Epizódok száma: ${item.episodeCount}`];
+    return [
+          `${this.translocoService.translate('SHOW_DETAILS.SEASON_COUNT')}: ${item.seasonCount}`, 
+          `${this.translocoService.translate('SHOW_DETAILS.EPISODE_COUNT')}: ${item.episodeCount}`,
+          ];
   });
 
   playLink = computed<HeroLink | null>(() => {

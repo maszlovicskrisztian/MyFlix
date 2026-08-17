@@ -4,7 +4,7 @@
   </header>
 
   <main class="profiles__main">
-    <h1 class="profiles__title">Ki nézi most?</h1>
+    <h1 class="profiles__title">{{ 'PROFILE_SELECTOR.WHOS_WATCHING' | transloco }}?</h1>
 
     <div class="profile-grid">
       @for (profile of profiles(); track profile.id) {
@@ -44,7 +44,7 @@
             <span class="profile-card__avatar">+</span>
           </button>
 
-          <span class="profile-card__name">Új profil</span>
+          <span class="profile-card__name">{{ 'PROFILE_SELECTOR.NEW_PROFILE' | transloco}}</span>
         </div>
     </div>
   </main>
