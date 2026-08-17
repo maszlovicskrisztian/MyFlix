@@ -10,5 +10,12 @@
             "LOGOUT": "Kijelentkezés",
             "LIBRARY_SCAN": "Könyvtár frissítés"
         }
+    },
+    "ENRICHMENT": {
+        "IMDB_ID": "IMDb Azonosító",
+        "DESCRIPTION": "Add meg annak a filmnek vagy sorozatnak az IMDb azonosítóját, amelyet szeretnél kiegészíteni, és mi lekérjük a részleteket számodra. Az IMDb azonosító megtalálható a cím oldalának URL-jében az IMDb-n.",
+        "CANCEL": "Mégse",
+        "SUBMIT": "Betöltés",
+        "SUBMITTING": "Betöltés…"
     }
 }

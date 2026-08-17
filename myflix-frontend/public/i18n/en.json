@@ -10,5 +10,12 @@
             "LOGOUT": "Logout",
             "LIBRARY_SCAN": "Refresh Library"
         }
+    },
+    "ENRICHMENT": {
+        "IMDB_ID": "IMDb ID",
+        "DESCRIPTION": "Paste the IMDb ID of the movie or show you want to enrich, and we will fetch the details for you. The IMDb ID can be found in the URL of the title's page on IMDb.",
+        "CANCEL": "Cancel",
+        "SUBMIT": "Load",
+        "SUBMITTING": "Loading…"
     }
 }

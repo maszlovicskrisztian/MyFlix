@@ -2,9 +2,9 @@
   <div class="overlay" (click)="cancel()">
     <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="enrich-dialog-title"
       (click)="$event.stopPropagation()">
-      <h2 class="dialog__title" id="enrich-dialog-title">IMDb azonosító</h2>
+      <h2 class="dialog__title" id="enrich-dialog-title">{{ 'ENRICHMENT.IMDB_ID' | transloco }}</h2>
       <p class="dialog__text">
-        Add meg a tartalom IMDb azonosítóját, és a metaadatokat az alapján töltjük be.
+        {{ 'ENRICHMENT.DESCRIPTION' | transloco }}
       </p>
 
       <form class="dialog__form" (ngSubmit)="submit()">
@@ -19,10 +19,10 @@
         <div class="dialog__actions">
           <button class="btn dialog__btn dialog__btn--ghost" type="button" (click)="cancel()"
             [disabled]="busy()">
-            Mégse
+            {{ 'ENRICHMENT.CANCEL' | transloco }}
           </button>
           <button class="btn dialog__btn dialog__btn--primary" type="submit" [disabled]="busy()">
-            {{ busy() ? 'Betöltés…' : 'Betöltés' }}
+            {{ busy() ? 'ENRICHMENT.SUBMITTING' : 'ENRICHMENT.SUBMIT' | transloco }}
           </button>
         </div>
       </form>

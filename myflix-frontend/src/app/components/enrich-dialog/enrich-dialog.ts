@@ -13,13 +13,14 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MetadataService } from '../../services/metadata-service';
+import { TranslocoModule } from '@jsverse/transloco';
 
 /** Accepts `tt0111161`, `TT0111161` or a bare `0111161`. */
 const IMDB_ID = /^(?:tt)?(\d{7,8})$/i;
 
 @Component({
   selector: 'app-enrich-dialog',
-  imports: [FormsModule],
+  imports: [FormsModule, TranslocoModule],
   templateUrl: './enrich-dialog.html',
   styleUrl: './enrich-dialog.scss',
 })
