@@ -19,7 +19,7 @@ export class MediaService {
     }
 
     public getContinueWatching(profileId: number): Observable<Array<MediaBaseResponse>> {
-        const url = `${environment.apiUrl}/media/continue-watching?profileId=${profileId}`;
+        const url = `${environment.apiUrl}/media/continue-watching?profileId=${profileId}&languageCode=${this.languageService.getCurrentLanguage()}`;
         return this.http.get<Array<MediaBaseResponse>>(url);
     }
     

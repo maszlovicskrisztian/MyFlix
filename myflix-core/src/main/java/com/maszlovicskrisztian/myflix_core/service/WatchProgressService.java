@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -21,6 +22,7 @@ public class WatchProgressService {
     private final ProfileRepository profileRepository;
     private final FileInfoRepository fileInfoRepository;
     private final MediaBaseMapper mediaBaseMapper;
+    private final TranslationService translationService;
 
     public Long getProgressSecondsForMediaByProfile(Long fileInfoId, Long profileId) {
         return watchProgressRepository
@@ -54,12 +56,19 @@ public class WatchProgressService {
     }
 
     @Transactional(readOnly = true)
-    public List<MediaBaseResponse> getMediasInWatchByProfile(Long profileId) {
-        return watchProgressRepository
+    public List<MediaBaseResponse> getMediasInWatchByProfile(Long profileId, String languageCode) {
+        var medias = watchProgressRepository
                 .findAllByProfileId(profileId)
                 .stream().map(WatchProgress::getFileInfo)
                 .filter(x -> x.getMovieMetadata() != null || x.getEpisodeMetadata() != null)
-                .map(mediaBaseMapper::fromContinueWatching)
                 .toList();
+
+        List<MediaBaseResponse> result = new ArrayList<>();
+        medias.forEach((x) -> {
+            var title = translationService.translateMediaTitle(x, languageCode);
+            result.add(mediaBaseMapper.fromContinueWatching(x, title));
+        });
+
+        return result;
     }
 }

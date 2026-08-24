@@ -43,8 +43,8 @@ public class MediaController {
     }
 
     @GetMapping("/continue-watching")
-    public List<MediaBaseResponse> getContinueWatchingList(@RequestParam Long profileId) {
-        return watchProgressService.getMediasInWatchByProfile(profileId);
+    public List<MediaBaseResponse> getContinueWatchingList(@RequestParam Long profileId, @RequestParam String languageCode) {
+        return watchProgressService.getMediasInWatchByProfile(profileId, languageCode);
     }
 
     @GetMapping("/{id}/progress")

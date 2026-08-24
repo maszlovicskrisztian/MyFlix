@@ -15,13 +15,13 @@ public class MediaBaseMapper {
 
     private final ImageUrlResolver imageUrlResolver;
 
-    public MediaBaseResponse fromContinueWatching(FileInfo model) {
+    public MediaBaseResponse fromContinueWatching(FileInfo model, String translatedTitle) {
         MovieMetadata movieMetadata = model.getMovieMetadata();
         if (movieMetadata != null) {
             return new MediaBaseResponse(
                     null,
                     model.getId(),
-                    movieMetadata.getTitle(),
+                    translatedTitle,
                     imageUrlResolver.toImageUrl(movieMetadata.getBackdropPath()),
                     movieMetadata.getGenres().stream().toList()
             );
@@ -31,7 +31,7 @@ public class MediaBaseMapper {
                 return new MediaBaseResponse(
                         episodeMetadata.getShow().getId(),
                         model.getId(),
-                        episodeMetadata.getTitle(),
+                        translatedTitle,
                         imageUrlResolver.toImageUrl(episodeMetadata.getStillPath()),
                         episodeMetadata.getShow().getGenres().stream().toList()
                 );

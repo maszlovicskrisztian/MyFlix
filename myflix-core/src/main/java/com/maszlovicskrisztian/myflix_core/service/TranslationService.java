@@ -9,6 +9,7 @@ import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.model.MetadataTranslation;
 import com.maszlovicskrisztian.myflix_core.model.MovieMetadata;
 import com.maszlovicskrisztian.myflix_core.model.Show;
+import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
 import com.maszlovicskrisztian.myflix_core.repository.MetadataTranslationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +59,21 @@ public class TranslationService {
         }
 
         return new TranslatedMovieResult(movieMetadata, translation.getTitle(), translation.getOverview());
+    }
+
+    public String translateMediaTitle(FileInfo media, String languageCode) {
+        if (media == null)
+            return null;
+
+        String translatedTitle;
+        if (media.getMovieMetadata() == null)
+            translatedTitle = translateShow(media.getEpisodeMetadata().getShow(), languageCode).localizedTitle();
+        else if (media.getEpisodeMetadata() == null)
+            translatedTitle = translateMovie(media.getMovieMetadata(), languageCode).localizedTitle();
+        else
+            translatedTitle = "";
+
+        return translatedTitle;
     }
 
     private MetadataTranslation saveTranslation(MediaType entityType, Long entityId, String title, String overview, String languageCode) {
