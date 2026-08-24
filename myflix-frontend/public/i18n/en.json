@@ -8,7 +8,8 @@
         "DROPDOWN": {
             "SWITCH_PROFILE": "Switch Profile",
             "LOGOUT": "Logout",
-            "LIBRARY_SCAN": "Refresh Library"
+            "LIBRARY_SCAN": "Refresh Library",
+            "CHANGE_LANGUAGE": "Change language"
         }
     },
     "ENRICHMENT": {

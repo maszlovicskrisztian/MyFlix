@@ -6,6 +6,7 @@ import { avatarUrl } from '../../model/avatar';
 import { MetadataService } from '../../services/metadata-service';
 import { MediaSearchDialog } from '../media-search-dialog/media-search-dialog';
 import { TranslocoModule } from '@jsverse/transloco';
+import { LanguageService } from '../../services/language-service';
 
 @Component({
   selector: 'app-header',
@@ -17,6 +18,7 @@ export class Header {
   authService = inject(AuthService);
   profileService = inject(ProfileService);
   metadataService = inject(MetadataService);
+  languageService = inject(LanguageService); 
   router = inject(Router);
 
   avatarUrl = avatarUrl;
@@ -70,5 +72,10 @@ export class Header {
         next: () => console.log('Dúsítás elindítva'),
         error: (err) => console.error('Hiba', err)
     });
+  }
+  
+  changeLanguage() {
+    this.menuOpen.set(false);
+    this.languageService.changeLanguage();
   }
 }

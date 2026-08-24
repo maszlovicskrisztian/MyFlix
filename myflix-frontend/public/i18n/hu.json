@@ -8,7 +8,8 @@
         "DROPDOWN": {
             "SWITCH_PROFILE": "Profil váltás",
             "LOGOUT": "Kijelentkezés",
-            "LIBRARY_SCAN": "Könyvtár frissítés"
+            "LIBRARY_SCAN": "Könyvtár frissítés",
+            "CHANGE_LANGUAGE": "Nyelv váltás"
         }
     },
     "ENRICHMENT": {
