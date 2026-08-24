@@ -42,6 +42,11 @@ public class MediaController {
         return mediaItemService.getUnknownMedia();
     }
 
+    @GetMapping("/unknown/{id}")
+    public MediaBaseResponse getUnknownMediaById(@PathVariable Long id) {
+        return mediaItemService.getUnknownMediaById(id);
+    }
+
     @GetMapping("/continue-watching")
     public List<MediaBaseResponse> getContinueWatchingList(@RequestParam Long profileId, @RequestParam String languageCode) {
         return watchProgressService.getMediasInWatchByProfile(profileId, languageCode);

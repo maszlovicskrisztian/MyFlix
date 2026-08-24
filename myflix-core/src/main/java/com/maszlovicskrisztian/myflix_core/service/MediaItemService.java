@@ -86,6 +86,10 @@ public class MediaItemService {
                 .toList();
     }
 
+    public MediaBaseResponse getUnknownMediaById(Long id) {
+        return mapper.fromUnknownMedia(getMediaById(id));
+    }
+
     public FileInfo getMediaById(Long fileInfoId) {
         return fileInfoRepository.findById(fileInfoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Could not find media by file info id: " + fileInfoId));
