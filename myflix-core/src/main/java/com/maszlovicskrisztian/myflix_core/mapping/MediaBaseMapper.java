@@ -23,7 +23,7 @@ public class MediaBaseMapper {
                     model.getId(),
                     movieMetadata.getTitle(),
                     imageUrlResolver.toImageUrl(movieMetadata.getBackdropPath()),
-                    movieMetadata.getGenres()
+                    movieMetadata.getGenres().stream().toList()
             );
         } else {
             EpisodeMetadata episodeMetadata = model.getEpisodeMetadata();
@@ -33,7 +33,7 @@ public class MediaBaseMapper {
                         model.getId(),
                         episodeMetadata.getTitle(),
                         imageUrlResolver.toImageUrl(episodeMetadata.getStillPath()),
-                        episodeMetadata.getShow().getGenres()
+                        episodeMetadata.getShow().getGenres().stream().toList()
                 );
             }
         }

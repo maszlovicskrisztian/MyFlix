@@ -1,9 +1,12 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtService {
 
     @Value("${JWT_SECRET}")
@@ -30,6 +34,15 @@ public class JwtService {
                 .expiration(expiry)
                 .signWith(getSignedKey())
                 .compact();
+    }
+
+    public String extractToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+
+        return request.getParameter("token");
     }
 
     public String extractUsername(String token) {
@@ -61,10 +74,18 @@ public class JwtService {
         if (token == null || token.isEmpty())
             return null;
 
-        return Jwts.parser()
-                .verifyWith(getSignedKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(getSignedKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (ExpiredJwtException e) {
+            log.debug("Expired token: {}", e.getMessage());
+            return null;
+        } catch (JwtException | IllegalArgumentException e) {
+            log.warn("Invalid token: {}", e.getMessage());
+            return null;
+        }
     }
 }

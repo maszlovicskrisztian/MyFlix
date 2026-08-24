@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -28,14 +29,20 @@ public class LibraryWatcher {
     @Value("${WATCHER_DEBOUNCE_MINUTES}")
     private int debounceMinutes;
 
+    @Value("${WATCHER_MAX_CONCURRENT_REGISTRATIONS:64}")
+    private int maxConcurrentRegistrations;
+
     private WatchService watchService;
     private final Map<WatchKey, Path> keyToPath = new ConcurrentHashMap<>();
     private final ScheduledExecutorService debounceExecutor = Executors.newSingleThreadScheduledExecutor();
     private final AtomicReference<ScheduledFuture<?>> pendingTask = new AtomicReference<>();
     private volatile boolean running = true;
+    private final ExecutorService registrationExecutor = Executors.newVirtualThreadPerTaskExecutor();
+    private Semaphore concurrencyLimiter;
 
     @PostConstruct
     public void start() throws IOException {
+        concurrencyLimiter = new Semaphore(maxConcurrentRegistrations);
         watchService = FileSystems.getDefault().newWatchService();
         Path root = mediaPathResolver.getMediaPath();
         Set<String> includeFolders = mediaPathResolver.getIncludeFolders();
@@ -44,11 +51,15 @@ public class LibraryWatcher {
                 ? List.of(root)
                 : includeFolders.stream().map(x -> Paths.get(root.toString(), x)).toList();
 
-        for (Path path : paths) {
-            log.info("LibraryWatcher starting, root={}, debounceMinutes={}", path, debounceMinutes);
-            registerRecursive(path);
-            log.info("LibraryWatcher registered {} directories under {}", keyToPath.size(), path);
-        }
+        long t0 = System.nanoTime();
+        List<CompletableFuture<Void>> rootFutures = paths.stream()
+                .map(this::registerDirAsync)
+                .toList();
+        joinAll(rootFutures);
+        long elapsedMs = (System.nanoTime() - t0) / 1_000_000;
+
+        log.info("LibraryWatcher registered {} directories across {} root(s) in {}ms",
+                keyToPath.size(), paths.size(), elapsedMs);
 
         Thread.ofVirtual().name("library-watcher").start(this::watchLoop);
     }
@@ -59,18 +70,52 @@ public class LibraryWatcher {
         running = false;
         watchService.close();
         debounceExecutor.shutdownNow();
+        registrationExecutor.shutdownNow();
     }
 
-    private void registerRecursive(Path start) throws IOException {
-        try (var paths = Files.walk(start)) {
-            for (Path dir : paths.filter(Files::isDirectory).toList()) {
+    private CompletableFuture<Void> registerDirAsync(Path dir) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                concurrencyLimiter.acquire();
                 try {
-                    WatchKey key = dir.register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
-                    keyToPath.put(key, dir);
-                } catch (IOException e) {
-                    log.error("Failed to register watch for directory: {}", dir, e);
+                    registerSingle(dir);
+                    try (var children = Files.list(dir)) {
+                        return children.filter(Files::isDirectory).toList();
+                    }
+                } finally {
+                    concurrencyLimiter.release();
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new CompletionException(e);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
+        }, registrationExecutor).thenCompose(children -> {
+            List<CompletableFuture<Void>> childFutures = children.stream()
+                    .map(this::registerDirAsync)
+                    .toList();
+            return CompletableFuture.allOf(childFutures.toArray(new CompletableFuture[0]));
+        });
+    }
+
+    private void joinAll(List<CompletableFuture<Void>> futures) throws IOException {
+        try {
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        } catch (CompletionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof UncheckedIOException uioe) throw uioe.getCause();
+            if (cause instanceof IOException ioe) throw ioe;
+            throw e;
+        }
+    }
+
+    private void registerSingle(Path dir) {
+        try {
+            WatchKey key = dir.register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
+            keyToPath.put(key, dir);
+        } catch (IOException e) {
+            log.error("Failed to register watch for directory: {}", dir, e);
         }
     }
 
@@ -105,7 +150,7 @@ public class LibraryWatcher {
 
                 if (event.kind() == ENTRY_CREATE && Files.isDirectory(fullPath)) {
                     try {
-                        registerRecursive(fullPath);
+                        joinAll(List.of(registerDirAsync(fullPath)));
                         log.info("Registered new subdirectory for watching: {}", fullPath);
                     } catch (IOException e) {
                         log.error("Failed to register new subdirectory: {}", fullPath, e);

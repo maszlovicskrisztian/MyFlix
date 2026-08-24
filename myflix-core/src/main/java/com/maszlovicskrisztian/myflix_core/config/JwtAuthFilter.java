@@ -24,7 +24,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        String token = extractToken(request);
+        String token = jwtService.extractToken(request);
 
         if (token != null && jwtService.isTokenValid(token)) {
             String username = jwtService.extractUsername(token);
@@ -34,14 +34,5 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private String extractToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
-        }
-
-        return request.getParameter("token");
     }
 }

@@ -9,6 +9,7 @@ import com.maszlovicskrisztian.myflix_core.repository.ProfileRepository;
 import com.maszlovicskrisztian.myflix_core.repository.WatchProgressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,6 +53,7 @@ public class WatchProgressService {
         return WatchProgressResponse.from(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<MediaBaseResponse> getMediasInWatchByProfile(Long profileId) {
         return watchProgressRepository
                 .findAllByProfileId(profileId)

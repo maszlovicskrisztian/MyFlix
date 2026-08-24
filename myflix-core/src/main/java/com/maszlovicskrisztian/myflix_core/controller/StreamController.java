@@ -4,8 +4,10 @@ import com.maszlovicskrisztian.myflix_core.dtos.enums.ExceptionReason;
 import com.maszlovicskrisztian.myflix_core.exception.MediaProcessingException;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaPathResolver;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
+import com.maszlovicskrisztian.myflix_core.service.JwtService;
 import com.maszlovicskrisztian.myflix_core.service.TranscodeService;
 import com.maszlovicskrisztian.myflix_core.service.MediaItemService;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
@@ -26,6 +29,7 @@ import java.util.List;
 @RequestMapping("/api/media/{id}/stream")
 public class StreamController {
 
+    private final JwtService jwtService;
     private final TranscodeService transcodeService;
     private final MediaItemService mediaItemService;
     private final MediaPathResolver mediaPathResolver;
@@ -49,7 +53,7 @@ public class StreamController {
         if (ranges.isEmpty()) {
             response.setStatus(HttpServletResponse.SC_OK);
             response.setContentLengthLong(contentLength);
-            try (InputStream in = new FileInputStream(file); OutputStream out = response.getOutputStream()) {
+            try (InputStream in = new FileInputStream(file); ServletOutputStream out = response.getOutputStream()) {
                 in.transferTo(out);
             }
             return;
@@ -65,8 +69,7 @@ public class StreamController {
         response.setContentLengthLong(rangeLength);
         response.setHeader(HttpHeaders.CONTENT_RANGE, "bytes " + start + "-" + rangeEnd + "/" + contentLength);
 
-        try (RandomAccessFile raf = new RandomAccessFile(file, "r");
-             OutputStream out = response.getOutputStream()) {
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r"); ServletOutputStream out = response.getOutputStream()) {
             raf.seek(start);
             byte[] buffer = new byte[8192];
             long remaining = rangeLength;
@@ -89,7 +92,7 @@ public class StreamController {
         Path playlist = transcodeService.getOrStartSession(sourceFile, id, startSeconds, media.getResHeight());
         transcodeService.waitForFirstSegment(playlist, Duration.ofSeconds(15), 3);
 
-        String token = extractToken(request);
+        String token = jwtService.extractToken(request);
         String rewritten = rewriteSegmentUrls(playlist, id, token);
 
         return ResponseEntity.ok()
@@ -114,14 +117,6 @@ public class StreamController {
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf("video/mp2t"))
                 .body(new FileSystemResource(segmentPath));
-    }
-
-    private String extractToken(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
-        }
-        return request.getParameter("token");
     }
 
     private String rewriteSegmentUrls(Path playlist, Long mediaId, String token) {
