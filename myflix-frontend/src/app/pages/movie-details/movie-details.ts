@@ -6,6 +6,7 @@ import { MovieService } from '../../services/movie-service';
 import { MovieDetailsResponse } from '../../model/movie-details-response';
 import { HeroLink, MediaHero } from '../../components/media-hero/media-hero';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-movie-details',
@@ -19,13 +20,15 @@ export class MovieDetails implements OnInit {
   private locale = inject(LOCALE_ID);
   private translocoService = inject(TranslocoService);
 
+  private translation = toSignal(this.translocoService.selectTranslation());
+
   movieId = signal<string | null>(null);
   movie = signal<MovieDetailsResponse | null>(null);
 
   metaItems = computed(() => {
     const item = this.movie();
 
-    if (!item) {
+    if (!item || !this.translation()) {
       return [];
     }
 

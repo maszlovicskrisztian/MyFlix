@@ -6,6 +6,7 @@ import { routes } from './app.routes';
 import { authInterceptor } from './interceptors/auth-interceptor';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
+import { provideTranslocoPersistLang } from '@jsverse/transloco-persist-lang';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,11 +18,15 @@ export const appConfig: ApplicationConfig = {
       config: {
         availableLangs: ['en', 'hu'],
         defaultLang: 'en',
-        // Remove this option if your application doesn't support changing language in runtime.
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
       },
       loader: TranslocoHttpLoader,
     }),
+    provideTranslocoPersistLang({
+      storage: {
+        useValue: localStorage
+      }
+    })
   ],
 };

@@ -4,7 +4,18 @@ import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth-service';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  
+  if (req.url.includes('/auth/login')) {
+    return next(req);
+  }
+
   const authService = inject(AuthService);
+
+  if (!authService.hasValidToken()) {
+    authService.logout();
+    return throwError(() => new HttpErrorResponse({ status: 401 }));
+  }
+
   const token = authService.getToken();
 
   const request = token
@@ -13,9 +24,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(request).pipe(
     catchError((error: HttpErrorResponse) => {
-      // A 401 from /auth/login means bad credentials — the login form reports that
-      // itself. Anywhere else it means the session expired, so drop it.
-      if (error.status === 401 && !req.url.includes('/auth/')) {
+      if (error.status === 401) {
         authService.logout();
       }
 

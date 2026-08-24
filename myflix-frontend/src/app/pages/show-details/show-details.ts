@@ -6,6 +6,7 @@ import { ShowDetailsResponse } from '../../model/show-details-response';
 import { SeasonDetails } from '../../model/season-details';
 import { HeroLink, MediaHero } from '../../components/media-hero/media-hero';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-show-details',
@@ -18,20 +19,20 @@ export class ShowDetails implements OnInit {
   private showService = inject(ShowService);
   private translocoService = inject(TranslocoService)
 
+  private translation = toSignal(this.translocoService.selectTranslation());
+
   showId = signal<string | null>(null);
   show = signal<ShowDetailsResponse | null>(null);
 
   metaItems = computed(() => {
     const item = this.show();
 
-    if (!item) {
+    if (!item || !this.translation()) {
       return [];
     }
-
-    return [
-          `${this.translocoService.translate('SHOW_DETAILS.SEASON_COUNT')}: ${item.seasonCount}`, 
-          `${this.translocoService.translate('SHOW_DETAILS.EPISODE_COUNT')}: ${item.episodeCount}`,
-          ];
+    const seasons = `${this.translocoService.translate('SHOW_DETAILS.SEASON_COUNT')}: ${item.seasonCount}`
+    const episodes = `${this.translocoService.translate('SHOW_DETAILS.EPISODE_COUNT')}: ${item.episodeCount}`
+    return [seasons, episodes];
   });
 
   playLink = computed<HeroLink | null>(() => {

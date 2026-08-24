@@ -7,6 +7,7 @@ import { SeasonDetails as SeasonDetailsModel } from '../../model/season-details'
 import { EpisodeDetails } from '../../model/episode-details';
 import { HeroLink, MediaHero } from '../../components/media-hero/media-hero';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-season-details',
@@ -19,6 +20,8 @@ export class SeasonDetails implements OnInit {
   private showService = inject(ShowService);
   private translocoService = inject(TranslocoService)
 
+  private translation = toSignal(this.translocoService.selectTranslation());
+
   showId = signal<string | null>(null);
   seasonNumber = signal<number | null>(null);
   show = signal<ShowDetailsResponse | null>(null);
@@ -30,6 +33,11 @@ export class SeasonDetails implements OnInit {
 
   metaItems = computed(() => {
     const item = this.season();
+
+    if (!this.translation()) {
+      return [];
+    }
+
     return item ? [`${this.translocoService.translate('SHOW_DETAILS.SEASONS')}: ${item.episodes.length}`] : [];
   });
 
