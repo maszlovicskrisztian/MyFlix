@@ -29,7 +29,8 @@
       <app-media-section
         layout="grid"
         title=" {{ 'MEDIA_SECTION.TITLES.UNKNOWN_MEDIA' | transloco }} "
-        [mediaBaseResponses]="unknownMedia()">
+        [mediaBaseResponses]="unknownMedia()"
+        [routeLink]="'/unknown'">
       </app-media-section>
     }
   }

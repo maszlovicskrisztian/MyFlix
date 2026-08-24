@@ -28,6 +28,11 @@ export const routes: Routes = [
         canActivate: [authGuard, profileGuard]
     },
     {
+        path: 'unknown/:id', 
+        loadComponent: () => import('./pages/unknown-media/unknown-media').then(m => m.UnknownMedia),
+        canActivate: [authGuard, profileGuard]
+    },
+    {
         path: 'movies', 
         loadComponent: () => import('./pages/movies/movies').then(m => m.Movies),
         canActivate: [authGuard, profileGuard]

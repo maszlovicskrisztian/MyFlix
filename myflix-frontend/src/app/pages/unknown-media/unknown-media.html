@@ -1,0 +1,10 @@
+<app-media-hero 
+    [loaded]="!!media()" 
+    [title]="media()?.title ?? ''"
+    [overview]="null" 
+    [backdropPath]="null"
+    [backLink]="['/home']" backLabel=" {{ 'DETAILS.BACK_TO_LIST' | transloco }} " 
+    [playLink]="playLink()" 
+    [enrichMediaId]="mediaId()"
+    (enriched)="loadMovie()"
+/>
