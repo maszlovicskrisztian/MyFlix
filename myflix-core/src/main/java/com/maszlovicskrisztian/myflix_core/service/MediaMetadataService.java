@@ -53,10 +53,10 @@ public class MediaMetadataService {
         }
 
         TmdbSearchResult result;
-        if (response.movieResults() != null) {
+        if (!response.movieResults().isEmpty()) {
             result = response.movieResults().getFirst();
             enrichMovie(media, result.id());
-        } else if (response.episodeResults() != null) {
+        } else if (!response.episodeResults().isEmpty()) {
             result = response.episodeResults().getFirst();
             enrichShow(result.showId(), result.season(), result.episode(), media);
         } else {
