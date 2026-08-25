@@ -25,6 +25,7 @@ public class FileInfo {
     private String container;
     private String codec;
     private String audioCodec;
+    private boolean isHdr;
     private LocalDateTime addedAt;
 
     @OneToOne(mappedBy = "fileInfo", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -56,7 +56,7 @@ public class TranscodeService {
         sessionRegistry.touch(mediaId);
     }
 
-    public Path getOrStartSession(Path sourceFile, Long mediaId, long startSeconds, Integer resHeight) {
+    public Path getOrStartSession(Path sourceFile, Long mediaId, long startSeconds, Integer resHeight, boolean isHdr) {
         log.trace("FFmpeg session request for file info {} started", mediaId);
         HlsSession existing = sessionRegistry.get(mediaId);
         if (existing != null && existing.startSeconds() != startSeconds) {
@@ -65,7 +65,7 @@ public class TranscodeService {
 
         var session = sessionRegistry.getOrCreate(mediaId, id -> {
             try {
-                return startSession(sourceFile, id, startSeconds, resHeight);
+                return startSession(sourceFile, id, startSeconds, resHeight, isHdr);
             } catch (IOException e) {
                 log.error("Error during session start: {}", e.getMessage());
                 throw new UncheckedIOException(e);
@@ -143,7 +143,7 @@ public class TranscodeService {
         long durationSeconds = (long)(root.path("format").path("duration").asDouble());
         Integer height = findHeight(root);
 
-        return new MediaProbeResult(videoCodec, audioCodec, container, durationSeconds, height);
+        return new MediaProbeResult(videoCodec, audioCodec, container, durationSeconds, height, isHdr(root));
     }
 
     private Integer findHeight(JsonNode root) {
@@ -156,6 +156,16 @@ public class TranscodeService {
         return null;
     }
 
+    private boolean isHdr(JsonNode root) {
+        for (JsonNode stream : root.path("streams")) {
+            if ("video".equals(stream.path("codec_type").asString())) {
+                String transfer = stream.path("color_transfer").asString("");
+                return "smpte2084".equals(transfer) || "arib-std-b67".equals(transfer);
+            }
+        }
+        return false;
+    }
+
     private String findCodec(JsonNode root, String codecType) {
         for (JsonNode stream : root.path("streams")) {
             if (codecType.equals(stream.path("codec_type").asString())) {
@@ -165,7 +175,7 @@ public class TranscodeService {
         return null;
     }
 
-    private HlsSession startSession(Path sourceFile, Long mediaId, long startSeconds, Integer resHeight) throws IOException {
+    private HlsSession startSession(Path sourceFile, Long mediaId, long startSeconds, Integer resHeight, boolean isHdr) throws IOException {
         log.trace("Starting FFmpeg session for file info: {}.", mediaId);
         Path sessionDir = Paths.get(hlsBasePath, mediaId.toString());
         Files.createDirectories(sessionDir);
@@ -195,8 +205,17 @@ public class TranscodeService {
         boolean needsDownscale = resHeight != null && resHeight > maxHeight;
 
         if (useVaapi) {
+            String vf;
+            if (isHdr) {
+                String tonemap = "tonemap_vaapi=format=nv12:p=bt709:t=bt709:m=bt709";
+                vf = needsDownscale ? tonemap + ",scale_vaapi=w=-2:h=" + maxHeight : tonemap;
+            } else {
+                vf = needsDownscale
+                        ? "scale_vaapi=format=nv12:w=-2:h=" + maxHeight
+                        : "scale_vaapi=format=nv12";
+            }
             command.add("-vf");
-            command.add("scale_vaapi=w=-2:h=" + maxHeight);
+            command.add(vf);
             command.addAll(List.of("-c:v", "h264_vaapi"));
         } else {
             if (needsDownscale) {

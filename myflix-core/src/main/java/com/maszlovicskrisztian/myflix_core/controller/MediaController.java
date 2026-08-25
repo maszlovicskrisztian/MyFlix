@@ -80,7 +80,7 @@ public class MediaController {
             item = mediaItemService.saveFileMetadata(item);
         }
 
-        MediaProbeResult probeResult = new MediaProbeResult(item.getCodec(), item.getAudioCodec(), item.getContainer(), item.getDurationSeconds(), item.getResHeight());
+        MediaProbeResult probeResult = new MediaProbeResult(item.getCodec(), item.getAudioCodec(), item.getContainer(), item.getDurationSeconds(), item.getResHeight(), item.isHdr());
 
         long resumeSeconds = watchProgressService.getProgressSecondsForMediaByProfile(id, profileId);
 

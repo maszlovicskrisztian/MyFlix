@@ -51,6 +51,7 @@ public class MediaItemService {
             item.setContainer(probeResult.container());
             item.setDurationSeconds(probeResult.durationSeconds());
             item.setResHeight(probeResult.resHeight());
+            item.setHdr(probeResult.hdr());
         }
 
         return saveMedia(item);
@@ -112,6 +113,7 @@ public class MediaItemService {
         item.setContainer(probeResult.container());
         item.setDurationSeconds(probeResult.durationSeconds());
         item.setResHeight(probeResult.resHeight());
+        item.setHdr(probeResult.hdr());
 
         return saveMedia(item);
     }
