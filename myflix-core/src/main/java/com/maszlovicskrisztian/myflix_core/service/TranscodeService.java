@@ -49,6 +49,9 @@ public class TranscodeService {
     @Value("${VAAPI_DEVICE:/dev/dri/renderD128}")
     private String vaapiDevice;
 
+    @Value("${HLS_MAX_HEIGHT:1080}")
+    private int maxHeight;
+
     public void touch(Long mediaId) {
         sessionRegistry.touch(mediaId);
     }
@@ -177,23 +180,27 @@ public class TranscodeService {
 
         boolean useVaapi = "vaapi".equalsIgnoreCase(hwAccel);
         if (useVaapi) {
-            command.add("-vaapi_device");
+            command.add("-hwaccel");
+            command.add("vaapi");
+            command.add("-hwaccel_device");
             command.add(vaapiDevice);
+            command.add("-hwaccel_output_format");
+            command.add("vaapi");
         }
 
         command.add("-i");
         command.add(sourceFile.toString());
         command.addAll(List.of("-map", "0:v:0", "-map", "0:a:0"));
 
-        boolean needsDownscale = resHeight != null && resHeight > 1080;
+        boolean needsDownscale = resHeight != null && resHeight > maxHeight;
 
         if (useVaapi) {
             command.add("-vf");
-            command.add(needsDownscale ? "format=nv12,hwupload,scale_vaapi=w=-2:h=1080" : "format=nv12,hwupload");
+            command.add("scale_vaapi=w=-2:h=" + maxHeight);
             command.addAll(List.of("-c:v", "h264_vaapi"));
         } else {
             if (needsDownscale) {
-                command.addAll(List.of("-vf", "scale=-2:1080"));
+                command.addAll(List.of("-vf", "scale=-2:" + maxHeight));
             }
             command.addAll(List.of("-c:v", "libx264", "-preset", "ultrafast"));
         }

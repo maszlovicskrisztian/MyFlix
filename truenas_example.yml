@@ -4,7 +4,11 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
+    devices:
+      - /dev/dri:/dev/dri
     environment:
+      - FFMPEG_HW_ACCEL=vaapi
+      - HLS_MAX_HEIGHT=2160
       - LOG_LEVEL=DEBUG
       - MEDIA_PATH=/media
       - MEDIA_INCLUDE_FOLDERS=
