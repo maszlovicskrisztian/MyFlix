@@ -89,7 +89,7 @@ public class StreamController {
 
         FileInfo media = mediaItemService.getMediaById(id);
         Path sourceFile = mediaPathResolver.getMediaPath().resolve(media.getRelativePath());
-        Path playlist = transcodeService.getOrStartSession(sourceFile, id, startSeconds, media.getResHeight());
+        Path playlist = transcodeService.getOrStartSession(sourceFile, id, startSeconds, media.getResHeight(), media.isHdr());
         transcodeService.waitForFirstSegment(playlist, Duration.ofSeconds(15), 3);
 
         String token = jwtService.extractToken(request);
