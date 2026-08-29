@@ -11,6 +11,5 @@ public record TmdbSeasonDetailsResponse(
         String overview,
         String name,
         @JsonProperty("poster_path") String posterPath,
-        @JsonProperty("air_date") String airDate,
-        List<TmdbEpisodeDetailsResponse> episodes
+        @JsonProperty("air_date") String airDate
 ) {}

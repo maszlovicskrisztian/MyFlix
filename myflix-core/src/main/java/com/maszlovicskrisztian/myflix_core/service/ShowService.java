@@ -8,7 +8,9 @@ import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchResult;
 import com.maszlovicskrisztian.myflix_core.exception.ResourceNotFoundException;
 import com.maszlovicskrisztian.myflix_core.interfaces.TmdbClient;
 import com.maszlovicskrisztian.myflix_core.mapping.ShowMapper;
+import com.maszlovicskrisztian.myflix_core.model.SeasonMetadata;
 import com.maszlovicskrisztian.myflix_core.model.Show;
+import com.maszlovicskrisztian.myflix_core.repository.SeasonMetadataRepository;
 import com.maszlovicskrisztian.myflix_core.repository.ShowRepository;
 import com.maszlovicskrisztian.myflix_core.repository.projection.TitleProjection;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ShowService {
+    private final SeasonMetadataRepository seasonRepository;
     private final ShowRepository showRepository;
     private final ShowMapper mapper;
     private final TranslationService translationService;
@@ -78,10 +81,16 @@ public class ShowService {
 
     @Transactional
     public void deleteEmptyShows() {
+        log.trace("Deleting seasons without episodes started");
+        List<SeasonMetadata> emptySeasons = seasonRepository.findAll().stream().filter(s -> s.getEpisodes().isEmpty()).toList();
+        log.debug("Found {} seasons without episodes.", emptySeasons.size());
+        seasonRepository.deleteAll(emptySeasons);
+        
         log.trace("Deleting show without episodes started");
         List<Show> emptyShows = showRepository.findAll().stream().filter(s -> s.getSeasons().isEmpty()).toList();
         log.debug("Found {} shows without episodes.", emptyShows.size());
         showRepository.deleteAll(emptyShows);
+
         log.trace("Deleting show without episodes finished");
     }
 }
