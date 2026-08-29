@@ -38,7 +38,7 @@ export class SeasonDetails implements OnInit {
       return [];
     }
 
-    return item ? [`${this.translocoService.translate('SHOW_DETAILS.SEASONS')}: ${item.episodes.length}`] : [];
+    return item ? [`${this.translocoService.translate('SHOW_DETAILS.EPISODE_COUNT')}: ${item.episodes.length}`] : [];
   });
 
   playLink = computed<HeroLink | null>(() => {
