@@ -65,8 +65,12 @@ public class WatchProgressService {
 
         List<MediaBaseResponse> result = new ArrayList<>();
         medias.forEach((x) -> {
-            var title = translationService.translateMediaTitle(x, languageCode);
-            result.add(mediaBaseMapper.fromContinueWatching(x, title));
+            String title;
+            if (!languageCode.equalsIgnoreCase("en"))
+                title = translationService.translateMediaTitle(x, languageCode);
+            else
+                title = x.getMovieMetadata() == null ? x.getEpisodeMetadata().getSeason().getShow().getTitle() : x.getMovieMetadata().getTitle();
+            result.add(mediaBaseMapper.fromFileInfo(x, title));
         });
 
         return result;

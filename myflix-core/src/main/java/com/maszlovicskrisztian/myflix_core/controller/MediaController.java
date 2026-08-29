@@ -37,14 +37,14 @@ public class MediaController {
         return results;
     }
 
+    @GetMapping("/{id}")
+    public MediaBaseResponse getMediaBaseById(@PathVariable Long id) {
+        return mediaItemService.getMediaBaseById(id);
+    }
+
     @GetMapping("/unknown")
     public List<MediaBaseResponse> getAllUnknownMedia() {
         return mediaItemService.getUnknownMedia();
-    }
-
-    @GetMapping("/unknown/{id}")
-    public MediaBaseResponse getUnknownMediaById(@PathVariable Long id) {
-        return mediaItemService.getUnknownMediaById(id);
     }
 
     @GetMapping("/continue-watching")

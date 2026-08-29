@@ -11,6 +11,7 @@ import com.maszlovicskrisztian.myflix_core.repository.projection.RelativePathPro
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -80,20 +81,22 @@ public class MediaItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("Could not find relative path by file info id: " + fileInfoId));
     }
 
+    @Transactional(readOnly = true)
     public List<MediaBaseResponse> getUnknownMedia() {
         return fileInfoRepository.findAll().stream()
                 .filter(x -> x.getMovieMetadata() == null && x.getEpisodeMetadata() == null)
-                .map(mapper::fromUnknownMedia)
+                .map((x) -> mapper.fromFileInfo(x, null))
                 .toList();
-    }
-
-    public MediaBaseResponse getUnknownMediaById(Long id) {
-        return mapper.fromUnknownMedia(getMediaById(id));
     }
 
     public FileInfo getMediaById(Long fileInfoId) {
         return fileInfoRepository.findById(fileInfoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Could not find media by file info id: " + fileInfoId));
+    }
+
+    @Transactional(readOnly = true)
+    public MediaBaseResponse getMediaBaseById(Long fileInfoId) {
+        return mapper.fromFileInfo(getMediaById(fileInfoId), null);
     }
 
     public List<FileInfo> getAll() {

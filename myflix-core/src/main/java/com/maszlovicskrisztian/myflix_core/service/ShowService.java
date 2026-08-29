@@ -85,7 +85,7 @@ public class ShowService {
         List<SeasonMetadata> emptySeasons = seasonRepository.findAll().stream().filter(s -> s.getEpisodes().isEmpty()).toList();
         log.debug("Found {} seasons without episodes.", emptySeasons.size());
         seasonRepository.deleteAll(emptySeasons);
-        
+
         log.trace("Deleting show without episodes started");
         List<Show> emptyShows = showRepository.findAll().stream().filter(s -> s.getSeasons().isEmpty()).toList();
         log.debug("Found {} shows without episodes.", emptyShows.size());
