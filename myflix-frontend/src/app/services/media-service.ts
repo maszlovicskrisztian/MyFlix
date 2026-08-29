@@ -13,14 +13,15 @@ export class MediaService {
     private http = inject(HttpClient);
     private languageService = inject(LanguageService);
     
+    
+    public getMediaBaseById(mediaId: string): Observable<MediaBaseResponse> {
+        const url = `${environment.apiUrl}/media/${mediaId}`;
+        return this.http.get<MediaBaseResponse>(url);
+    }
+
     public getAllUnknownMedia(): Observable<Array<MediaBaseResponse>> {
         const url = `${environment.apiUrl}/media/unknown`;
         return this.http.get<Array<MediaBaseResponse>>(url);
-    }
-    
-    public getUnknownMediaById(mediaId: string): Observable<MediaBaseResponse> {
-        const url = `${environment.apiUrl}/media/unknown/${mediaId}`;
-        return this.http.get<MediaBaseResponse>(url);
     }
 
     public getContinueWatching(profileId: number): Observable<Array<MediaBaseResponse>> {
