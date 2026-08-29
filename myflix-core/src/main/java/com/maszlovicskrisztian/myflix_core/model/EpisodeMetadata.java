@@ -25,20 +25,13 @@ public class EpisodeMetadata {
     private String stillPath;
     private LocalDate releaseDate;
     private Integer runtimeMinutes;
-    private Integer seasonNumber;
     private Integer episodeNumber;
-
-    private String seasonTitle;
-
-    @Lob
-    private String seasonOverview;
-    private String seasonPosterPath;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_info_id", nullable = false, unique = true)
     private FileInfo fileInfo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "show_id")
-    private Show show;
+    @JoinColumn(name = "season_id", nullable = false)
+    private SeasonMetadata season;
 }

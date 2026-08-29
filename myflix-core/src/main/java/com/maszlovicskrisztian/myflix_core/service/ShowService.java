@@ -52,7 +52,7 @@ public class ShowService {
                 .orElseThrow(() -> new ResourceNotFoundException("Could not find show by id: " + id));
 
         if (!languageCode.equalsIgnoreCase("en")) {
-            return mapper.toShowDetails(translationService.translateShow(show, languageCode));
+            return mapper.toTranslatedShowDetails(translationService.translateShowDetails(show, languageCode));
         }
 
         return mapper.toShowDetails(show);
@@ -79,7 +79,7 @@ public class ShowService {
     @Transactional
     public void deleteEmptyShows() {
         log.trace("Deleting show without episodes started");
-        List<Show> emptyShows = showRepository.findAll().stream().filter(s -> s.getEpisodes().isEmpty()).toList();
+        List<Show> emptyShows = showRepository.findAll().stream().filter(s -> s.getSeasons().isEmpty()).toList();
         log.debug("Found {} shows without episodes.", emptyShows.size());
         showRepository.deleteAll(emptyShows);
         log.trace("Deleting show without episodes finished");

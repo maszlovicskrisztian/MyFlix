@@ -150,39 +150,40 @@ public class TmdbApiClient implements TmdbClient{
     }
 
     @Override
-    public TmdbDetailsResponse getMovieDetails(Long tmdbId, String language) {
+    public TmdbMovieDetailsResponse getMovieDetails(Long tmdbId, String language) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder.path("/movie/{id}")
                         .queryParamIfPresent("language", Optional.ofNullable(language))
                         .build(tmdbId))
-                .retrieve().body(TmdbDetailsResponse.class);
+                .retrieve().body(TmdbMovieDetailsResponse.class);
     }
 
     @Override
-    public TmdbDetailsResponse getTvDetails(Long tmdbId, String language) {
+    public TmdbShowDetailsResponse getTvDetails(Long tmdbId, String language) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder.path("/tv/{id}")
                         .queryParamIfPresent("language", Optional.ofNullable(language))
                         .build(tmdbId))
-                .retrieve().body(TmdbDetailsResponse.class);
+                .retrieve().body(TmdbShowDetailsResponse.class);
     }
 
     @Override
-    public TmdbDetailsResponse getTvSeasonDetails(Long tvId, Integer season, String language) {
+    public TmdbSeasonDetailsResponse getTvSeasonDetails(Long tvId, Integer season, String language) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder.path("/tv/{id}/season/{season}")
                         .queryParamIfPresent("language", Optional.ofNullable(language))
                         .build(tvId,season))
-                .retrieve().body(TmdbDetailsResponse.class);
+                .retrieve().body(TmdbSeasonDetailsResponse.class);
 
     }
 
     @Override
-    public TmdbDetailsResponse getTvEpisodeDetails(Long tvId, Integer season, Integer episode, String language) {
+    public TmdbEpisodeDetailsResponse getTvEpisodeDetails(Long tvId, Integer season, Integer episode, String language) {
         return client.get()
                 .uri(uriBuilder -> uriBuilder.path("/tv/{id}/season/{season}/episode/{episode}")
                         .queryParamIfPresent("language", Optional.ofNullable(language))
                         .build(tvId, season, episode))
-                .retrieve().body(TmdbDetailsResponse.class);
+                .retrieve().body(TmdbEpisodeDetailsResponse.class);
+
     }
 }

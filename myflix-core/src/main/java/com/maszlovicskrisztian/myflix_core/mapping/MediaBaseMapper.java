@@ -29,11 +29,11 @@ public class MediaBaseMapper {
             EpisodeMetadata episodeMetadata = model.getEpisodeMetadata();
             if (episodeMetadata != null) {
                 return new MediaBaseResponse(
-                        episodeMetadata.getShow().getId(),
+                        episodeMetadata.getSeason().getShow().getId(),
                         model.getId(),
                         translatedTitle,
                         imageUrlResolver.toImageUrl(episodeMetadata.getStillPath()),
-                        episodeMetadata.getShow().getGenres().stream().toList()
+                        episodeMetadata.getSeason().getShow().getGenres().stream().toList()
                 );
             }
         }

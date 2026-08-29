@@ -36,5 +36,5 @@ public class Show {
     private List<String> genres;
 
     @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<EpisodeMetadata> episodes = new ArrayList<>();
+    private List<SeasonMetadata> seasons = new ArrayList<>();
 }

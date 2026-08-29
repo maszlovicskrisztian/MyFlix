@@ -1,14 +1,13 @@
 package com.maszlovicskrisztian.myflix_core.mapping;
 
-import com.maszlovicskrisztian.myflix_core.dtos.EpisodeDetails;
-import com.maszlovicskrisztian.myflix_core.dtos.SeasonDetails;
-import com.maszlovicskrisztian.myflix_core.dtos.TranslatedShowResult;
+import com.maszlovicskrisztian.myflix_core.dtos.*;
 import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaSearchResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.ShowDetailsResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
 import com.maszlovicskrisztian.myflix_core.helpers.ImageUrlResolver;
 import com.maszlovicskrisztian.myflix_core.model.EpisodeMetadata;
+import com.maszlovicskrisztian.myflix_core.model.SeasonMetadata;
 import com.maszlovicskrisztian.myflix_core.model.Show;
 import com.maszlovicskrisztian.myflix_core.repository.projection.TitleProjection;
 import lombok.RequiredArgsConstructor;
@@ -65,20 +64,12 @@ public class ShowMapper {
         );
     }
 
-    public ShowDetailsResponse toShowDetails(TranslatedShowResult translatedShow) {
+    public ShowDetailsResponse toTranslatedShowDetails(TranslatedShowResult translatedShow) {
         if (translatedShow == null || translatedShow.show() == null)
             return null;
 
         Show model = translatedShow.show();
-        List<EpisodeMetadata> episodes = model.getEpisodes().stream().toList();
-        Map<Integer, List<EpisodeMetadata>> episodesPerSeason = episodes
-                .stream().collect(Collectors.groupingBy(
-                        EpisodeMetadata::getSeasonNumber,
-                        TreeMap::new,
-                        Collectors.toList()
-                ));
-
-        List<SeasonDetails> seasons = episodesPerSeason.values().stream().map(this::toSeasonDetails).toList();
+        List<SeasonDetails> seasons = translatedShow.seasons().stream().map(this::toTranslatedSeasonDetails).toList();
 
         return new ShowDetailsResponse(
                 model.getId(),
@@ -94,15 +85,7 @@ public class ShowMapper {
     }
 
     public ShowDetailsResponse toShowDetails(Show model) {
-        List<EpisodeMetadata> episodes = model.getEpisodes().stream().toList();
-        Map<Integer, List<EpisodeMetadata>> episodesPerSeason = episodes
-                .stream().collect(Collectors.groupingBy(
-                        EpisodeMetadata::getSeasonNumber,
-                        TreeMap::new,
-                        Collectors.toList()
-                ));
-
-        List<SeasonDetails> seasons = episodesPerSeason.values().stream().map(this::toSeasonDetails).toList();
+        List<SeasonDetails> seasons = model.getSeasons().stream().map(this::toSeasonDetails).toList();
 
         return new ShowDetailsResponse(
                 model.getId(),
@@ -117,19 +100,33 @@ public class ShowMapper {
         );
     }
 
-    public SeasonDetails toSeasonDetails(List<EpisodeMetadata> episodes) {
-        EpisodeMetadata base = episodes.getFirst();
-
-        List<EpisodeDetails> sortedEpisodes = episodes.stream()
+    public SeasonDetails toSeasonDetails(SeasonMetadata season) {
+        List<EpisodeDetails> sortedEpisodes = season.getEpisodes().stream()
                 .sorted(Comparator.comparing(EpisodeMetadata::getEpisodeNumber))
                 .map(this::toEpisodeDetails)
                 .toList();
 
         return new SeasonDetails(
-                base.getSeasonTitle(),
-                base.getSeasonOverview(),
-                imageUrlResolver.toImageUrl(base.getSeasonPosterPath()),
-                base.getSeasonNumber(),
+                season.getTitle(),
+                season.getOverview(),
+                imageUrlResolver.toImageUrl(season.getPosterPath()),
+                season.getSeasonNumber(),
+                sortedEpisodes
+        );
+    }
+
+    public SeasonDetails toTranslatedSeasonDetails(TranslatedSeasonResult translatedSeason) {
+        SeasonMetadata model = translatedSeason.season();
+        List<EpisodeDetails> sortedEpisodes = translatedSeason.episodes().stream()
+                .sorted(Comparator.comparing((x) -> x.episode().getEpisodeNumber()))
+                .map(this::toTranslatedEpisodeDetails)
+                .toList();
+
+        return new SeasonDetails(
+                translatedSeason.localizedTitle().isBlank() ? model.getTitle() : translatedSeason.localizedTitle(),
+                translatedSeason.localizedOverview().isBlank() ? model.getOverview() : translatedSeason.localizedOverview(),
+                imageUrlResolver.toImageUrl(model.getPosterPath()),
+                model.getSeasonNumber(),
                 sortedEpisodes
         );
     }
@@ -143,6 +140,18 @@ public class ShowMapper {
                 model.getRuntimeMinutes(),
                 model.getEpisodeNumber(),
                 model.getFileInfo().getId()
+        );
+    }
+
+    public EpisodeDetails toTranslatedEpisodeDetails(TranslatedEpisodeResult model) {
+        return new EpisodeDetails(
+                model.localizedTitle(),
+                model.localizedOverview(),
+                imageUrlResolver.toImageUrl(model.episode().getStillPath()),
+                model.episode().getReleaseDate(),
+                model.episode().getRuntimeMinutes(),
+                model.episode().getEpisodeNumber(),
+                model.episode().getFileInfo().getId()
         );
     }
 }

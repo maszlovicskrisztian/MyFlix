@@ -5,10 +5,7 @@ import com.maszlovicskrisztian.myflix_core.exception.ResourceNotFoundException;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaTitleParser;
 import com.maszlovicskrisztian.myflix_core.interfaces.TmdbClient;
 import com.maszlovicskrisztian.myflix_core.model.*;
-import com.maszlovicskrisztian.myflix_core.repository.EpisodeMetadataRepository;
-import com.maszlovicskrisztian.myflix_core.repository.FileInfoRepository;
-import com.maszlovicskrisztian.myflix_core.repository.MovieMetadataRepository;
-import com.maszlovicskrisztian.myflix_core.repository.ShowRepository;
+import com.maszlovicskrisztian.myflix_core.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +27,7 @@ public class MediaMetadataService {
     private final EpisodeMetadataRepository episodeMetadataRepository;
     private final FileInfoRepository fileInfoRepository;
     private final ShowRepository showRepository;
+    private final SeasonMetadataRepository seasonRepository;
 
     public void enrich() {
         List<FileInfo> mediaMissingMetadata = fileInfoRepository
@@ -109,7 +107,7 @@ public class MediaMetadataService {
     private void enrichShow(Long showId, Integer season, Integer episode, FileInfo fileInfo) {
         Show savedShow = showRepository.findByTmdbId(showId).orElse(null);
         if (savedShow == null) {
-            TmdbDetailsResponse showDetails = tmdbClient.getTvDetails(showId, "en");
+            TmdbShowDetailsResponse showDetails = tmdbClient.getTvDetails(showId, "en");
             Show show = new Show();
             show.setTmdbId(showId);
             show.setBackdropPath(showDetails.backdropPath());
@@ -125,31 +123,39 @@ public class MediaMetadataService {
             log.info("New show saved: {}", showDetails.name());
         }
 
-        TmdbDetailsResponse seasonDetails = tmdbClient.getTvSeasonDetails(showId, season, "en");
-        TmdbDetailsResponse episodeDetails = tmdbClient.getTvEpisodeDetails(showId, season, episode, "en");
+        SeasonMetadata savedSeason = seasonRepository.findByShowIdAndSeasonNumber(savedShow.getId(), season).orElse(null);
+        if (savedSeason == null) {
+            TmdbSeasonDetailsResponse seasonDetails = tmdbClient.getTvSeasonDetails(showId, season, "en");
+            SeasonMetadata seasonMetadata = new SeasonMetadata();
+            seasonMetadata.setTmdbId(seasonDetails.id());
+            seasonMetadata.setPosterPath(seasonDetails.posterPath());
+            seasonMetadata.setTitle(seasonDetails.name());
+            seasonMetadata.setOverview(seasonDetails.overview());
+            seasonMetadata.setReleaseDate(parseDateOrNull(seasonDetails.airDate()));
+            seasonMetadata.setSeasonNumber(season);
+            seasonMetadata.setShow(savedShow);
 
-        EpisodeMetadata episodeMetadata = fileInfo.getEpisodeMetadata();
-
-        if (episodeMetadata == null) {
-            episodeMetadata = new EpisodeMetadata();
-            episodeMetadata.setFileInfo(fileInfo);
+            savedSeason = seasonRepository.save(seasonMetadata);
+            log.info("New season saved: {}", seasonDetails.name());
         }
 
-        episodeMetadata.setTmdbId(episodeDetails.id());
-        episodeMetadata.setOverview(episodeDetails.overview());
-        episodeMetadata.setTitle(episodeDetails.name());
-        episodeMetadata.setStillPath(episodeDetails.stillPath());
-        episodeMetadata.setReleaseDate(parseDateOrNull(episodeDetails.airDate()));
-        episodeMetadata.setRuntimeMinutes(episodeDetails.runtime());
-        episodeMetadata.setSeasonNumber(season);
-        episodeMetadata.setEpisodeNumber(episode);
-        episodeMetadata.setSeasonTitle(seasonDetails.name());
-        episodeMetadata.setSeasonOverview(seasonDetails.overview());
-        episodeMetadata.setSeasonPosterPath(seasonDetails.posterPath());
-        episodeMetadata.setShow(savedShow);
+        EpisodeMetadata episodeMetadata = fileInfo.getEpisodeMetadata();
+        if (episodeMetadata == null) {
+            TmdbEpisodeDetailsResponse episodeDetails = tmdbClient.getTvEpisodeDetails(showId, season, episode, "en");
+            episodeMetadata = new EpisodeMetadata();
+            episodeMetadata.setFileInfo(fileInfo);
+            episodeMetadata.setTmdbId(episodeDetails.id());
+            episodeMetadata.setOverview(episodeDetails.overview());
+            episodeMetadata.setTitle(episodeDetails.name());
+            episodeMetadata.setStillPath(episodeDetails.stillPath());
+            episodeMetadata.setReleaseDate(parseDateOrNull(episodeDetails.airDate()));
+            episodeMetadata.setRuntimeMinutes(episodeDetails.runtime());
+            episodeMetadata.setEpisodeNumber(episode);
+            episodeMetadata.setSeason(savedSeason);
 
-        episodeMetadataRepository.save(episodeMetadata);
-        log.info("{}: season {} episode {} saved successfully", savedShow.getTitle(), season, episode);
+            episodeMetadataRepository.save(episodeMetadata);
+            log.info("{}: season {} episode {} saved successfully", savedShow.getTitle(), season, episode);
+        }
     }
 
     private void enrichMovie(FileInfo fileInfo, Long tmdbId) {
@@ -160,7 +166,7 @@ public class MediaMetadataService {
             metadata.setFileInfo(fileInfo);
         }
 
-        TmdbDetailsResponse details = tmdbClient.getMovieDetails(tmdbId, "en");
+        TmdbMovieDetailsResponse details = tmdbClient.getMovieDetails(tmdbId, "en");
 
         metadata.setTmdbId(tmdbId);
         metadata.setTitle(details.title());
