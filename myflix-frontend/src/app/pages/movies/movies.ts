@@ -21,17 +21,21 @@ export class Movies implements OnInit {
   loading = signal(true);
 
   ngOnInit(): void {
+    this.loadPage();
+  }
+
+  loadPage(): void {
     this.movieService.getMovies()
-    .pipe(finalize(() => this.loading.set(false)))
-    .subscribe({
-      next: (movies) => {
-        const newMovies = movies.values().next().value ? Array.from(movies.values()).sort((a, b) => b.fileInfoId! - a.fileInfoId!).slice(0, 5) : [];
-        const actionMovies = movies.filter((m) => m.genres.includes('Action'));
-        this.movies.set(movies);
-        this.newMovies.set(newMovies);
-        this.actionMovies.set(actionMovies);
-      },
-      error: (err) => console.error('Hiba a filmek lekérésekor', err),
-    });
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (movies) => {
+          const newMovies = movies.values().next().value ? Array.from(movies.values()).sort((a, b) => b.fileInfoId! - a.fileInfoId!).slice(0, 5) : [];
+          const actionMovies = movies.filter((m) => m.genres.includes('Action'));
+          this.movies.set(movies);
+          this.newMovies.set(newMovies);
+          this.actionMovies.set(actionMovies);
+        },
+        error: (err) => console.error('Hiba a filmek lekérésekor', err),
+      });
   }
 }

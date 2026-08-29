@@ -26,6 +26,10 @@ export class Home implements OnInit {
   loading = signal(true);
 
   ngOnInit(): void {
+    this.loadPage();
+  }
+
+  loadPage() {
     this.loading.set(true);
 
     forkJoin({

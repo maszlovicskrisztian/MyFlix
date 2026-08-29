@@ -20,6 +20,10 @@ export class Shows {
   loading = signal(true)
 
   ngOnInit(): void {
+    this.loadPage();
+  }
+  
+  loadPage(): void {
     this.showService.getShows()
     .pipe(finalize(() => this.loading.set(false)))
     .subscribe({

@@ -1,4 +1,4 @@
-import { Component, computed, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, inject, output, signal, viewChild } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth-service';
 import { ProfileService } from '../../services/profile-service';
@@ -28,6 +28,7 @@ export class Header {
   profileInitial = computed(() => this.selectedProfileName()?.charAt(0) ?? '');
   menuOpen = signal(false);
   searchOpen = signal(false);
+  refreshRequested = output<void>();
 
   private profileMenu = viewChild<ElementRef<HTMLElement>>('profileMenu');
 
@@ -77,5 +78,6 @@ export class Header {
   changeLanguage() {
     this.menuOpen.set(false);
     this.languageService.changeLanguage();
+    this.refreshRequested.emit();
   }
 }

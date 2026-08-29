@@ -1,4 +1,4 @@
-<app-header></app-header>
+<app-header (refreshRequested)="loadPage()"/>
 
 @if (loading()) {
     <app-loading-overlay></app-loading-overlay>
