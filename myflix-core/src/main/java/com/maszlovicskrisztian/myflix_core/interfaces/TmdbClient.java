@@ -13,4 +13,6 @@ public interface TmdbClient {
     TmdbShowDetailsResponse getTvDetails(Long tmdbId, String language);
     TmdbSeasonDetailsResponse getTvSeasonDetails(Long tvId, Integer season, String language);
     TmdbEpisodeDetailsResponse getTvEpisodeDetails(Long tvId, Integer season, Integer episode, String language);
+    List<TmdbDiscoverResult> discoverNewMovies(int monthsBack);
+    List<TmdbDiscoverResult> discoverNewShows(int monthsBack);
 }

@@ -4,10 +4,13 @@ import com.maszlovicskrisztian.myflix_core.dtos.tmdb.*;
 import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +20,12 @@ import java.util.Optional;
 public class TmdbApiClient implements TmdbClient{
 
     private final RestClient client;
+
+    @Value("${tmdb.series.watch-providers}")
+    private String seriesWatchProviders;
+
+    @Value("${tmdb.region:HU}")
+    private String region;
 
     @Override
     public TmdbSearchResult searchBestMatch(TmdbSearchRequest request) {
@@ -174,7 +183,6 @@ public class TmdbApiClient implements TmdbClient{
                         .queryParamIfPresent("language", Optional.ofNullable(language))
                         .build(tvId,season))
                 .retrieve().body(TmdbSeasonDetailsResponse.class);
-
     }
 
     @Override
@@ -184,6 +192,41 @@ public class TmdbApiClient implements TmdbClient{
                         .queryParamIfPresent("language", Optional.ofNullable(language))
                         .build(tvId, season, episode))
                 .retrieve().body(TmdbEpisodeDetailsResponse.class);
+    }
 
+    @Override
+    public List<TmdbDiscoverResult> discoverNewMovies(int monthsBack) {
+        LocalDate to = LocalDate.now();
+        LocalDate from = to.minusMonths(monthsBack);
+
+        var response = client.get()
+                .uri(uriBuilder -> uriBuilder.path("/discover/movie")
+                        .queryParam("sort_by", "popularity.desc")
+                        .queryParam("primary_release_date.gte", from)
+                        .queryParam("primary_release_date.lte", to)
+                        .build()
+                )
+                .retrieve().body(TmdbDiscoverResponse.class);
+
+        return response == null ? List.of() : response.results();
+    }
+
+    @Override
+    public List<TmdbDiscoverResult> discoverNewShows(int monthsBack) {
+        LocalDate to = LocalDate.now();
+        LocalDate from = to.minusMonths(monthsBack);
+
+        var response = client.get()
+                .uri(uriBuilder -> uriBuilder.path("/discover/tv")
+                        .queryParam("sort_by", "popularity.desc")
+                        .queryParam("air_date.gte", from)
+                        .queryParam("air_date.lte", to)
+                        .queryParam("watch_region", region)
+                        .queryParam("with_watch_providers", seriesWatchProviders)
+                        .build()
+                )
+                .retrieve().body(TmdbDiscoverResponse.class);
+
+        return response == null ? List.of() : response.results();
     }
 }
