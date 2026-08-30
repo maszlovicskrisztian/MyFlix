@@ -238,3 +238,27 @@
     backdrop-filter: blur(12px);
   }
 }
+
+/* Six tabs get tight on narrow phones — shrink the labels before they ellipsize. */
+@media (max-width: 420px) {
+  .tabbar {
+    gap: 0;
+    padding-left: 2px;
+    padding-right: 2px;
+
+    &__link {
+      padding: 6px 1px;
+      gap: 3px;
+    }
+
+    &__icon {
+      width: 21px;
+      height: 21px;
+    }
+
+    &__label {
+      font-size: 10px;
+      letter-spacing: 0;
+    }
+  }
+}

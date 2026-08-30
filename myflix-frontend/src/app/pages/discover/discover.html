@@ -1,0 +1,22 @@
+<div class="browse">
+  <app-header (refreshRequested)="loadPage()"/>
+
+  @if (loading()) {
+    <app-loading-overlay/>
+  } @else {
+    @if (discoveredMovies().length > 0) {
+      <app-media-section
+        layout="grid"
+        title=" {{ 'DISCOVER.MOVIES' | transloco }} "
+        [mediaBaseResponses]="discoveredMovies()">
+      </app-media-section>
+    }
+    @if (discoveredShows().length > 0) {
+      <app-media-section
+        layout="grid"
+        title=" {{ 'DISCOVER.SHOWS' | transloco }} "
+        [mediaBaseResponses]="discoveredShows()">
+      </app-media-section>
+    }
+  }
+</div>

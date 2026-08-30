@@ -5,6 +5,7 @@
         "SHOWS": "Sorozatok",
         "FAVORITES": "Kedvencek",
         "SEARCH": "Keresés",
+        "DISCOVER": "Felfedezés",
         "DROPDOWN": {
             "SWITCH_PROFILE": "Profil váltás",
             "LOGOUT": "Kijelentkezés",
@@ -76,5 +77,9 @@
     "PROFILE_SELECTOR": {
         "WHOS_WATCHING": "Ki nézi most",
         "NEW_PROFILE": "Új profil"
+    },
+    "DISCOVER": {
+        "MOVIES": "Filmek",
+        "SHOWS": "Sorozatok"
     }
 }

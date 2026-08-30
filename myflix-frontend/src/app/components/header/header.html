@@ -10,6 +10,8 @@
             [routerLinkActiveOptions]="{ exact: true }">{{ 'HEADER.SHOWS' | transloco}}</a>
         <a class="topbar__link" [routerLink]="['/favorites']" routerLinkActive="topbar__link--active"
             [routerLinkActiveOptions]="{ exact: true }">{{ 'HEADER.FAVORITES' | transloco}}</a>
+        <a class="topbar__link" [routerLink]="['/discover']" routerLinkActive="topbar__link--active"
+            [routerLinkActiveOptions]="{ exact: true }">{{ 'HEADER.DISCOVER' | transloco}}</a>
         <button class="topbar__link topbar__link--action" type="button" (click)="openSearch()">
             {{ 'HEADER.SEARCH' | transloco}}
         </button>
@@ -48,7 +50,7 @@
     </div>
 </header>
 
-<!-- Phone-sized screens only: the topbar cannot fit four links, so they move here. -->
+<!-- Phone-sized screens only: the topbar cannot fit the nav links, so they move here. -->
 <nav class="tabbar" aria-label="Fő navigáció">
     <a class="tabbar__link" [routerLink]="['/home']" routerLinkActive="tabbar__link--active"
         [routerLinkActiveOptions]="{ exact: true }">
@@ -83,6 +85,15 @@
                 d="M12 20.6l-1.3-1.2C6 15.2 3 12.4 3 9.2 3 6.6 5 4.6 7.5 4.6c1.5 0 2.9.7 3.8 1.8.9-1.1 2.3-1.8 3.8-1.8C17.6 4.6 19.6 6.6 19.6 9.2c0 3.2-3 6-7.7 10.2L12 20.6z" />
         </svg>
         <span class="tabbar__label">{{ 'HEADER.FAVORITES' | transloco }}</span>
+    </a>
+
+    <a class="tabbar__link" [routerLink]="['/discover']" routerLinkActive="tabbar__link--active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <svg class="tabbar__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" />
+            <path d="m15.2 8.8-2 4.4-4.4 2 2-4.4 4.4-2z" />
+        </svg>
+        <span class="tabbar__label">{{ 'HEADER.DISCOVER' | transloco }}</span>
     </a>
 
     <button class="tabbar__link tabbar__link--action" type="button" (click)="openSearch()">

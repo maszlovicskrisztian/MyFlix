@@ -62,4 +62,9 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/season-details/season-details').then(m => m.SeasonDetails),
         canActivate: [authGuard, profileGuard]
     },
+    {
+        path: 'discover', 
+        loadComponent: () => import('./pages/discover/discover').then(m => m.Discover),
+        canActivate: [authGuard, profileGuard]
+    },
 ];
