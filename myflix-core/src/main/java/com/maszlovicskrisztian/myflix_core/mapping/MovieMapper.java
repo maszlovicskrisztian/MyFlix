@@ -40,8 +40,10 @@ public class MovieMapper {
         return new MediaBaseResponse(
                 null,
                 translatedMovie.movie().getFileInfo().getId(),
+                metadata.getTmdbId(),
                 translatedMovie.localizedTitle().isBlank() ? metadata.getTitle() : translatedMovie.localizedTitle(),
                 imageUrlResolver.toImageUrl(metadata.getPosterPath()),
+                metadata.getOverview(),
                 metadata.getGenres().stream().toList()
         );
     }
@@ -53,8 +55,10 @@ public class MovieMapper {
         return new MediaBaseResponse(
                 null,
                 metadata.getFileInfo().getId(),
+                metadata.getTmdbId(),
                 metadata.getTitle(),
                 imageUrlResolver.toImageUrl(metadata.getPosterPath()),
+                metadata.getOverview(),
                 metadata.getGenres().stream().toList()
         );
     }

@@ -5,7 +5,9 @@ import java.util.List;
 public record MediaBaseResponse(
         Long showId,
         Long fileInfoId,
+        Long tmdbId,
         String title,
         String imagePath,
+        String overview,
         List<String> genres) {
 }

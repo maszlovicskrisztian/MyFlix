@@ -195,7 +195,7 @@ public class TmdbApiClient implements TmdbClient{
     }
 
     @Override
-    public List<TmdbDiscoverResult> discoverNewMovies(int monthsBack) {
+    public List<TmdbDiscoverResult> discoverNewMovies(int monthsBack, String languageCode) {
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusMonths(monthsBack);
 
@@ -204,6 +204,7 @@ public class TmdbApiClient implements TmdbClient{
                         .queryParam("sort_by", "popularity.desc")
                         .queryParam("primary_release_date.gte", from)
                         .queryParam("primary_release_date.lte", to)
+                        .queryParam("language", languageCode)
                         .build()
                 )
                 .retrieve().body(TmdbDiscoverResponse.class);
@@ -212,7 +213,7 @@ public class TmdbApiClient implements TmdbClient{
     }
 
     @Override
-    public List<TmdbDiscoverResult> discoverNewShows(int monthsBack) {
+    public List<TmdbDiscoverResult> discoverNewShows(int monthsBack, String languageCode) {
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusMonths(monthsBack);
 
@@ -223,6 +224,7 @@ public class TmdbApiClient implements TmdbClient{
                         .queryParam("air_date.lte", to)
                         .queryParam("watch_region", region)
                         .queryParam("with_watch_providers", seriesWatchProviders)
+                        .queryParam("language", languageCode)
                         .build()
                 )
                 .retrieve().body(TmdbDiscoverResponse.class);

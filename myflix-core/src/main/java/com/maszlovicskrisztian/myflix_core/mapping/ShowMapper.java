@@ -48,8 +48,10 @@ public class ShowMapper {
         return new MediaBaseResponse(
                 show.getId(),
                 null,
+                show.getTmdbId(),
                 translatedShow.localizedTitle().isBlank() ? show.getTitle() : translatedShow.localizedTitle(),
                 imageUrlResolver.toImageUrl(show.getPosterPath()),
+                show.getOverview(),
                 show.getGenres().stream().toList()
         );
     }
@@ -58,8 +60,10 @@ public class ShowMapper {
         return new MediaBaseResponse(
                 model.getId(),
                 null,
+                model.getTmdbId(),
                 model.getTitle(),
                 imageUrlResolver.toImageUrl(model.getPosterPath()),
+                model.getOverview(),
                 model.getGenres().stream().toList()
         );
     }

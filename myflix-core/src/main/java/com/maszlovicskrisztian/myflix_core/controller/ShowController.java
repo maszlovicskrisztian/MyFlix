@@ -16,20 +16,19 @@ import java.util.List;
 public class ShowController {
 
     private final ShowService showService;
-    private final TmdbClient tmdbClient;
 
     @GetMapping
-    public List<MediaBaseResponse> getShows(@RequestParam String languageCode) {
+    public List<MediaBaseResponse> getShows(@RequestParam(defaultValue = "en") String languageCode) {
         return showService.getShows(languageCode);
     }
 
     @GetMapping("/{id}")
-    public ShowDetailsResponse getShowDetails(@PathVariable Long id, @RequestParam String languageCode) {
+    public ShowDetailsResponse getShowDetails(@PathVariable Long id, @RequestParam(defaultValue = "en") String languageCode) {
         return showService.getShowById(id, languageCode);
     }
 
     @GetMapping("/discover")
-    public List<TmdbDiscoverResult> discoverShows(@RequestParam(defaultValue = "1") int monthsBack) {
-        return tmdbClient.discoverNewShows(monthsBack);
+    public List<MediaBaseResponse> discoverShows(@RequestParam(defaultValue = "1") int monthsBack, @RequestParam(defaultValue = "en") String languageCode) {
+        return showService.discoverShows(monthsBack, languageCode);
     }
 }

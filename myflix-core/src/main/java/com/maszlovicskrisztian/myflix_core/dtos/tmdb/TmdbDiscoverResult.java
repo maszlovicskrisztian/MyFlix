@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record TmdbDiscoverResult(
-        int id,
+        @JsonProperty("id") Long tmdbId,
         String title,
         String name,
         String overview,

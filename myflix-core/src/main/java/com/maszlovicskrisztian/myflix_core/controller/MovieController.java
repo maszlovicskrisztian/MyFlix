@@ -16,20 +16,19 @@ import java.util.List;
 public class MovieController {
 
     private final MovieService movieService;
-    private final TmdbClient tmdbClient;
 
     @GetMapping
-    public List<MediaBaseResponse> getMovies(@RequestParam String languageCode) {
+    public List<MediaBaseResponse> getMovies(@RequestParam(defaultValue = "en") String languageCode) {
         return movieService.getAllMovies(languageCode);
     }
 
     @GetMapping("/{id}")
-    public MovieDetailsResponse getMovieById(@PathVariable Long id, @RequestParam String languageCode) {
+    public MovieDetailsResponse getMovieById(@PathVariable Long id, @RequestParam(defaultValue = "en") String languageCode) {
         return movieService.getMovieByFileInfoId(id, languageCode);
     }
 
     @GetMapping("/discover")
-    public List<TmdbDiscoverResult> discoverMovies(@RequestParam(defaultValue = "1") int monthsBack) {
-        return tmdbClient.discoverNewMovies(monthsBack);
+    public List<MediaBaseResponse> discoverMovies(@RequestParam(defaultValue = "1") int monthsBack, @RequestParam(defaultValue = "en") String languageCode) {
+        return movieService.discoverMovies(monthsBack, languageCode);
     }
 }

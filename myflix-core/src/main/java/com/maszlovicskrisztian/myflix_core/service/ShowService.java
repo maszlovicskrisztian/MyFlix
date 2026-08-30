@@ -7,6 +7,7 @@ import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchRequest;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchResult;
 import com.maszlovicskrisztian.myflix_core.exception.ResourceNotFoundException;
 import com.maszlovicskrisztian.myflix_core.interfaces.TmdbClient;
+import com.maszlovicskrisztian.myflix_core.mapping.MediaBaseMapper;
 import com.maszlovicskrisztian.myflix_core.mapping.ShowMapper;
 import com.maszlovicskrisztian.myflix_core.model.SeasonMetadata;
 import com.maszlovicskrisztian.myflix_core.model.Show;
@@ -28,6 +29,7 @@ public class ShowService {
     private final SeasonMetadataRepository seasonRepository;
     private final ShowRepository showRepository;
     private final ShowMapper mapper;
+    private final MediaBaseMapper baseMapper;
     private final TranslationService translationService;
     private final TmdbClient tmdbClient;
 
@@ -92,5 +94,11 @@ public class ShowService {
         showRepository.deleteAll(emptyShows);
 
         log.trace("Deleting show without episodes finished");
+    }
+
+    public List<MediaBaseResponse> discoverShows(int monthsBack, String languageCode) {
+        return tmdbClient.discoverNewShows(monthsBack, languageCode)
+                .stream().map(baseMapper::fromDiscover)
+                .toList();
     }
 }
