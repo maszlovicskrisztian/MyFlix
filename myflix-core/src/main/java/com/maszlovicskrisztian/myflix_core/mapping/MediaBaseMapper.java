@@ -24,7 +24,6 @@ public class MediaBaseMapper {
                 discoverResult.tmdbId(),
                 discoverResult.title() == null ? discoverResult.name() : discoverResult.title(),
                 imageUrlResolver.toImageUrl(discoverResult.posterPath()),
-                discoverResult.overview(),
                 null
         );
     }
@@ -38,7 +37,6 @@ public class MediaBaseMapper {
                     movieMetadata.getTmdbId(),
                     translatedTitle == null ? movieMetadata.getTitle() : translatedTitle,
                     imageUrlResolver.toImageUrl(movieMetadata.getBackdropPath()),
-                    movieMetadata.getOverview(),
                     movieMetadata.getGenres().stream().toList()
             );
         } else if (model.getEpisodeMetadata() != null) {
@@ -49,7 +47,6 @@ public class MediaBaseMapper {
                     episodeMetadata.getTmdbId(),
                     translatedTitle == null ? episodeMetadata.getTitle() : translatedTitle,
                     imageUrlResolver.toImageUrl(episodeMetadata.getStillPath()),
-                    episodeMetadata.getOverview(),
                     episodeMetadata.getSeason().getShow().getGenres().stream().toList()
             );
         } else {
@@ -58,7 +55,6 @@ public class MediaBaseMapper {
                     model.getId(),
                     null,
                     model.getRelativePath(),
-                    null,
                     null,
                     null
             );

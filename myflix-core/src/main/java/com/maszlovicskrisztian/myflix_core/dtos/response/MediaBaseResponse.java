@@ -8,6 +8,5 @@ public record MediaBaseResponse(
         Long tmdbId,
         String title,
         String imagePath,
-        String overview,
         List<String> genres) {
 }

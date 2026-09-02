@@ -5,11 +5,14 @@ import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaSearchResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MovieDetailsResponse;
+import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbMovieDetailsResponse;
 import com.maszlovicskrisztian.myflix_core.helpers.ImageUrlResolver;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.model.MovieMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 @RequiredArgsConstructor
 @Component
@@ -43,7 +46,6 @@ public class MovieMapper {
                 metadata.getTmdbId(),
                 translatedMovie.localizedTitle().isBlank() ? metadata.getTitle() : translatedMovie.localizedTitle(),
                 imageUrlResolver.toImageUrl(metadata.getPosterPath()),
-                metadata.getOverview(),
                 metadata.getGenres().stream().toList()
         );
     }
@@ -58,7 +60,6 @@ public class MovieMapper {
                 metadata.getTmdbId(),
                 metadata.getTitle(),
                 imageUrlResolver.toImageUrl(metadata.getPosterPath()),
-                metadata.getOverview(),
                 metadata.getGenres().stream().toList()
         );
     }
@@ -95,6 +96,22 @@ public class MovieMapper {
                 imageUrlResolver.toImageUrl(metadata.getBackdropPath()),
                 metadata.getReleaseDate(),
                 metadata.getRuntimeMinutes()
+        );
+    }
+
+    public MovieDetailsResponse toMovieDetails(TmdbMovieDetailsResponse model) {
+        if (model == null)
+            return null;
+
+        return new MovieDetailsResponse(
+                null,
+                null,
+                model.overview(),
+                model.title(),
+                imageUrlResolver.toImageUrl(model.posterPath()),
+                imageUrlResolver.toImageUrl(model.backdropPath()),
+                model.releaseDate() != null ? LocalDate.parse(model.releaseDate()) : null,
+                model.runtime()
         );
     }
 }

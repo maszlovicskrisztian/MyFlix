@@ -5,7 +5,6 @@ import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.apache.commons.text.similarity.JaroWinklerDistance;
@@ -19,7 +18,7 @@ import java.util.Optional;
 @Slf4j
 public class TmdbApiClient implements TmdbClient{
 
-    private final RestClient client;
+    private final RestClient tmdbClient;
 
     @Value("${tmdb.series.watch-providers}")
     private String seriesWatchProviders;
@@ -69,7 +68,7 @@ public class TmdbApiClient implements TmdbClient{
         if (request == null || request.title() == null)
             return List.of();
 
-        TmdbSearchResponse response = client.get()
+        TmdbSearchResponse response = tmdbClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/search/movie")
                         .queryParam("query", request.title())
                         .queryParamIfPresent("primary_release_year", Optional.ofNullable(request.year()))
@@ -88,7 +87,7 @@ public class TmdbApiClient implements TmdbClient{
 
             for (int i = currentPage + 1; i < pageCount; i++) {
                 int finalI = i;
-                response = client.get()
+                response = tmdbClient.get()
                         .uri(uriBuilder -> uriBuilder.path("/search/movie")
                                 .queryParam("query", request.title())
                                 .queryParamIfPresent("primary_release_year", Optional.ofNullable(request.year()))
@@ -111,7 +110,7 @@ public class TmdbApiClient implements TmdbClient{
         if (request == null || request.title() == null)
             return List.of();
 
-        TmdbSearchResponse response = client.get()
+        TmdbSearchResponse response = tmdbClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/search/tv")
                         .queryParam("query", request.title())
                         .queryParamIfPresent("year", Optional.ofNullable(request.year()))
@@ -130,7 +129,7 @@ public class TmdbApiClient implements TmdbClient{
 
             for (int i = currentPage + 1; i < pageCount; i++) {
                 int finalI = i;
-                response = client.get()
+                response = tmdbClient.get()
                         .uri(uriBuilder -> uriBuilder.path("/search/tv")
                                 .queryParam("query", request.title())
                                 .queryParamIfPresent("year", Optional.ofNullable(request.year()))
@@ -150,7 +149,7 @@ public class TmdbApiClient implements TmdbClient{
 
     @Override
     public ImdbSearchResponse searchByImdbId(String imdbId) {
-        return client.get()
+        return tmdbClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/find/{external_id}")
                         .queryParam("external_source", "imdb_id")
                         .build(imdbId))
@@ -160,7 +159,7 @@ public class TmdbApiClient implements TmdbClient{
 
     @Override
     public TmdbMovieDetailsResponse getMovieDetails(Long tmdbId, String language) {
-        return client.get()
+        return tmdbClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/movie/{id}")
                         .queryParamIfPresent("language", Optional.ofNullable(language))
                         .build(tmdbId))
@@ -169,7 +168,7 @@ public class TmdbApiClient implements TmdbClient{
 
     @Override
     public TmdbShowDetailsResponse getTvDetails(Long tmdbId, String language) {
-        return client.get()
+        return tmdbClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/tv/{id}")
                         .queryParamIfPresent("language", Optional.ofNullable(language))
                         .build(tmdbId))
@@ -178,7 +177,7 @@ public class TmdbApiClient implements TmdbClient{
 
     @Override
     public TmdbSeasonDetailsResponse getTvSeasonDetails(Long tvId, Integer season, String language) {
-        return client.get()
+        return tmdbClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/tv/{id}/season/{season}")
                         .queryParamIfPresent("language", Optional.ofNullable(language))
                         .build(tvId,season))
@@ -187,7 +186,7 @@ public class TmdbApiClient implements TmdbClient{
 
     @Override
     public TmdbEpisodeDetailsResponse getTvEpisodeDetails(Long tvId, Integer season, Integer episode, String language) {
-        return client.get()
+        return tmdbClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/tv/{id}/season/{season}/episode/{episode}")
                         .queryParamIfPresent("language", Optional.ofNullable(language))
                         .build(tvId, season, episode))
@@ -199,7 +198,7 @@ public class TmdbApiClient implements TmdbClient{
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusMonths(monthsBack);
 
-        var response = client.get()
+        var response = tmdbClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/discover/movie")
                         .queryParam("sort_by", "popularity.desc")
                         .queryParam("primary_release_date.gte", from)
@@ -217,7 +216,7 @@ public class TmdbApiClient implements TmdbClient{
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusMonths(monthsBack);
 
-        var response = client.get()
+        var response = tmdbClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/discover/tv")
                         .queryParam("sort_by", "popularity.desc")
                         .queryParam("air_date.gte", from)

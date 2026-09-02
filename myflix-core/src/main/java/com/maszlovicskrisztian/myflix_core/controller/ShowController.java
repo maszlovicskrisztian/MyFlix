@@ -26,9 +26,4 @@ public class ShowController {
     public ShowDetailsResponse getShowDetails(@PathVariable Long id, @RequestParam(defaultValue = "en") String languageCode) {
         return showService.getShowById(id, languageCode);
     }
-
-    @GetMapping("/discover")
-    public List<MediaBaseResponse> discoverShows(@RequestParam(defaultValue = "1") int monthsBack, @RequestParam(defaultValue = "en") String languageCode) {
-        return showService.discoverShows(monthsBack, languageCode);
-    }
 }

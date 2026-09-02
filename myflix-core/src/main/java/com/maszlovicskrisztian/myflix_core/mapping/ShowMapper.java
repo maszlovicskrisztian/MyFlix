@@ -51,7 +51,6 @@ public class ShowMapper {
                 show.getTmdbId(),
                 translatedShow.localizedTitle().isBlank() ? show.getTitle() : translatedShow.localizedTitle(),
                 imageUrlResolver.toImageUrl(show.getPosterPath()),
-                show.getOverview(),
                 show.getGenres().stream().toList()
         );
     }
@@ -63,7 +62,6 @@ public class ShowMapper {
                 model.getTmdbId(),
                 model.getTitle(),
                 imageUrlResolver.toImageUrl(model.getPosterPath()),
-                model.getOverview(),
                 model.getGenres().stream().toList()
         );
     }

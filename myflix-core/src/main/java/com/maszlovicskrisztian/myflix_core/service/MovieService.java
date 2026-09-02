@@ -7,7 +7,6 @@ import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchRequest;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchResult;
 import com.maszlovicskrisztian.myflix_core.exception.ResourceNotFoundException;
 import com.maszlovicskrisztian.myflix_core.interfaces.TmdbClient;
-import com.maszlovicskrisztian.myflix_core.mapping.MediaBaseMapper;
 import com.maszlovicskrisztian.myflix_core.mapping.MovieMapper;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.model.MovieMetadata;
@@ -32,7 +31,6 @@ public class MovieService {
     private final MovieMetadataRepository movieMetadataRepository;
     private final FileInfoRepository fileInfoRepository;
     private final MovieMapper movieMapper;
-    private final MediaBaseMapper baseMapper;
 
     public List<MediaBaseResponse> getAllMovies(String languageCode) {
         List<MovieMetadata> movies = movieMetadataRepository.findAll();
@@ -79,11 +77,5 @@ public class MovieService {
                 .toList();
 
         return translationService.translateMovies(movies, languageCode).stream().map(movieMapper::toMediaSearchResponse).toList();
-    }
-
-    public List<MediaBaseResponse> discoverMovies(int monthsBack, String languageCode) {
-        return tmdbClient.discoverNewMovies(monthsBack, languageCode)
-                .stream().map(baseMapper::fromDiscover)
-                .toList();
     }
 }
