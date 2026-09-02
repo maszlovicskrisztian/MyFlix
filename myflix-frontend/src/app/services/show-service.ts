@@ -21,11 +21,6 @@ export class ShowService {
         return this.http.get<ShowDetailsResponse>(url);
     }
     
-    public discoverMovies(monthsBack: number): Observable<Array<MediaBaseResponse>> {
-        const url = `${environment.apiUrl}/shows/discover?monthsBack=${monthsBack}&languageCode=${this.languageService.getCurrentLanguage()}`;
-        return this.http.get<Array<MediaBaseResponse>>(url);
-    }
-    
     public getSuggestedSeries() {
     }
 }

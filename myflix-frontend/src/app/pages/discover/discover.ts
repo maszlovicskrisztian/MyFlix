@@ -4,9 +4,8 @@ import { MediaSection } from '../../components/media-section/media-section';
 import { LoadingOverlay } from '../../components/loading-overlay/loading-overlay';
 import { TranslocoModule } from '@jsverse/transloco';
 import { catchError, finalize, forkJoin, Observable, of } from 'rxjs';
-import { MovieService } from '../../services/movie-service';
-import { ShowService } from '../../services/show-service';
 import { MediaBaseResponse } from '../../model/media-base-response';
+import { DiscoverService } from '../../services/discover-service';
 
 @Component({
   selector: 'app-discover',
@@ -15,8 +14,7 @@ import { MediaBaseResponse } from '../../model/media-base-response';
   styleUrl: './discover.scss',
 })
 export class Discover implements OnInit {
-  movieService = inject(MovieService);
-  showService = inject(ShowService);
+  discoverService = inject(DiscoverService);
 
   discoveredMovies = signal<MediaBaseResponse[]>([]);
   discoveredShows = signal<MediaBaseResponse[]>([]);
@@ -42,7 +40,7 @@ export class Discover implements OnInit {
   }
   
   discoverMovies(): Observable<MediaBaseResponse[]> {
-    return this.movieService.discoverMovies(1).pipe(
+    return this.discoverService.discoverMovies(1).pipe(
       catchError((error) => {
         console.error('Error fetching media items:', error);
         return of([]);
@@ -51,7 +49,7 @@ export class Discover implements OnInit {
   }
 
   discoverShows(): Observable<MediaBaseResponse[]> {
-    return this.showService.discoverMovies(1).pipe(
+    return this.discoverService.discoverShows(1).pipe(
       catchError((error) => {
         console.error('Error fetching unknown media items:', error);
         return of([]);

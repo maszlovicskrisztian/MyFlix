@@ -30,7 +30,8 @@
         "PLAY": "Lejátszás",
         "ADD_TO_FAVORITES": "Hozzáadás a kedvencekhez",
         "REMOVE_FROM_FAVORITES": "Eltávolítás a kedvencekből",
-        "ENRICH": "Azonosítás"
+        "ENRICH": "Azonosítás",
+        "DOWNLOAD": "Letöltés"
     },
     "SEARCHBAR": {
         "SEARCH": "Keresés",

@@ -60,6 +60,13 @@
                 {{ 'MEDIA_HERO.ENRICH' | transloco }}
               </button>
             }
+
+            @if (showDownload()) {
+              <button class="btn btn--ghost" type="button" (click)="download.emit()">
+                <span class="btn__icon" aria-hidden="true">&#8595;</span>
+                {{ 'MEDIA_HERO.DOWNLOAD' | transloco }}
+              </button>
+            }
           </div>
 
           @if (overview(); as overview) {

@@ -8,14 +8,16 @@
       <app-media-section
         layout="grid"
         title=" {{ 'DISCOVER.MOVIES' | transloco }} "
-        [mediaBaseResponses]="discoveredMovies()">
+        [mediaBaseResponses]="discoveredMovies()"
+        [routeLink]="'/discover'">
       </app-media-section>
     }
     @if (discoveredShows().length > 0) {
       <app-media-section
         layout="grid"
         title=" {{ 'DISCOVER.SHOWS' | transloco }} "
-        [mediaBaseResponses]="discoveredShows()">
+        [mediaBaseResponses]="discoveredShows()"
+        [routeLink]="'/discover'">
       </app-media-section>
     }
   }

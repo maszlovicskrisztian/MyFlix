@@ -1,0 +1,11 @@
+<app-media-hero 
+    [loaded]="!!movie()" 
+    [title]="movie()?.title ?? ''"
+    [overview]="movie()?.overview ?? null" 
+    [backdropPath]="movie()?.backdropPath ?? null"
+    [metaItems]="metaItems()" 
+    [runtime]="runtime()" 
+    [showDownload]="true"
+    (download)="downloadMovie()"
+    [backLink]="['/discover']" backLabel=" {{ 'DETAILS.BACK_TO_LIST' | transloco }} ">
+</app-media-hero>

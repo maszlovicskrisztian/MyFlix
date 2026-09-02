@@ -36,7 +36,11 @@ export class MediaHero {
 
   enrichMediaId = input<string | null>(null);
 
+  /** Shows the download action; the page owns what downloading means. */
+  showDownload = input(false);
+
   enriched = output<void>();
+  download = output<void>();
 
   enrichDialogOpen = signal(false);
 

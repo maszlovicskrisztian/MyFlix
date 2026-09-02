@@ -67,4 +67,9 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/discover/discover').then(m => m.Discover),
         canActivate: [authGuard, profileGuard]
     },
+    {
+        path: 'discover/:tmdbId', 
+        loadComponent: () => import('./pages/discover-details/discover-details').then(m => m.DiscoverDetails),
+        canActivate: [authGuard, profileGuard]
+    },
 ];

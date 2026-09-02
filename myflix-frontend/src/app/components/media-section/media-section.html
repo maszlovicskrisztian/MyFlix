@@ -18,7 +18,7 @@
     @if (mediaBaseResponses().length) {
       <div class="items" [class.items--grid]="layout() === 'grid'" [class.items--row]="layout() === 'row'"
         [class.items--still]="aspect() === 'still'">
-        @for (item of visibleItems(); track item.fileInfoId || item.showId) {
+        @for (item of visibleItems(); track item.fileInfoId || item.showId || item.tmdbId) {
           <app-media-card class="items__item" [mediaBase]="item" [routeLink]="routeLink()" [aspect]="aspect()"></app-media-card>
         }
       </div>

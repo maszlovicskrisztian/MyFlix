@@ -13,12 +13,23 @@ export class MediaCard {
   mediaBase = input<MediaBaseResponse | null>(null);
   routeLink = input<string | null>("/movies");
   route = computed<string>(() => {
-    const url = this.routeLink() + (this.mediaBase()?.fileInfoId || this.mediaBase()?.showId ? `/${this.mediaBase()?.fileInfoId || this.mediaBase()?.showId}` : "");
+    var url = this.routeLink() ?? "";
+    
+    if (this.mediaBase()?.fileInfoId) {
+      url = url + `/${this.mediaBase()?.fileInfoId}`;
+    }
+    else if (this.mediaBase()?.showId) {
+      url = url + `/${this.mediaBase()?.showId}`;
+    }
+    else if (this.mediaBase()?.tmdbId) {
+      url = url + `/${this.mediaBase()?.tmdbId}`;
+    }
+
     if (this.routeLink() == "/media"){
       return url + "/play";
     }
 
-    return url
+    return url;
   });
 
   aspect = input<MediaCardAspect>('poster');
