@@ -19,6 +19,9 @@ services:
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - JWT_SECRET=${JWT_SECRET}
       - TMDB_API=${TMDB_API}
+      - NAS_HOST=${NAS_HOST}
+      - RADARR_PORT=${RADARR_PORT}
+      - RADARR_API_KEY=${RADARR_API_KEY}
     volumes:
       - media:/media:ro
       - ./test-data:/data
