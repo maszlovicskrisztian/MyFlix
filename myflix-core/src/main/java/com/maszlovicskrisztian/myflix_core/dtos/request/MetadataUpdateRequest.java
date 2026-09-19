@@ -1,7 +1,6 @@
 package com.maszlovicskrisztian.myflix_core.dtos.request;
 
 import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
@@ -16,7 +15,6 @@ public class MetadataUpdateRequest {
     private MediaType mediaType;
     private Long tmdbId;
 
-    @NotBlank(message = "Title must be set!")
     private String title;
     private String overview;
     private String backdropPath;

@@ -6,6 +6,7 @@ import com.maszlovicskrisztian.myflix_core.dtos.response.MovieDetailsResponse;
 import com.maszlovicskrisztian.myflix_core.interfaces.RadarrApiClient;
 import com.maszlovicskrisztian.myflix_core.service.DiscoverService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,13 +35,13 @@ public class DiscoverController {
     }
 
     @PostMapping("/movies/{tmdbId}")
-    public ResponseEntity<Void> requestMovie(
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void requestMovie(
             @PathVariable int tmdbId,
             @RequestParam String title,
             @RequestParam int qualityProfileId) {
 
         radarrClient.requestMovie(tmdbId, title, qualityProfileId);
-        return ResponseEntity.accepted().build();
     }
 
     @GetMapping("/shows")

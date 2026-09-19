@@ -44,4 +44,11 @@ public class CustomExceptionHandler {
     public void handleClientDisconnect(AsyncRequestNotUsableException ex) {
         log.debug("Client closed the stream connection: {}", ex.getMessage());
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        log.error(ex.getLocalizedMessage(), ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiErrorResponse(ex.getMessage()));
+    }
 }

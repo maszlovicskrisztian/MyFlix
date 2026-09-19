@@ -56,12 +56,12 @@ public class TranslationService {
 
     private TranslatedSeasonResult translateSeason(Long showTmdbId, SeasonMetadata seasonMetadata, String languageCode) {
         MetadataTranslation translation = translationRepository
-                .findByEntityTypeAndEntityIdAndLanguageCode(MediaType.TV_SEASON, seasonMetadata.getId(), languageCode)
+                .findByEntityTypeAndEntityIdAndLanguageCode(MediaType.SEASON, seasonMetadata.getId(), languageCode)
                 .orElse(null);
 
         if (translation == null) {
             TmdbSeasonDetailsResponse translatedSeason = tmdbClient.getTvSeasonDetails(showTmdbId, seasonMetadata.getSeasonNumber(), languageCode);
-            translation = saveTranslation(MediaType.TV_SEASON, seasonMetadata.getId(), translatedSeason.name(), translatedSeason.overview(), languageCode);
+            translation = saveTranslation(MediaType.SEASON, seasonMetadata.getId(), translatedSeason.name(), translatedSeason.overview(), languageCode);
         }
 
         List<TranslatedEpisodeResult> translatedEpisodes = new ArrayList<>();
@@ -74,12 +74,12 @@ public class TranslationService {
 
     private TranslatedEpisodeResult translateEpisode(Long showTmdbId, EpisodeMetadata episodeMetadata, Integer seasonNumber, String languageCode) {
         MetadataTranslation translation = translationRepository
-                .findByEntityTypeAndEntityIdAndLanguageCode(MediaType.TV_EPISODE, episodeMetadata.getId(), languageCode)
+                .findByEntityTypeAndEntityIdAndLanguageCode(MediaType.EPISODE, episodeMetadata.getId(), languageCode)
                 .orElse(null);
 
         if (translation == null) {
             TmdbEpisodeDetailsResponse translatedEpisode = tmdbClient.getTvEpisodeDetails(showTmdbId, seasonNumber, episodeMetadata.getEpisodeNumber(), languageCode);
-            translation = saveTranslation(MediaType.TV_EPISODE, episodeMetadata.getId(), translatedEpisode.name(), translatedEpisode.overview(), languageCode);
+            translation = saveTranslation(MediaType.EPISODE, episodeMetadata.getId(), translatedEpisode.name(), translatedEpisode.overview(), languageCode);
         }
 
         return new TranslatedEpisodeResult(episodeMetadata, translation.getTitle(), translation.getOverview());

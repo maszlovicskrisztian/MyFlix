@@ -23,9 +23,10 @@ public class ProfileController {
     }
 
     @PostMapping
-    public ResponseEntity<ProfileDto> saveProfile(@RequestBody ProfileDto profileDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ProfileDto saveProfile(@RequestBody ProfileDto profileDto) {
         Profile profile = profileService.saveProfile(profileDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ProfileDto.from(profile));
+        return ProfileDto.from(profile);
     }
 
     @DeleteMapping("/{id}")

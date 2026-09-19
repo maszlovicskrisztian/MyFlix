@@ -10,7 +10,6 @@ import com.maszlovicskrisztian.myflix_core.helpers.PlaybackCompatibility;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.service.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +19,6 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@Slf4j
 @RequestMapping("/api/media")
 public class MediaController {
 

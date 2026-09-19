@@ -87,7 +87,10 @@ public class ShowMapper {
     }
 
     public ShowDetailsResponse toShowDetails(Show model) {
-        List<SeasonDetails> seasons = model.getSeasons().stream().map(this::toSeasonDetails).toList();
+        List<SeasonDetails> seasons = model.getSeasons()
+                .stream().map(this::toSeasonDetails)
+                .sorted(Comparator.comparing(SeasonDetails::seasonNumber))
+                .toList();
 
         return new ShowDetailsResponse(
                 model.getId(),
