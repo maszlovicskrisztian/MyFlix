@@ -1,5 +1,6 @@
 package com.maszlovicskrisztian.myflix_core.interfaces;
 
+import com.maszlovicskrisztian.myflix_core.dtos.request.ImageSearchRequest;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.*;
 
 import java.util.List;
@@ -15,4 +16,5 @@ public interface TmdbClient {
     TmdbEpisodeDetailsResponse getTvEpisodeDetails(Long tvId, Integer season, Integer episode, String language);
     List<TmdbDiscoverResult> discoverNewMovies(int monthsBack, String languageCode);
     List<TmdbDiscoverResult> discoverNewShows(int monthsBack, String languageCode);
+    TmdbImageResponse searchImagesForMedia(ImageSearchRequest request);
 }

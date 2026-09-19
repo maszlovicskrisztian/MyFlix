@@ -1,5 +1,6 @@
 package com.maszlovicskrisztian.myflix_core.interfaces;
 
+import com.maszlovicskrisztian.myflix_core.dtos.request.ImageSearchRequest;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.*;
 import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
 import lombok.RequiredArgsConstructor;
@@ -229,5 +230,41 @@ public class TmdbApiClient implements TmdbClient{
                 .retrieve().body(TmdbDiscoverResponse.class);
 
         return response == null ? List.of() : response.results();
+    }
+
+    @Override
+    public TmdbImageResponse searchImagesForMedia(ImageSearchRequest request) {
+        if (request.mediaType() == MediaType.MOVIE)
+            return searchImagesForTv(request);
+        else if (request.mediaType() == MediaType.EPISODE)
+            return searchImagesForTv(request);
+        else
+            return null;
+    }
+
+    private TmdbImageResponse searchImagesForTv(ImageSearchRequest request) {
+        //itt jelenleg csak olyan sorozattal jöhetünk be, ami már megvan --> van tmdb id
+        // viszont a request tmdbid az nem a sorozaté hanem a részé
+        //tehát ki kéne szedni a rész alapján a sorozat tmdbid-t
+        return null;
+    }
+
+    private TmdbImageResponse searchImagesForMovie(ImageSearchRequest request) {
+        Long tmdbId = request.tmdbId();
+
+        if (tmdbId == null && request.title() != null) {
+            TmdbSearchRequest searchRequest = new TmdbSearchRequest(request.title(), null, null,null, "en");
+            TmdbSearchResult result = searchBestMatch(searchRequest);
+            tmdbId = result.id();
+        }
+
+        if (tmdbId == null)
+            return null;
+
+        var finalId = tmdbId;
+        return tmdbClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/movie/{id}/images")
+                        .build(finalId))
+                .retrieve().body(TmdbImageResponse.class);
     }
 }
