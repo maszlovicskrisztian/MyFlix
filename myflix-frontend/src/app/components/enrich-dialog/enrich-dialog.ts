@@ -13,13 +13,14 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MetadataService } from '../../services/metadata-service';
+import { MetadataEditor } from '../metadata-editor/metadata-editor';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 const IMDB_ID = /^(?:tt)?(\d{7,8})$/i;
 
 @Component({
   selector: 'app-enrich-dialog',
-  imports: [FormsModule, TranslocoModule],
+  imports: [FormsModule, TranslocoModule, MetadataEditor],
   templateUrl: './enrich-dialog.html',
   styleUrl: './enrich-dialog.scss',
 })
@@ -34,6 +35,9 @@ export class EnrichDialog {
 
   imdbId = linkedSignal<boolean, string>({ source: this.open, computation: () => '' });
   error = linkedSignal<boolean, string | null>({ source: this.open, computation: () => null });
+
+  /** The manual metadata editor stacks on top of this dialog. */
+  editorOpen = linkedSignal<boolean, boolean>({ source: this.open, computation: () => false });
 
   private imdbInput = viewChild<ElementRef<HTMLInputElement>>('imdbInput');
 
@@ -73,6 +77,20 @@ export class EnrichDialog {
     });
   }
 
+  openEditor(): void {
+    if (this.busy()) {
+      return;
+    }
+
+    this.error.set(null);
+    this.editorOpen.set(true);
+  }
+
+  onEditorSaved(): void {
+    this.open.set(false);
+    this.enriched.emit();
+  }
+
   cancel(): void {
     if (this.busy()) {
       return;
@@ -83,7 +101,8 @@ export class EnrichDialog {
 
   @HostListener('document:keydown.escape')
   onEscape(): void {
-    if (!this.open()) {
+    // The editor is on top, so it handles escape itself.
+    if (!this.open() || this.editorOpen()) {
       return;
     }
 

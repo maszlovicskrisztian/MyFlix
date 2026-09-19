@@ -6,12 +6,13 @@ import { ShowDetailsResponse } from '../../model/show-details-response';
 import { SeasonDetails as SeasonDetailsModel } from '../../model/season-details';
 import { EpisodeDetails } from '../../model/episode-details';
 import { HeroLink, MediaHero } from '../../components/media-hero/media-hero';
+import { MetadataEditor } from '../../components/metadata-editor/metadata-editor';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-season-details',
-  imports: [RouterLink, MediaHero, TranslocoModule],
+  imports: [RouterLink, MediaHero, MetadataEditor, TranslocoModule],
   templateUrl: './season-details.html',
   styleUrl: './season-details.scss',
 })
@@ -46,6 +47,10 @@ export class SeasonDetails implements OnInit {
     return episode ? ['/media', episode.fileInfoId, 'play'] : null;
   });
 
+  /** The metadata editor, opened from an episode's action rather than from the hero. */
+  editorOpen = signal(false);
+  editorMediaId = signal<string | null>(null);
+
   private brokenStills = linkedSignal<ShowDetailsResponse | null, Set<number>>({
     source: this.show,
     computation: () => new Set<number>(),
@@ -57,6 +62,11 @@ export class SeasonDetails implements OnInit {
     this.showId.set(this.route.snapshot.paramMap.get('id'));
     this.seasonNumber.set(seasonNumber === null ? null : Number(seasonNumber));
     this.loadShow();
+  }
+
+  editEpisode(episode: EpisodeDetails): void {
+    this.editorMediaId.set(String(episode.fileInfoId));
+    this.editorOpen.set(true);
   }
 
   episodeStillUrl(episode: EpisodeDetails): string | null {

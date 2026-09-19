@@ -73,6 +73,7 @@
 
   &__actions {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
     gap: 10px;
     margin-top: 4px;
@@ -81,6 +82,11 @@
   &__btn {
     padding: 10px 20px;
     font-size: 15px;
+
+    /* Keeps the manual-edit escape hatch away from cancel/submit. */
+    &--start {
+      margin-right: auto;
+    }
 
     &:disabled {
       opacity: 0.55;

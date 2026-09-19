@@ -1,0 +1,117 @@
+@if (open()) {
+  <div class="overlay" (click)="cancel()">
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="metadata-editor-title"
+      (click)="$event.stopPropagation()">
+      <h2 class="dialog__title" id="metadata-editor-title">{{ 'METADATA_EDITOR.TITLE' | transloco }}</h2>
+
+      @if (loading()) {
+        <p class="dialog__note" role="status">{{ 'METADATA_EDITOR.LOADING' | transloco }}</p>
+      }
+
+      <div class="switch" role="group" [attr.aria-label]="('METADATA_EDITOR.MEDIA_TYPE' | transloco)">
+        <button class="switch__option" type="button" [class.switch__option--active]="mode() === 'MOVIE'"
+          [attr.aria-pressed]="mode() === 'MOVIE'" [disabled]="disabled()" (click)="setMode('MOVIE')">
+          {{ 'METADATA_EDITOR.MOVIE' | transloco }}
+        </button>
+        <button class="switch__option" type="button" [class.switch__option--active]="mode() === 'EPISODE'"
+          [attr.aria-pressed]="mode() === 'EPISODE'" [disabled]="disabled()" (click)="setMode('EPISODE')">
+          {{ 'METADATA_EDITOR.EPISODE' | transloco }}
+        </button>
+      </div>
+
+      <form class="dialog__form" (ngSubmit)="submit()">
+        <label class="field">
+          <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.TMDB_ID' | transloco }}</span>
+          <input class="field__input" type="number" name="tmdbId" [(ngModel)]="tmdbId" min="1" step="1"
+            autocomplete="off" [disabled]="disabled()" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.TITLE' | transloco }}</span>
+          <input #titleInput class="field__input" type="text" name="title" [(ngModel)]="title"
+            autocomplete="off" [disabled]="disabled()" />
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.OVERVIEW' | transloco }}</span>
+          <textarea class="field__input field__input--area" name="overview" rows="4" [(ngModel)]="overview"
+            [disabled]="disabled()"></textarea>
+        </label>
+
+        <label class="field">
+          <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.BACKDROP_PATH' | transloco }}</span>
+          <input class="field__input" type="text" name="backdropPath" [(ngModel)]="backdropPath"
+            placeholder="/abc123.jpg" autocomplete="off" spellcheck="false" [disabled]="disabled()" />
+        </label>
+
+        <div class="field-row">
+          <label class="field">
+            <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.RELEASE_DATE' | transloco }}</span>
+            <input class="field__input" type="date" name="releaseDate" [(ngModel)]="releaseDate"
+              [disabled]="disabled()" />
+          </label>
+
+          <label class="field">
+            <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.RUNTIME' | transloco }}</span>
+            <input class="field__input" type="number" name="runtimeMinutes" [(ngModel)]="runtimeMinutes"
+              min="0" step="1" autocomplete="off" [disabled]="disabled()" />
+          </label>
+        </div>
+
+        <label class="field">
+          <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.GENRES' | transloco }}</span>
+          <input class="field__input" type="text" name="genres" [(ngModel)]="genres"
+            [placeholder]="('METADATA_EDITOR.GENRES_PLACEHOLDER' | transloco)" autocomplete="off"
+            [disabled]="disabled()" />
+          <span class="field__hint">{{ 'METADATA_EDITOR.GENRES_HINT' | transloco }}</span>
+        </label>
+
+        @if (mode() === 'MOVIE') {
+          <label class="field">
+            <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.POSTER_PATH' | transloco }}</span>
+            <input class="field__input" type="text" name="posterPath" [(ngModel)]="posterPath"
+              placeholder="/abc123.jpg" autocomplete="off" spellcheck="false" [disabled]="disabled()" />
+          </label>
+        } @else {
+          <label class="field">
+            <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.SHOW' | transloco }}</span>
+            <select class="field__input" name="showId" [(ngModel)]="showId" [disabled]="disabled()">
+              <option value="">{{ 'METADATA_EDITOR.SELECT_SHOW' | transloco }}</option>
+              @for (show of shows(); track show.showId) {
+                <option [value]="show.showId">{{ show.title }}</option>
+              }
+            </select>
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.SEASON_NUMBER' | transloco }}</span>
+              <input class="field__input" type="number" name="seasonNumber" [(ngModel)]="seasonNumber"
+                min="0" step="1" autocomplete="off" [disabled]="disabled()" />
+            </label>
+
+            <label class="field">
+              <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.EPISODE_NUMBER' | transloco }}</span>
+              <input class="field__input" type="number" name="episodeNumber" [(ngModel)]="episodeNumber"
+                min="0" step="1" autocomplete="off" [disabled]="disabled()" />
+            </label>
+          </div>
+        }
+
+        @if (error(); as message) {
+          <p class="dialog__error" role="alert">{{ message }}</p>
+        }
+
+        <div class="dialog__actions">
+          <button class="btn dialog__btn dialog__btn--ghost" type="button" (click)="cancel()"
+            [disabled]="disabled()">
+            {{ 'METADATA_EDITOR.CANCEL' | transloco }}
+          </button>
+          <button class="btn dialog__btn dialog__btn--primary" type="submit" [disabled]="disabled()">
+            {{ (busy() ? 'METADATA_EDITOR.SAVING' : 'METADATA_EDITOR.SAVE') | transloco }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

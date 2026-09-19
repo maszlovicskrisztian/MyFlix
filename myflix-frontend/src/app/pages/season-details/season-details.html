@@ -16,37 +16,49 @@
 
         <div class="episodes__grid">
           @for (episode of item.episodes; track episode.episodeNumber) {
-            <a class="episode-card" [routerLink]="['/media', episode.fileInfoId, 'play']">
-              <div class="episode-card__still">
-                @if (episodeStillUrl(episode); as still) {
-                  <img class="episode-card__still-img" [src]="still" [alt]="episode.title"
-                    loading="lazy" (error)="onEpisodeStillError(episode)" />
-                } @else {
-                  <span class="episode-card__still-title">{{ episode.title }}</span>
-                }
+            <!-- The edit action is a sibling of the play link rather than inside it:
+                 a button nested in an anchor is not valid markup. -->
+            <article class="episode-card">
+              <a class="episode-card__link" [routerLink]="['/media', episode.fileInfoId, 'play']">
+                <div class="episode-card__still">
+                  @if (episodeStillUrl(episode); as still) {
+                    <img class="episode-card__still-img" [src]="still" [alt]="episode.title"
+                      loading="lazy" (error)="onEpisodeStillError(episode)" />
+                  } @else {
+                    <span class="episode-card__still-title">{{ episode.title }}</span>
+                  }
 
-                <div class="episode-card__overlay">
-                  <span class="episode-card__play" aria-hidden="true">▶</span>
+                  <div class="episode-card__overlay">
+                    <span class="episode-card__play" aria-hidden="true">▶</span>
+                  </div>
                 </div>
-              </div>
 
-              <div class="episode-card__meta">
-                <span class="episode-card__name">
-                  {{ episode.episodeNumber }}. {{ episode.title }}
-                </span>
+                <div class="episode-card__meta">
+                  <span class="episode-card__name">
+                    {{ episode.episodeNumber }}. {{ episode.title }}
+                  </span>
 
-                @if (episode.runtimeMinutes) {
-                  <span class="episode-card__sub">{{ episode.runtimeMinutes }} {{'SEASON_DETAILS.MINUTES' | transloco}}</span>
-                }
+                  @if (episode.runtimeMinutes) {
+                    <span class="episode-card__sub">{{ episode.runtimeMinutes }} {{'SEASON_DETAILS.MINUTES' | transloco}}</span>
+                  }
 
-                @if (episode.overview) {
-                  <p class="episode-card__overview">{{ episode.overview }}</p>
-                }
-              </div>
-            </a>
+                  @if (episode.overview) {
+                    <p class="episode-card__overview">{{ episode.overview }}</p>
+                  }
+                </div>
+              </a>
+
+              <button class="episode-card__edit" type="button" (click)="editEpisode(episode)"
+                aria-label="{{ 'SEASON_DETAILS.EDIT_METADATA' | transloco }}"
+                title="{{ 'SEASON_DETAILS.EDIT_METADATA' | transloco }}">
+                <span aria-hidden="true">⋮</span>
+              </button>
+            </article>
           }
         </div>
       </section>
     }
   }
 </app-media-hero>
+
+<app-metadata-editor [(open)]="editorOpen" [mediaId]="editorMediaId()" (saved)="loadShow()" />

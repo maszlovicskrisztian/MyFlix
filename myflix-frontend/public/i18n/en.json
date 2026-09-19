@@ -23,6 +23,40 @@
             "INVALID_ID": "Invalid imdb id. Id should look like this: tt0111161",
             "MISSING_MEDIA_ID": "The media you want to enrich is missing.",
             "GENERIC": "Failed to load metadata."
+        },
+        "EDIT_MANUALLY": "Edit manually"
+    },
+    "METADATA_EDITOR": {
+        "TITLE": "Edit metadata",
+        "MEDIA_TYPE": "Media type",
+        "MOVIE": "Movie",
+        "EPISODE": "Episode",
+        "SELECT_SHOW": "Select a show…",
+        "GENRES_PLACEHOLDER": "Action, Drama",
+        "GENRES_HINT": "Separate genres with commas.",
+        "CANCEL": "Cancel",
+        "SAVE": "Save",
+        "SAVING": "Saving…",
+        "LOADING": "Loading the metadata we already have…",
+        "FIELDS": {
+            "TMDB_ID": "TMDB ID",
+            "TITLE": "Title",
+            "OVERVIEW": "Overview",
+            "BACKDROP_PATH": "Backdrop path",
+            "RELEASE_DATE": "Release date",
+            "RUNTIME": "Runtime (minutes)",
+            "GENRES": "Genres",
+            "POSTER_PATH": "Poster path",
+            "SHOW": "Show",
+            "SEASON_NUMBER": "Season number",
+            "EPISODE_NUMBER": "Episode number"
+        },
+        "ERRORS": {
+            "MISSING_MEDIA_ID": "The media you want to edit is missing.",
+            "MISSING_TITLE": "A title is required.",
+            "MISSING_SHOW": "Pick the show this episode belongs to.",
+            "MISSING_EPISODE_NUMBERS": "Season and episode numbers are required.",
+            "GENERIC": "Failed to save metadata."
         }
     },
     "MEDIA_HERO": {
@@ -73,7 +107,8 @@
     },
     "SEASON_DETAILS": {
         "EPISODES": "Episodes",
-        "MINUTES": "minutes"
+        "MINUTES": "minutes",
+        "EDIT_METADATA": "Edit metadata"
     },
     "PROFILE_SELECTOR": {
         "WHOS_WATCHING": "Who's watching",

@@ -23,6 +23,40 @@
             "INVALID_ID": "Érvénytelen azonosító. Például: tt0111161",
             "MISSING_MEDIA_ID": "Hiányzik a tartalom azonosítója.",
             "GENERIC": "Nem sikerült betölteni a metaadatokat."
+        },
+        "EDIT_MANUALLY": "Kézi szerkesztés"
+    },
+    "METADATA_EDITOR": {
+        "TITLE": "Metaadatok szerkesztése",
+        "MEDIA_TYPE": "Tartalom típusa",
+        "MOVIE": "Film",
+        "EPISODE": "Epizód",
+        "SELECT_SHOW": "Válassz sorozatot…",
+        "GENRES_PLACEHOLDER": "Akció, Dráma",
+        "GENRES_HINT": "A műfajokat vesszővel válaszd el.",
+        "CANCEL": "Mégse",
+        "SAVE": "Mentés",
+        "SAVING": "Mentés…",
+        "LOADING": "Már ismert metaadatok betöltése…",
+        "FIELDS": {
+            "TMDB_ID": "TMDB azonosító",
+            "TITLE": "Cím",
+            "OVERVIEW": "Leírás",
+            "BACKDROP_PATH": "Háttérkép útvonala",
+            "RELEASE_DATE": "Megjelenés dátuma",
+            "RUNTIME": "Játékidő (perc)",
+            "GENRES": "Műfajok",
+            "POSTER_PATH": "Poszter útvonala",
+            "SHOW": "Sorozat",
+            "SEASON_NUMBER": "Évad száma",
+            "EPISODE_NUMBER": "Epizód száma"
+        },
+        "ERRORS": {
+            "MISSING_MEDIA_ID": "Hiányzik a szerkesztendő tartalom azonosítója.",
+            "MISSING_TITLE": "A cím megadása kötelező.",
+            "MISSING_SHOW": "Válaszd ki, melyik sorozathoz tartozik az epizód.",
+            "MISSING_EPISODE_NUMBERS": "Az évad és az epizód száma kötelező.",
+            "GENERIC": "Nem sikerült elmenteni a metaadatokat."
         }
     },
     "MEDIA_HERO": {
@@ -73,7 +107,8 @@
     },
     "SEASON_DETAILS": {
         "EPISODES": "Epizódok",
-        "MINUTES": "perc"
+        "MINUTES": "perc",
+        "EDIT_METADATA": "Metaadatok szerkesztése"
     },
     "PROFILE_SELECTOR": {
         "WHOS_WATCHING": "Ki nézi most",

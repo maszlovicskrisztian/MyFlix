@@ -17,6 +17,10 @@
         }
 
         <div class="dialog__actions">
+          <button class="btn dialog__btn dialog__btn--ghost dialog__btn--start" type="button" (click)="openEditor()"
+            [disabled]="busy()">
+            {{ 'ENRICHMENT.EDIT_MANUALLY' | transloco }}
+          </button>
           <button class="btn dialog__btn dialog__btn--ghost" type="button" (click)="cancel()"
             [disabled]="busy()">
             {{ 'ENRICHMENT.CANCEL' | transloco }}
@@ -28,4 +32,6 @@
       </form>
     </div>
   </div>
+
+  <app-metadata-editor [(open)]="editorOpen" [mediaId]="mediaId()" (saved)="onEditorSaved()" />
 }
