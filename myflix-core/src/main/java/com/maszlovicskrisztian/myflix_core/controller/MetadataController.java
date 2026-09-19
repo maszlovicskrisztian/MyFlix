@@ -1,6 +1,8 @@
 package com.maszlovicskrisztian.myflix_core.controller;
 
 import com.maszlovicskrisztian.myflix_core.dtos.request.EnrichRequest;
+import com.maszlovicskrisztian.myflix_core.dtos.request.MetadataUpdateRequest;
+import com.maszlovicskrisztian.myflix_core.dtos.response.MetadataDetailsResponse;
 import com.maszlovicskrisztian.myflix_core.service.MediaMetadataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,14 +16,25 @@ public class MetadataController {
 
     private final MediaMetadataService metadataService;
 
+    @GetMapping("/{mediaId}")
+    public MetadataDetailsResponse getMetadataForMedia(@PathVariable Long mediaId) {
+        return metadataService.getMetadata(mediaId);
+    }
+
     @PostMapping("/enrich")
     public void refreshMissingMetadata() {
         metadataService.enrich();
     }
 
-    @PostMapping("/enrich/{mediaId}")
-    public ResponseEntity<Long> refreshMetadataForMedia(@PathVariable Long mediaId, @RequestBody EnrichRequest request) {
+    @PutMapping("/enrich/{mediaId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Long refreshMetadataForMediaByImdb(@PathVariable Long mediaId, @RequestBody EnrichRequest request) {
         metadataService.enrichMediaByImdbId(mediaId, request.imdbId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(mediaId);
+        return mediaId;
+    }
+
+    @PutMapping("/update/{mediaId}")
+    public void updateMetadataForMedia(@PathVariable Long mediaId, @RequestBody MetadataUpdateRequest request) {
+        metadataService.updateMetadata(mediaId, request);
     }
 }

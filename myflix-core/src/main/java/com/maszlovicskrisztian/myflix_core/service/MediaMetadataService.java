@@ -1,5 +1,8 @@
 package com.maszlovicskrisztian.myflix_core.service;
 
+import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
+import com.maszlovicskrisztian.myflix_core.dtos.request.MetadataUpdateRequest;
+import com.maszlovicskrisztian.myflix_core.dtos.response.MetadataDetailsResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.tmdb.*;
 import com.maszlovicskrisztian.myflix_core.exception.ResourceNotFoundException;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaTitleParser;
@@ -9,6 +12,7 @@ import com.maszlovicskrisztian.myflix_core.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -102,6 +106,124 @@ public class MediaMetadataService {
         } catch (Exception e) {
             log.error("Error during automatic enrich for file info: {}: {}", fileInfo.getId(), e.getMessage());
         }
+    }
+
+    @Transactional(readOnly = true)
+    public MetadataDetailsResponse getMetadata(Long fileInfoId) {
+        FileInfo media = fileInfoRepository
+                .findById(fileInfoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find media with the requested id"));
+
+        MovieMetadata movie = media.getMovieMetadata();
+        if (movie != null) {
+            return new MetadataDetailsResponse(
+                    fileInfoId,
+                    MediaType.MOVIE,
+                    movie.getTmdbId(),
+                    movie.getTitle(),
+                    movie.getOverview(),
+                    movie.getBackdropPath(),
+                    movie.getPosterPath(),
+                    movie.getReleaseDate(),
+                    movie.getRuntimeMinutes(),
+                    movie.getGenres() == null ? List.of() : List.copyOf(movie.getGenres()),
+                    null,
+                    null,
+                    null);
+        }
+
+        EpisodeMetadata episode = media.getEpisodeMetadata();
+        if (episode != null) {
+            SeasonMetadata season = episode.getSeason();
+            Show show = season.getShow();
+
+            return new MetadataDetailsResponse(
+                    fileInfoId,
+                    MediaType.EPISODE,
+                    episode.getTmdbId(),
+                    episode.getTitle(),
+                    episode.getOverview(),
+                    // The editor calls the episode still a backdrop; it is the same field.
+                    episode.getStillPath(),
+                    null,
+                    episode.getReleaseDate(),
+                    episode.getRuntimeMinutes(),
+                    show.getGenres() == null ? List.of() : List.copyOf(show.getGenres()),
+                    show.getId(),
+                    season.getSeasonNumber(),
+                    episode.getEpisodeNumber());
+        }
+
+        return new MetadataDetailsResponse(
+                fileInfoId, null, null, null, null, null, null, null, null, List.of(), null, null, null);
+    }
+
+    @Transactional
+    public void updateMetadata(Long fileInfoId, MetadataUpdateRequest request) {
+        FileInfo media = fileInfoRepository
+                .findById(fileInfoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find media with the requested id"));
+
+        if (request.getMediaType() == MediaType.MOVIE)
+            saveMovieMetadata(media, request);
+        else
+            saveEpisodeMetadata(media, request);
+    }
+
+    private void saveMovieMetadata(FileInfo media, MetadataUpdateRequest request) {
+        if (request.getMediaType() != MediaType.MOVIE)
+            return;
+
+        if (media.getEpisodeMetadata() != null)
+            episodeMetadataRepository.delete(media.getEpisodeMetadata());
+
+        MovieMetadata metadata = media.getMovieMetadata();
+        if (metadata == null) {
+            metadata = new MovieMetadata();
+            metadata.setFileInfo(media);
+        }
+
+        metadata.setBackdropPath(request.getBackdropPath());
+        metadata.setOverview(request.getOverview());
+        metadata.setTitle(request.getTitle());
+        metadata.setGenres(request.getGenres());
+        metadata.setTmdbId(request.getTmdbId());
+        metadata.setPosterPath(request.getPosterPath());
+        metadata.setReleaseDate(request.getReleaseDate());
+        metadata.setRuntimeMinutes(request.getRuntimeMinutes());
+
+        movieMetadataRepository.save(metadata);
+    }
+
+    private void saveEpisodeMetadata(FileInfo media, MetadataUpdateRequest request) {
+        if (request.getMediaType() != MediaType.EPISODE)
+            return;
+
+        if (request.getSeasonNumber() == null || request.getEpisodeNumber() == null)
+            throw new IllegalArgumentException("Requested update to an episode but season and/or episode are not present.");
+
+        SeasonMetadata season = seasonRepository
+                .findByShowIdAndSeasonNumber(request.getShowId(), request.getSeasonNumber())
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find season with the provided data"));
+
+        if (media.getMovieMetadata() != null)
+            movieMetadataRepository.delete(media.getMovieMetadata());
+
+        EpisodeMetadata metadata = media.getEpisodeMetadata();
+        if (metadata == null) {
+            metadata = new EpisodeMetadata();
+            metadata.setFileInfo(media);
+        }
+
+        metadata.setTitle(request.getTitle());
+        metadata.setOverview(request.getOverview());
+        metadata.setTmdbId(request.getTmdbId());
+        metadata.setRuntimeMinutes(request.getRuntimeMinutes());
+        metadata.setReleaseDate(request.getReleaseDate());
+        metadata.setStillPath(request.getBackdropPath());
+        metadata.setEpisodeNumber(request.getEpisodeNumber());
+        metadata.setSeason(season);
+        episodeMetadataRepository.save(metadata);
     }
 
     private void enrichShow(Long showId, Integer season, Integer episode, FileInfo fileInfo) {
