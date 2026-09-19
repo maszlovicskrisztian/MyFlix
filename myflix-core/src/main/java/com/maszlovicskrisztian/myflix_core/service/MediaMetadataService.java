@@ -174,8 +174,11 @@ public class MediaMetadataService {
         if (request.getMediaType() != MediaType.MOVIE)
             return;
 
-        if (media.getEpisodeMetadata() != null)
-            episodeMetadataRepository.delete(media.getEpisodeMetadata());
+        EpisodeMetadata episodeMetadata = media.getEpisodeMetadata();
+        if (episodeMetadata != null) {
+            media.setEpisodeMetadata(null);
+            episodeMetadataRepository.delete(episodeMetadata);
+        }
 
         MovieMetadata metadata = media.getMovieMetadata();
         if (metadata == null) {
@@ -202,12 +205,18 @@ public class MediaMetadataService {
         if (request.getSeasonNumber() == null || request.getEpisodeNumber() == null)
             throw new IllegalArgumentException("Requested update to an episode but season and/or episode are not present.");
 
-        SeasonMetadata season = seasonRepository
-                .findByShowIdAndSeasonNumber(request.getShowId(), request.getSeasonNumber())
-                .orElseThrow(() -> new ResourceNotFoundException("Could not find season with the provided data"));
+        Show show = showRepository.findById(request.getShowId())
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find show with the provided data"));
 
-        if (media.getMovieMetadata() != null)
-            movieMetadataRepository.delete(media.getMovieMetadata());
+        SeasonMetadata season = show.getSeasons()
+                .stream().filter(x -> x.getSeasonNumber().equals(request.getSeasonNumber())).toList()
+                .getFirst();
+
+        MovieMetadata movieMetadata = media.getMovieMetadata();
+        if (movieMetadata != null) {
+            media.setMovieMetadata(null);
+            movieMetadataRepository.delete(movieMetadata);
+        }
 
         EpisodeMetadata metadata = media.getEpisodeMetadata();
         if (metadata == null) {

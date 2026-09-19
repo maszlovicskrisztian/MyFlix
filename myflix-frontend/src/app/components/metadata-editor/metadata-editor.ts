@@ -236,14 +236,16 @@ export class MetadataEditor {
   }
 
   private number(value: string): number | null {
-    const trimmed = value.trim();
-
-    if (!trimmed) {
-      return null;
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        return null;
+      }
+      const parsed = Number(trimmed);
+      return Number.isFinite(parsed) ? parsed : null;
     }
 
-    const parsed = Number(trimmed);
-    return Number.isFinite(parsed) ? parsed : null;
+    return Number(value);
   }
 
   private numberText(value: number | null): string {
