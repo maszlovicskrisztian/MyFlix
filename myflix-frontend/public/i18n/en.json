@@ -39,6 +39,7 @@
         "SAVING": "Saving…",
         "LOADING": "Loading the metadata we already have…",
         "FIELDS": {
+            "RELATIVE_PATH": "Relative path",
             "TMDB_ID": "TMDB ID",
             "TITLE": "Title",
             "OVERVIEW": "Overview",

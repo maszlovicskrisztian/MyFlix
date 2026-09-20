@@ -1,9 +1,5 @@
-/**
- * What the backend already knows about a media item, in the shape the metadata editor
- * edits. `mediaType` is null while the item is still unknown — nothing has been
- * enriched yet — so the editor falls back to its own default in that case.
- */
 export type MetadataDetails = {
+    relativePath: string;
     mediaId: number;
     mediaType: 'MOVIE' | 'EPISODE' | null;
     tmdbId: number | null;

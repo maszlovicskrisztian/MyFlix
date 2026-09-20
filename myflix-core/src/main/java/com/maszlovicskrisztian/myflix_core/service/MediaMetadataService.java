@@ -117,6 +117,7 @@ public class MediaMetadataService {
         MovieMetadata movie = media.getMovieMetadata();
         if (movie != null) {
             return new MetadataDetailsResponse(
+                    media.getRelativePath(),
                     fileInfoId,
                     MediaType.MOVIE,
                     movie.getTmdbId(),
@@ -138,6 +139,7 @@ public class MediaMetadataService {
             Show show = season.getShow();
 
             return new MetadataDetailsResponse(
+                    media.getRelativePath(),
                     fileInfoId,
                     MediaType.EPISODE,
                     episode.getTmdbId(),
@@ -155,7 +157,7 @@ public class MediaMetadataService {
         }
 
         return new MetadataDetailsResponse(
-                fileInfoId, null, null, null, null, null, null, null, null, List.of(), null, null, null);
+                media.getRelativePath(), fileInfoId, null, null, null, null, null, null, null, null, List.of(), null, null, null);
     }
 
     @Transactional
@@ -209,8 +211,9 @@ public class MediaMetadataService {
                 .orElseThrow(() -> new ResourceNotFoundException("Could not find show with the provided data"));
 
         SeasonMetadata season = show.getSeasons()
-                .stream().filter(x -> x.getSeasonNumber().equals(request.getSeasonNumber())).toList()
-                .getFirst();
+                .stream().filter(x -> x.getSeasonNumber().equals(request.getSeasonNumber()))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find season with the provided data"));
 
         MovieMetadata movieMetadata = media.getMovieMetadata();
         if (movieMetadata != null) {

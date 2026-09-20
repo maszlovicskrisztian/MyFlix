@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record MetadataDetailsResponse(
+        String relativePath,
         Long mediaId,
         MediaType mediaType,
         Long tmdbId,

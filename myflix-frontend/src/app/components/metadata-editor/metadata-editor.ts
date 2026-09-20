@@ -56,6 +56,7 @@ export class MetadataEditor {
     computation: () => 'MOVIE',
   });
 
+  relativePath = linkedSignal<boolean, string>({ source: this.open, computation: () => '' });
   tmdbId = linkedSignal<boolean, string>({ source: this.open, computation: () => '' });
   title = linkedSignal<boolean, string>({ source: this.open, computation: () => '' });
   overview = linkedSignal<boolean, string>({ source: this.open, computation: () => '' });
@@ -186,6 +187,7 @@ export class MetadataEditor {
   private prefill(details: MetadataDetails): void {
     this.mode.set(details.mediaType ?? 'MOVIE');
 
+    this.relativePath.set(details.relativePath ?? '');
     this.tmdbId.set(this.numberText(details.tmdbId));
     this.title.set(details.title ?? '');
     this.overview.set(details.overview ?? '');

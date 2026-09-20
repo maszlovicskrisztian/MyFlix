@@ -21,6 +21,12 @@
 
       <form class="dialog__form" (ngSubmit)="submit()">
         <label class="field">
+          <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.RELATIVE_PATH' | transloco }}</span>
+          <input #relativePathInput class="field__input" type="text" name="relativePath" [(ngModel)]="relativePath"
+            autocomplete="off" readonly/>
+        </label>
+
+        <label class="field">
           <span class="field__label">{{ 'METADATA_EDITOR.FIELDS.TMDB_ID' | transloco }}</span>
           <input class="field__input" type="number" name="tmdbId" [(ngModel)]="tmdbId" min="1" step="1"
             autocomplete="off" [disabled]="disabled()" />

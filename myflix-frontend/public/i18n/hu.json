@@ -39,6 +39,7 @@
         "SAVING": "Mentés…",
         "LOADING": "Már ismert metaadatok betöltése…",
         "FIELDS": {
+            "RELATIVE_PATH": "Média elérési útvonala",
             "TMDB_ID": "TMDB azonosító",
             "TITLE": "Cím",
             "OVERVIEW": "Leírás",
