@@ -1,26 +1,20 @@
 package com.maszlovicskrisztian.myflix_core.helpers;
 
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchRequest;
-import lombok.RequiredArgsConstructor;
+import com.maszlovicskrisztian.myflix_core.tmdb.request.TmdbSearchRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component
 @Slf4j
-@RequiredArgsConstructor
-public class MediaTitleParser {
-
-    private final FileHelper fileHelper;
+public final class MediaTitleParser {
 
     private static final Pattern YEAR = Pattern.compile("\\b(19|20)\\d{2}\\b");
     private static final Pattern EPISODE = Pattern.compile("(?i)e(\\d{1,3})");
     private static final Pattern SEASON = Pattern.compile("(?i)s(\\d{1,2})");
 
-    public TmdbSearchRequest getSearchDetailsFromPath(Path relativePath) {
+    public static TmdbSearchRequest getSearchDetailsFromPath(Path relativePath) {
         log.info("Resolving data from {}", relativePath);
 
         String title = getTitle(relativePath);
@@ -47,7 +41,7 @@ public class MediaTitleParser {
         return new TmdbSearchRequest(title, year, season, episode, "en");
     }
 
-    private String getTitle(Path relativePath) {
+    private static String getTitle(Path relativePath) {
         String folderName = relativePath.getName(relativePath.getNameCount() - 2).toString();
 
         log.debug("Started title parsing from folder name: {}", folderName);
@@ -61,8 +55,8 @@ public class MediaTitleParser {
         log.debug("Could not get title from folder, trying with file name.");
 
         String fileName = relativePath.getFileName().toString();
-        if (fileHelper.hasVideoExtension(relativePath.getFileName()))
-            fileName = fileHelper.stripExtension(fileName);
+        if (FileHelper.hasVideoExtension(relativePath.getFileName()))
+            fileName = FileHelper.stripExtension(fileName);
 
         titlePart = tryResolveTitle(fileName);
 
@@ -77,7 +71,7 @@ public class MediaTitleParser {
                 .trim();
     }
 
-    private String tryResolveTitle(String path) {
+    private static String tryResolveTitle(String path) {
         String titlePart = null;
 
         Matcher seasonMatcher = SEASON.matcher(path);
@@ -100,7 +94,7 @@ public class MediaTitleParser {
                 .trim();
     }
 
-    private String getYear(Path relativePath) {
+    private static String getYear(Path relativePath) {
         String folderName = relativePath.getName(relativePath.getNameCount() - 2).toString();
 
         String year = tryResolveYear(folderName);
@@ -120,7 +114,7 @@ public class MediaTitleParser {
         return null;
     }
 
-    private String tryResolveYear(String path) {
+    private static String tryResolveYear(String path) {
         Matcher yearMatcher = YEAR.matcher(path);
         if (yearMatcher.find()) {
             return yearMatcher.group();
@@ -129,7 +123,7 @@ public class MediaTitleParser {
         return null;
     }
 
-    private Integer getSeason(Path relativePath) {
+    private static Integer getSeason(Path relativePath) {
         String folderName = relativePath.getName(relativePath.getNameCount() - 2).toString();
         Matcher seasonMatcher = SEASON.matcher(folderName);
 
@@ -140,7 +134,7 @@ public class MediaTitleParser {
         return Integer.parseInt(seasonMatcher.group(1));
     }
 
-    private Integer getEpisode(Path relativePath) {
+    private static Integer getEpisode(Path relativePath) {
         String fileName = relativePath.getFileName().toString();
         Matcher episodeMatcher = EPISODE.matcher(fileName);
 

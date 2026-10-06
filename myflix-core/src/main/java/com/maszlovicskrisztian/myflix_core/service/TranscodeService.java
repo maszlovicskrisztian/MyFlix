@@ -31,7 +31,6 @@ import java.util.stream.Stream;
 @Slf4j
 public class TranscodeService {
 
-    private final HlsSessionRegistry sessionRegistry;
     private final ObjectMapper objectMapper;
 
     @Value("${ffmpeg.path}")
@@ -53,17 +52,17 @@ public class TranscodeService {
     private int maxHeight;
 
     public void touch(Long mediaId) {
-        sessionRegistry.touch(mediaId);
+        HlsSessionRegistry.touch(mediaId);
     }
 
     public Path getOrStartSession(Path sourceFile, Long mediaId, long startSeconds, Integer resHeight, boolean isHdr) {
         log.trace("FFmpeg session request for file info {} started", mediaId);
-        HlsSession existing = sessionRegistry.get(mediaId);
+        HlsSession existing = HlsSessionRegistry.get(mediaId);
         if (existing != null && existing.startSeconds() != startSeconds) {
-            sessionRegistry.discardAndStop(mediaId, getSessionDir(mediaId));
+            HlsSessionRegistry.discardAndStop(mediaId, getSessionDir(mediaId));
         }
 
-        var session = sessionRegistry.getOrCreate(mediaId, id -> {
+        var session = HlsSessionRegistry.getOrCreate(mediaId, id -> {
             try {
                 return startSession(sourceFile, id, startSeconds, resHeight, isHdr);
             } catch (IOException e) {

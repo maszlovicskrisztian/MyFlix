@@ -1,4 +1,4 @@
-package com.maszlovicskrisztian.myflix_core.helpers;
+package com.maszlovicskrisztian.myflix_core.tmdb;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

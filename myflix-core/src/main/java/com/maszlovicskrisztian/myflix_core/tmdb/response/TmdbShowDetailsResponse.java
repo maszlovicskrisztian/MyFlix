@@ -1,7 +1,8 @@
-package com.maszlovicskrisztian.myflix_core.dtos.tmdb;
+package com.maszlovicskrisztian.myflix_core.tmdb.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.maszlovicskrisztian.myflix_core.tmdb.TmdbGenre;
 
 import java.util.List;
 

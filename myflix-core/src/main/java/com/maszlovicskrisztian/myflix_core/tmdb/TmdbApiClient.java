@@ -1,8 +1,9 @@
-package com.maszlovicskrisztian.myflix_core.interfaces;
+package com.maszlovicskrisztian.myflix_core.tmdb;
 
 import com.maszlovicskrisztian.myflix_core.dtos.request.ImageSearchRequest;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.*;
 import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
+import com.maszlovicskrisztian.myflix_core.tmdb.request.TmdbSearchRequest;
+import com.maszlovicskrisztian.myflix_core.tmdb.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class TmdbApiClient implements TmdbClient{
+class TmdbApiClient implements TmdbClient{
 
     private final RestClient tmdbClient;
 

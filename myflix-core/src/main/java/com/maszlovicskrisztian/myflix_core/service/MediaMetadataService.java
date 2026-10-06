@@ -3,12 +3,14 @@ package com.maszlovicskrisztian.myflix_core.service;
 import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
 import com.maszlovicskrisztian.myflix_core.dtos.request.MetadataUpdateRequest;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MetadataDetailsResponse;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.*;
 import com.maszlovicskrisztian.myflix_core.exception.ResourceNotFoundException;
 import com.maszlovicskrisztian.myflix_core.helpers.MediaTitleParser;
-import com.maszlovicskrisztian.myflix_core.interfaces.TmdbClient;
+import com.maszlovicskrisztian.myflix_core.tmdb.TmdbClient;
 import com.maszlovicskrisztian.myflix_core.model.*;
 import com.maszlovicskrisztian.myflix_core.repository.*;
+import com.maszlovicskrisztian.myflix_core.tmdb.TmdbGenre;
+import com.maszlovicskrisztian.myflix_core.tmdb.request.TmdbSearchRequest;
+import com.maszlovicskrisztian.myflix_core.tmdb.response.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,7 +27,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MediaMetadataService {
 
-    private final MediaTitleParser parser;
     private final TmdbClient tmdbClient;
     private final MovieMetadataRepository movieMetadataRepository;
     private final EpisodeMetadataRepository episodeMetadataRepository;
@@ -81,7 +82,7 @@ public class MediaMetadataService {
 
         try {
             Path relativePath = Paths.get(fileInfo.getRelativePath());
-            TmdbSearchRequest parseResult = parser.getSearchDetailsFromPath(relativePath);
+            TmdbSearchRequest parseResult = MediaTitleParser.getSearchDetailsFromPath(relativePath);
             TmdbSearchResult result = tmdbClient.searchBestMatch(parseResult);
 
             if (result == null) {

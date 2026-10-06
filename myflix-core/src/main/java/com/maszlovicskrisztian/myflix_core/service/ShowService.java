@@ -3,10 +3,10 @@ package com.maszlovicskrisztian.myflix_core.service;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaSearchResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.ShowDetailsResponse;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchRequest;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbSearchResult;
+import com.maszlovicskrisztian.myflix_core.tmdb.request.TmdbSearchRequest;
+import com.maszlovicskrisztian.myflix_core.tmdb.response.TmdbSearchResult;
 import com.maszlovicskrisztian.myflix_core.exception.ResourceNotFoundException;
-import com.maszlovicskrisztian.myflix_core.interfaces.TmdbClient;
+import com.maszlovicskrisztian.myflix_core.tmdb.TmdbClient;
 import com.maszlovicskrisztian.myflix_core.mapping.ShowMapper;
 import com.maszlovicskrisztian.myflix_core.model.SeasonMetadata;
 import com.maszlovicskrisztian.myflix_core.model.Show;
@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 public class ShowService {
     private final SeasonMetadataRepository seasonRepository;
     private final ShowRepository showRepository;
-    private final ShowMapper mapper;
     private final TranslationService translationService;
     private final TmdbClient tmdbClient;
+    private final ShowMapper showMapper;
 
     @Transactional(readOnly = true)
     public List<MediaBaseResponse> getShows(String languageCode) {
@@ -38,13 +38,13 @@ public class ShowService {
         if (!languageCode.equalsIgnoreCase("en"))
         {
             return translationService.translateShows(shows, languageCode)
-                    .stream().map(mapper::toMediaBaseResponse)
+                    .stream().map(showMapper::toMediaBaseResponse)
                     .sorted(Comparator.comparing(MediaBaseResponse::title))
                     .toList();
         }
 
         return shows
-                .stream().map(mapper::toMediaBaseResponse)
+                .stream().map(showMapper::toMediaBaseResponse)
                 .sorted(Comparator.comparing(MediaBaseResponse::title))
                 .toList();
     }
@@ -55,17 +55,17 @@ public class ShowService {
                 .orElseThrow(() -> new ResourceNotFoundException("Could not find show by id: " + id));
 
         if (!languageCode.equalsIgnoreCase("en")) {
-            return mapper.toTranslatedShowDetails(translationService.translateShowDetails(show, languageCode));
+            return showMapper.toTranslatedShowDetails(translationService.translateShowDetails(show, languageCode));
         }
 
-        return mapper.toShowDetails(show);
+        return showMapper.toShowDetails(show);
     }
 
     public List<MediaSearchResponse> findAllTitleWithIdByQuery(String query, String languageCode) {
         if (languageCode.equalsIgnoreCase("en")) {
             return showRepository.findAllBy(TitleProjection.class)
                     .stream().filter(x -> x.getTitle().contains(query))
-                    .map(mapper::toMediaSearchResponse)
+                    .map(showMapper::toMediaSearchResponse)
                     .toList();
         }
 
@@ -76,7 +76,7 @@ public class ShowService {
                 .stream().filter(x -> tmdbIds.contains(x.getTmdbId()))
                 .toList();
 
-        return translationService.translateShows(shows, languageCode).stream().map(mapper::toMediaSearchResponse).toList();
+        return translationService.translateShows(shows, languageCode).stream().map(showMapper::toMediaSearchResponse).toList();
     }
 
     @Transactional

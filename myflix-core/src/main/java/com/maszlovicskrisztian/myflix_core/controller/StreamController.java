@@ -15,7 +15,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
@@ -29,10 +28,10 @@ import java.util.List;
 @RequestMapping("/api/media/{id}/stream")
 public class StreamController {
 
+    private final MediaPathResolver mediaPathResolver;
     private final JwtService jwtService;
     private final TranscodeService transcodeService;
     private final MediaItemService mediaItemService;
-    private final MediaPathResolver mediaPathResolver;
 
     @GetMapping()
     public void stream(@PathVariable Long id,

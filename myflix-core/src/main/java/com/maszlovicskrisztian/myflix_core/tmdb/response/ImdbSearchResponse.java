@@ -1,4 +1,4 @@
-package com.maszlovicskrisztian.myflix_core.dtos.tmdb;
+package com.maszlovicskrisztian.myflix_core.tmdb.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

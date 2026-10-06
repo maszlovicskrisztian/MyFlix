@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class TranscodingCleaner {
 
-    private final HlsSessionRegistry sessionRegistry;
     private final TranscodeService transcodeService;
 
     @Value("${HLS_IDLE_TIMEOUT_MINUTES}")
@@ -26,10 +25,10 @@ public class TranscodingCleaner {
     public void cleanupIdleSessions() {
         Instant idleThreshold = Instant.now().minus(Duration.ofMinutes(idleTimeoutMinutes));
 
-        sessionRegistry.entries().stream()
+        HlsSessionRegistry.entries().stream()
                 .filter(entry -> entry.getValue().lastAccessed().get().isBefore(idleThreshold))
                 .map(Map.Entry::getKey)
                 .toList()
-                .forEach(mediaId -> sessionRegistry.discardAndStop(mediaId, transcodeService.getSessionDir(mediaId)));
+                .forEach(mediaId -> HlsSessionRegistry.discardAndStop(mediaId, transcodeService.getSessionDir(mediaId)));
     }
 }

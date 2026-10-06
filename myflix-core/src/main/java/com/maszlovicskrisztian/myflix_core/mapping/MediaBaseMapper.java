@@ -1,18 +1,16 @@
 package com.maszlovicskrisztian.myflix_core.mapping;
 
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbDiscoverResponse;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbDiscoverResult;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbGenre;
-import com.maszlovicskrisztian.myflix_core.helpers.ImageUrlResolver;
+import com.maszlovicskrisztian.myflix_core.tmdb.response.TmdbDiscoverResult;
+import com.maszlovicskrisztian.myflix_core.tmdb.ImageUrlResolver;
 import com.maszlovicskrisztian.myflix_core.model.EpisodeMetadata;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.model.MovieMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class MediaBaseMapper {
 
     private final ImageUrlResolver imageUrlResolver;

@@ -4,7 +4,7 @@ import com.maszlovicskrisztian.myflix_core.dtos.MediaProbeResult;
 
 import java.util.Set;
 
-public class PlaybackCompatibility {
+public final class PlaybackCompatibility {
 
     private static final Set<String> COMPATIBLE_VIDEO_CODECS = Set.of("h264", "vp9", "av1");
     private static final Set<String> COMPATIBLE_AUDIO_CODECS = Set.of("aac", "opus", "vorbis", "mp3");

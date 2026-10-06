@@ -5,7 +5,7 @@ import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaSearchResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.ShowDetailsResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
-import com.maszlovicskrisztian.myflix_core.helpers.ImageUrlResolver;
+import com.maszlovicskrisztian.myflix_core.tmdb.ImageUrlResolver;
 import com.maszlovicskrisztian.myflix_core.model.EpisodeMetadata;
 import com.maszlovicskrisztian.myflix_core.model.SeasonMetadata;
 import com.maszlovicskrisztian.myflix_core.model.Show;
@@ -15,13 +15,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class ShowMapper {
+
     private final ImageUrlResolver imageUrlResolver;
 
     public MediaSearchResponse toMediaSearchResponse(TranslatedShowResult translatedShow) {
@@ -105,7 +103,7 @@ public class ShowMapper {
         );
     }
 
-    public SeasonDetails toSeasonDetails(SeasonMetadata season) {
+    private SeasonDetails toSeasonDetails(SeasonMetadata season) {
         List<EpisodeDetails> sortedEpisodes = season.getEpisodes().stream()
                 .sorted(Comparator.comparing(EpisodeMetadata::getEpisodeNumber))
                 .map(this::toEpisodeDetails)
@@ -120,7 +118,7 @@ public class ShowMapper {
         );
     }
 
-    public SeasonDetails toTranslatedSeasonDetails(TranslatedSeasonResult translatedSeason) {
+    private SeasonDetails toTranslatedSeasonDetails(TranslatedSeasonResult translatedSeason) {
         SeasonMetadata model = translatedSeason.season();
         List<EpisodeDetails> sortedEpisodes = translatedSeason.episodes().stream()
                 .sorted(Comparator.comparing((x) -> x.episode().getEpisodeNumber()))
@@ -136,7 +134,7 @@ public class ShowMapper {
         );
     }
 
-    public EpisodeDetails toEpisodeDetails(EpisodeMetadata model) {
+    private EpisodeDetails toEpisodeDetails(EpisodeMetadata model) {
         return new EpisodeDetails(
                 model.getTitle(),
                 model.getOverview(),
@@ -148,7 +146,7 @@ public class ShowMapper {
         );
     }
 
-    public EpisodeDetails toTranslatedEpisodeDetails(TranslatedEpisodeResult model) {
+    private EpisodeDetails toTranslatedEpisodeDetails(TranslatedEpisodeResult model) {
         return new EpisodeDetails(
                 model.localizedTitle(),
                 model.localizedOverview(),

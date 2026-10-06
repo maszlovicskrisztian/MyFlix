@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 public class LibraryScanner {
 
     private final MediaItemService mediaItemService;
-    private final FileHelper fileHelper;
     private final MediaPathResolver mediaPathResolver;
     private final MediaMetadataService mediaMetadataService;
 
@@ -54,10 +53,10 @@ public class LibraryScanner {
         try (Stream<Path> paths = Files.walk(root)) {
             List<Path> result = paths
                     .filter(Files::isRegularFile)
-                    .filter(fileHelper::hasVideoExtension)
-                    .filter(p -> !fileHelper.isSample(p))
+                    .filter(FileHelper::hasVideoExtension)
+                    .filter(p -> !FileHelper.isSample(p))
                     .map(root::relativize)
-                    .filter(p -> includeFolders.isEmpty() || includeFolders.contains(fileHelper.topLevelFolder(p)))
+                    .filter(p -> includeFolders.isEmpty() || includeFolders.contains(FileHelper.topLevelFolder(p)))
                     .toList();
 
             log.trace("File scan finished.");

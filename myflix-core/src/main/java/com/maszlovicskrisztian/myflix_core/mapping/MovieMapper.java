@@ -5,8 +5,8 @@ import com.maszlovicskrisztian.myflix_core.dtos.enums.MediaType;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaBaseResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MediaSearchResponse;
 import com.maszlovicskrisztian.myflix_core.dtos.response.MovieDetailsResponse;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.TmdbMovieDetailsResponse;
-import com.maszlovicskrisztian.myflix_core.helpers.ImageUrlResolver;
+import com.maszlovicskrisztian.myflix_core.tmdb.response.TmdbMovieDetailsResponse;
+import com.maszlovicskrisztian.myflix_core.tmdb.ImageUrlResolver;
 import com.maszlovicskrisztian.myflix_core.model.FileInfo;
 import com.maszlovicskrisztian.myflix_core.model.MovieMetadata;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +14,10 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class MovieMapper {
+
     private final ImageUrlResolver imageUrlResolver;
 
     public MediaSearchResponse toMediaSearchResponse(TranslatedMovieResult translatedMovie) {

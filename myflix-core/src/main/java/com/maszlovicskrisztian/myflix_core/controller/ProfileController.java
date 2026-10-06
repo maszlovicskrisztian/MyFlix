@@ -5,7 +5,6 @@ import com.maszlovicskrisztian.myflix_core.model.Profile;
 import com.maszlovicskrisztian.myflix_core.service.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

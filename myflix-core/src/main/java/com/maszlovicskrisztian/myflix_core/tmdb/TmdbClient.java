@@ -1,7 +1,8 @@
-package com.maszlovicskrisztian.myflix_core.interfaces;
+package com.maszlovicskrisztian.myflix_core.tmdb;
 
 import com.maszlovicskrisztian.myflix_core.dtos.request.ImageSearchRequest;
-import com.maszlovicskrisztian.myflix_core.dtos.tmdb.*;
+import com.maszlovicskrisztian.myflix_core.tmdb.request.TmdbSearchRequest;
+import com.maszlovicskrisztian.myflix_core.tmdb.response.*;
 
 import java.util.List;
 

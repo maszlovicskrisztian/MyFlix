@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class MediaItemService {
     private final FileInfoRepository fileInfoRepository;
-    private final MediaBaseMapper mapper;
-    private final MediaPathResolver mediaPathResolver;
     private final TranscodeService transcodeService;
+    private final MediaPathResolver mediaPathResolver;
+    private final MediaBaseMapper mediaBaseMapper;
 
     public List<FileInfo> addMediaItems(List<Path> relativePaths) {
         if (relativePaths == null || relativePaths.isEmpty())
@@ -85,7 +85,7 @@ public class MediaItemService {
     public List<MediaBaseResponse> getUnknownMedia() {
         return fileInfoRepository.findAll().stream()
                 .filter(x -> x.getMovieMetadata() == null && x.getEpisodeMetadata() == null)
-                .map((x) -> mapper.fromFileInfo(x, null))
+                .map((x) -> mediaBaseMapper.fromFileInfo(x, null))
                 .toList();
     }
 
@@ -96,7 +96,7 @@ public class MediaItemService {
 
     @Transactional(readOnly = true)
     public MediaBaseResponse getMediaBaseById(Long fileInfoId) {
-        return mapper.fromFileInfo(getMediaById(fileInfoId), null);
+        return mediaBaseMapper.fromFileInfo(getMediaById(fileInfoId), null);
     }
 
     public List<FileInfo> getAll() {
